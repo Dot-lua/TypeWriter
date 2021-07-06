@@ -3,6 +3,8 @@ return function()
     _G.RuntimePath = require("path").resolve(RuntimeArgs[0], "../../")
     _G.RuntimeLocation = require("path").resolve("./") .. "\\"
     _G.RuntimeOS = require("GetOS")()
+    _G.RuntimeSession = require("RandomString")(32)
+
     RuntimeArgs[0] = nil
     table.remove(RuntimeArgs, 1)
 
