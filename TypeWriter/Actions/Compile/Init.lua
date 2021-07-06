@@ -12,15 +12,13 @@ return function(Args)
     FS.mkdirSync(RuntimeLocation .. "TypeWriter")
     FS.mkdirSync(RuntimeLocation .. "TypeWriter/Out")
 
-    local CacheHolder = require("RandomString")(32)
-
     Logger.Info("Building into Project.dua with CacheHolder " .. CacheHolder)
 
     FS.mkdirSync(RuntimePath .. "Cache/Compile/" .. CacheHolder)
     FS.mkdirSync(RuntimePath .. "Cache/Compile/" .. CacheHolder .. "/Data")
     FS.mkdirSync(RuntimePath .. "Cache/Compile/" .. CacheHolder .. "/Out")
 
-    local CommandWindows = "PowerShell -NoProfile -ExecutionPolicy unrestricted -File " ..RuntimePath .. "Actions/Compile/Compile.ps1 " .. "Project" .. " " .. CacheHolder .. " " .. RuntimePath .. " " .. RuntimeLocation
+    local CommandWindows = "PowerShell -NoProfile -ExecutionPolicy unrestricted -File " ..RuntimePath .. "Actions/Compile/Compile.ps1 " .. "Project" .. " " .. RuntimeSession .. " " .. RuntimePath .. " " .. RuntimeLocation
     local CommandMac = "sh ./Dotter/Scripts/Init/DownloadTemplate.sh"
 
     local Handle
