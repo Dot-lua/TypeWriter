@@ -72,4 +72,6 @@ return function(PackagePath, Log, IsMain)
             ProcessPath .. "Running/" .. v
         )
     end
+
+    return PackageInfo
 end
