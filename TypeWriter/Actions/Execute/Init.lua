@@ -65,7 +65,7 @@ return function()
     local MainEntry = Import(ProcessInfo.Entrypoints.Main)
 
     if not MainEntry then
-        ProcessHelper.Fail("The main entry of " .. ProcessInfo.ID .. " '" .. ProcessInfo.Entrypoints.Main .. "' was not found!")
+        Logger.Error("The main entry of " .. ProcessInfo.ID .. " '" .. ProcessInfo.Entrypoints.Main .. "' was not found!")
         process:exit(1)
     end
 
@@ -73,6 +73,11 @@ return function()
         MainEntry.OnInitialize()
     end)
 
+    if not EntryWorked then
+        Logger.Error("Error in runtime, " .. EntryError)
+    end
+
+    --[[
     if not EntryWorked then
 
         local ParseStepOne = Split(EntryError, "\\")
@@ -93,5 +98,5 @@ return function()
     else
         Logger.Info("Process complete")
         Logger.Info("Exiting...")
-    end
+    end]]
 end

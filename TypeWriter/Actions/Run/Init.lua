@@ -34,7 +34,7 @@ return function(Args)
     local MainEntry = Import(ProcessInfo.Entrypoints.Main)
 
     if not MainEntry then
-        ProcessHelper.Fail("The main entry of " .. ProcessInfo.ID .. " '" .. ProcessInfo.Entrypoints.Main .. "' was not found!")
+        Logger.Error("The main entry of " .. ProcessInfo.ID .. " '" .. ProcessInfo.Entrypoints.Main .. "' was not found!")
         process:exit(1)
     end
 

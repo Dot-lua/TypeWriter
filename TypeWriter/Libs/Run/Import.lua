@@ -3,7 +3,6 @@ local Split = require("Split")
 local Logger = require("Logger")
 
 return function(Path)
-    
 
     local PathSplitted = Split(Path, ".")
     local LastExistedPath = {}
@@ -17,13 +16,13 @@ return function(Path)
 
         local RealPath = ProcessPath .. "Running/" .. ConcPath
         local LuaPath = RealPath .. ".lua"
-        Logger.Debug(RealPath)
-        Logger.Debug(LuaPath)
+        Logger.Debug("Real" .. tostring(RealPath))
+        Logger.Debug("Lua" .. tostring(LuaPath))
 
         local PathExists = FS.existsSync(RealPath)
         local LuaExists = FS.existsSync(LuaPath)
-        Logger.Debug(PathExists)
-        Logger.Debug(LuaExists)
+        Logger.Debug("PathEx" .. tostring(PathExists))
+        Logger.Debug("LuaEx" .. tostring(LuaExists))
 
         local OneExists = PathExists-- or LuaExists
 
