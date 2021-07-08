@@ -58,6 +58,7 @@ return function()
     _G.LoadPackage = require("Run/LoadPackage")
     _G.LoadInternal = require("Run/LoadInternal")
     _G.CallEntrypoint = require("Run/CallEntrypoint")
+    _G.Class = require("core").Object
 
     LoadPackage(Path, false, true)
 
