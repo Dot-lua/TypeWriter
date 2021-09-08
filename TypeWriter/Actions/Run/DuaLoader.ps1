@@ -9,6 +9,8 @@ Copy-Item -Path "$Location" -Destination "$RuntimePath/Cache/Run/$ProcessId/Arch
 
 Move-Item -Path "$RuntimePath/Cache/Run/$ProcessId/Archives/$FileName" -Destination "$RuntimePath/Cache/Run/$ProcessId/Archives/$FileName.zip"
 
+$ProgressPreference = 'SilentlyContinue'
 Expand-Archive -Path "$RuntimePath/Cache/Run/$ProcessId/Archives/$FileName.zip" -DestinationPath "$RuntimePath/Cache/Run/$ProcessId/UnpackCache/"
+$ProgressPreference = 'Continue'
 
 Move-Item -Path "$RuntimePath/Cache/Run/$ProcessId/Archives/$FileName.zip" -Destination "$RuntimePath/Cache/Run/$ProcessId/Archives/$FileName"
