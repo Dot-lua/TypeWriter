@@ -39,4 +39,3 @@ Write-Output "Moving archive"
 Copy-Item "$CachePath/Out/$Output.dua" -Destination "$RuntimeLocation/TypeWriter/Out/$output.dua"
 
 Write-Output "Done!"
-Start-Sleep 1
