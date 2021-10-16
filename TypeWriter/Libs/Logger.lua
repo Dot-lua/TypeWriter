@@ -64,7 +64,8 @@ function Logger.Info(Msg, ...)
 end
 
 function Logger.Debug(Msg, ...)
-	if require(RuntimePath .. "Configuration/DevelopmentMode.lua") then
+	local IsDevMode = require(RuntimePath .. "Config/DevMode.lua")
+	if IsDevMode == true then
 		Logger.Log(4, Msg, ... or "")
 	end
 end
