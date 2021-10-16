@@ -24,8 +24,13 @@ return function(PackagePath, Log, IsMain)
     end
 
     local MalformedRuntimePath = string.sub(RuntimePath, 1, #RuntimePath - 1)
+
+    local UnpackSession = require("RandomString")(5)
+    Logger.Debug("Creating Unpack Session " .. UnpackSession)
+
+    FS.mkdirSync(RuntimePath .. "Cache/Run/" .. RuntimeSession .. "/UnpackCache/" .. UnpackSession .. "/")
     
-    local CommandWindows = "PowerShell -NoProfile -ExecutionPolicy unrestricted -File " .. RuntimePath .. "Actions/Run/DuaLoader.ps1 " .. RuntimePath .. " " .. RuntimeSession .. " " .. FilePos .. " " .. FileBase
+    local CommandWindows = "PowerShell -NoProfile -ExecutionPolicy unrestricted -File " .. RuntimePath .. "Actions/Run/DuaLoader.ps1 " .. RuntimePath .. " " .. RuntimeSession .. " " .. FilePos .. " " .. FileBase .. " " .. UnpackSession
     local CommandMac = "sh " .. RuntimePath .. "Scripts/Loaders/DuaLoader.sh " .. RuntimeSession .. " " .. FilePos .. " " .. FileBase
 
     local Handle
@@ -42,34 +47,40 @@ return function(PackagePath, Log, IsMain)
 
     Handle:close()
 
-    local ResDirExists = FS.existsSync(ProcessPath .. "UnpackCache/resources/")
+    local ResDirExists = FS.existsSync(ProcessPath .. "UnpackCache/" .. UnpackSession .. "/resources/")
 
     if ResDirExists then
-        local ResDir = FS.readdirSync(ProcessPath .. "UnpackCache/resources/")
+        local ResDir = FS.readdirSync(ProcessPath .. "UnpackCache/" .. UnpackSession .. "/resources/")
 
         for i, v in pairs(ResDir) do
             FS.renameSync(
-                ProcessPath .. "UnpackCache/resources/" .. v,
+                ProcessPath .. "UnpackCache/" .. UnpackSession .. "/resources/" .. v,
                 ProcessPath .. "/Resources/" .. v
             )
         end
 
-        FS.rmdirSync(ProcessPath .. "UnpackCache/resources/" )
+        FS.rmdirSync(ProcessPath .. "UnpackCache/" .. UnpackSession .. "/resources/" )
     end
 
-    local PackageInfo = require(ProcessPath .. "UnpackCache/package.info.lua")
+    local PackageInfo = require(ProcessPath .. "UnpackCache/" .. UnpackSession .. "/package.info.lua")
     LoadedPackages[PackageInfo.ID] = PackageInfo
 
-    FS.unlinkSync(ProcessPath .. "UnpackCache/package.info.lua")
+    FS.unlinkSync(ProcessPath .. "UnpackCache/" .. UnpackSession .. "/package.info.lua")
 
     if IsMain then
         _G.ProcessInfo = PackageInfo
     end
-    local DirFiles = FS.readdirSync(ProcessPath .. "UnpackCache/")
+
+    FS.mkdirSync(ProcessPath .. "Running/" .. FileBase .. "-" .. UnpackSession ..  "/")
+
+    local DirFiles = FS.readdirSync(ProcessPath .. "UnpackCache/" .. UnpackSession)
+
     for i, v in pairs(DirFiles) do
+        print(i, v)
+
         FS.renameSync(
-            ProcessPath .. "UnpackCache/" .. v,
-            ProcessPath .. "Running/" .. v
+            ProcessPath .. "UnpackCache/" .. UnpackSession .. "/" .. v,
+            ProcessPath .. "Running/" .. FileBase .. "-" .. UnpackSession .. "/" .. v
         )
     end
 
