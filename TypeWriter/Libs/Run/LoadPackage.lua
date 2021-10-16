@@ -76,7 +76,7 @@ return function(PackagePath, Log, IsMain)
     local DirFiles = FS.readdirSync(ProcessPath .. "UnpackCache/" .. UnpackSession)
 
     for i, v in pairs(DirFiles) do
-        print(i, v)
+        --print(i, v)
 
         FS.renameSync(
             ProcessPath .. "UnpackCache/" .. UnpackSession .. "/" .. v,
