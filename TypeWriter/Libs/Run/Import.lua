@@ -6,7 +6,7 @@ return function(Path)
 
     local PathSplitted = Split(Path, ".")
     local LastExistedPath = {}
-    p(PathSplitted)
+    --p(PathSplitted)
 
     local FoundPath
 
@@ -33,12 +33,12 @@ return function(Path)
                     FoundPath = RealPath .. ".lua"
                 else
                     Logger.Debug("The path did not exist, Breaking loop...")
-                    p()
+                    --p()
                     break
                 end
                 
             end
-            p()
+            --p()
         end
     end
     
@@ -83,7 +83,7 @@ return function(Path)
     local FoundData = nil
 
     local Worked, WorkedError = pcall(function()
-        p(FoundPath)
+        --p(FoundPath)
         FoundData = require(FoundPath)
     end)
 
