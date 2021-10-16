@@ -70,6 +70,8 @@ return function()
     end
 
     local EntryWorked, EntryError = pcall(function()
+        Logger.Info("Package log:")
+        p()
         MainEntry.OnInitialize()
     end)
 
