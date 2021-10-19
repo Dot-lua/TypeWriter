@@ -5,8 +5,7 @@ local Logger = require("Logger")
 return function(Path)
 
     local PathSplitted = Split(Path, ".")
-    local LastExistedPath = {}
-    --p(PathSplitted)
+    --Logger.Info("Finding " .. Path)
 
     local FoundPath
 
@@ -31,6 +30,7 @@ return function(Path)
                 if LuaFileExists then
                     Logger.Debug("Found the lua file: " .. RealPath .. ".lua")
                     FoundPath = RealPath .. ".lua"
+                    break
                 else
                     Logger.Debug("The path did not exist, Breaking loop...")
                     --p()
@@ -40,6 +40,8 @@ return function(Path)
             end
             --p()
         end
+
+        if FoundPath then break end
     end
     
     --[[
@@ -84,14 +86,16 @@ return function(Path)
 
     local Worked, WorkedError = pcall(function()
         --p(FoundPath)
+        Logger.Debug(FoundPath)
         FoundData = require(FoundPath)
     end)
 
     if not Worked == true then
-        Logger.Debug("Import failed: " .. (WorkedError or "Unknown"))
+        Logger.Warn("Import failed: " .. (WorkedError or "Unknown"))
     end
 
     Logger.Debug(FoundData)
+    --p(FoundData)
     return FoundData
 
 end
