@@ -47,6 +47,17 @@ return function(PackagePath, Log, IsMain)
 
     Handle:close()
 
+    local PackageInfo = require(ProcessPath .. "UnpackCache/" .. UnpackSession .. "/package.info.lua")
+
+    if LoadedPackages[PackageInfo.ID] then
+        return nil, "Already Loaded"
+    end
+
+    LoadedPackages[PackageInfo.ID] = PackageInfo
+
+    FS.unlinkSync(ProcessPath .. "UnpackCache/" .. UnpackSession .. "/package.info.lua")
+
+
     local ResDirExists = FS.existsSync(ProcessPath .. "UnpackCache/" .. UnpackSession .. "/resources/")
 
     if ResDirExists then
@@ -61,11 +72,6 @@ return function(PackagePath, Log, IsMain)
 
         FS.rmdirSync(ProcessPath .. "UnpackCache/" .. UnpackSession .. "/resources/" )
     end
-
-    local PackageInfo = require(ProcessPath .. "UnpackCache/" .. UnpackSession .. "/package.info.lua")
-    LoadedPackages[PackageInfo.ID] = PackageInfo
-
-    FS.unlinkSync(ProcessPath .. "UnpackCache/" .. UnpackSession .. "/package.info.lua")
 
     if IsMain then
         _G.ProcessInfo = PackageInfo
@@ -83,6 +89,15 @@ return function(PackagePath, Log, IsMain)
             ProcessPath .. "Running/" .. FileBase .. "-" .. UnpackSession .. "/" .. v
         )
     end
+
+    if PackageInfo.Entrypoints.OnLoad then
+        Logger.Error("Loading entrypoint Onload from " .. PackageInfo.Name)
+        Import(PackageInfo.Entrypoints.OnLoad)
+    end
+
+    --Logger.Error("Loading " .. PackageInfo.ID)
+    --p(PackageInfo)
+    --p(PackageInfo.Entrypoints.OnLoad)
 
     return PackageInfo
 end
