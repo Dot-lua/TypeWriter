@@ -12,22 +12,10 @@ return function(Args)
     end
 
     Logger.Info("Starting process with id: " .. RuntimeSession)
-    _G.ProcessPath = RuntimePath .. "Cache/Run/" .. RuntimeSession .. "/"
-
-    FS.mkdirSync(RuntimePath .. "/Cache/Run/")
-    FS.mkdirSync(RuntimePath .. "/Cache/Run/" .. RuntimeSession .. "/")
-    FS.mkdirSync(RuntimePath .. "/Cache/Run/" .. RuntimeSession .. "/Archives/")
-    FS.mkdirSync(RuntimePath .. "/Cache/Run/" .. RuntimeSession .. "/Running/")
-    FS.mkdirSync(RuntimePath .. "/Cache/Run/" .. RuntimeSession .. "/Resources/")
-    FS.mkdirSync(RuntimePath .. "/Cache/Run/" .. RuntimeSession .. "/UnpackCache/")
 
     _G.LoadedPackages = {}
         
-    _G.Import = require("Run/Import")
-    _G.LoadPackage = require("Run/LoadPackage")
-    _G.LoadInternal = require("Run/LoadInternal")
-    _G.CallEntrypoint = require("Run/CallEntrypoint")
-    _G.Class = require("core").Object
+    require("LoadExecutionValues.lua")()
 
     LoadPackage(Path, false, true)
 
@@ -39,7 +27,6 @@ return function(Args)
     end
 
     local EntryWorked, EntryError = pcall(function()
-        p()
         MainEntry.OnInitialize()
     end)
 
