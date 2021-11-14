@@ -1,5 +1,6 @@
 local FS = require("fs")
 local Logger = require("Logger")
+local Json = require("json")
 
 local PathLibrary = require("Path")
 local Split = require("Split")
@@ -13,7 +14,7 @@ return function()
     FS.mkdirSync(RuntimeLocation .. "TypeWriter/Out")
 
     Logger.Info("Writing to '" .. CompiledData.PackageInfo.Name .. ".dua'!")
-    FS.writeFileSync(RuntimeLocation .. "TypeWriter/Out/" .. CompiledData.PackageInfo.Name .. ".dua", require("PrettyJson/lib/pretty/json.lua").stringify(CompiledData, nil, 4))
+    FS.writeFileSync(RuntimeLocation .. "TypeWriter/Out/" .. CompiledData.PackageInfo.Name .. ".dua", Json.stringify(CompiledData, nil, 4))
 
     Logger.Info("Starting process with id: " .. RuntimeSession)
 
