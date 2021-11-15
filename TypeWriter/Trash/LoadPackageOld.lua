@@ -95,10 +95,6 @@ return function(PackagePath, Log, IsMain)
         Logger.Error("Loading entrypoint Onload from " .. PackageInfo.Name)
         Import(PackageInfo.Entrypoints.OnLoad)
     end
-
-    --Logger.Error("Loading " .. PackageInfo.ID)
-    --p(PackageInfo)
-    --p(PackageInfo.Entrypoints.OnLoad)
-
+    
     return PackageInfo
 end

@@ -33,12 +33,10 @@ return function(Path)
                     break
                 else
                     Logger.Debug("The path did not exist, Breaking loop...")
-                    --p()
                     break
                 end
                 
             end
-            --p()
         end
 
         if FoundPath then break end
@@ -47,7 +45,6 @@ return function(Path)
     local FoundData = nil
 
     local Worked, WorkedError = pcall(function()
-        --p(FoundPath)
         Logger.Debug(FoundPath)
         FoundData = require(FoundPath)
     end)
@@ -57,7 +54,6 @@ return function(Path)
     end
 
     Logger.Debug(FoundData)
-    --p(FoundData)
     return FoundData
 
 end

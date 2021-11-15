@@ -39,7 +39,6 @@ return function(Args)
     end
 
     local EntryWorked, EntryError = pcall(function()
-        p()
         MainEntry.OnInitialize()
     end)
 

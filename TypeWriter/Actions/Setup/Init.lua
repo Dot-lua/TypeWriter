@@ -14,7 +14,6 @@ return function(Args)
     local CommandWindows = "PowerShell -NoProfile -ExecutionPolicy unrestricted -File " ..RuntimePath .. "Actions/Setup/DownloadSrc.ps1"
     local CommandMac = "sh " .. RuntimePath .. "/Actions/Setup/DownloadSrc.sh"
 
-    p(WorkingOS)
 
     local Handle
 
