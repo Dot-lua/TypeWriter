@@ -6,7 +6,9 @@ local Path = require("path")
 return function(Path)
     local Compiled = {}
 
-    Compiled.PackageInfo = require(Path .. "resources/package.info.lua")
+    local PackageData = FS.readFileSync(Path .. "resources/package.info.lua")
+    
+    Compiled.PackageInfo = loadstring(PackageData)()
     Compiled.Code = {}
     Compiled.Resources = {} 
 

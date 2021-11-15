@@ -12,13 +12,15 @@ return function(Args)
     --local Command = "PowerShell -NoProfile -ExecutionPolicy unrestricted -Command \"[Net.ServicePointManager]::SecurityProtocol = 'Tls12'; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/Dot-lua/Dotter/main/Scripts/Functions/DownloadTemplate.ps1'))\""
 
     local CommandWindows = "PowerShell -NoProfile -ExecutionPolicy unrestricted -File " ..RuntimePath .. "Actions/Setup/DownloadSrc.ps1"
-    local CommandMac = "sh ./Dotter/Scripts/Init/DownloadTemplate.sh"
+    local CommandMac = "sh " .. RuntimePath .. "/Actions/Setup/DownloadSrc.sh"
+
+    p(WorkingOS)
 
     local Handle
 
     if RuntimeOS == "Windows" then
         Handle = io.popen(CommandWindows)
-    elseif WorkingOS == "Mac" then
+    elseif RuntimeOS == "OSX" then
         Handle = io.popen(CommandMac, "r")
     end
 

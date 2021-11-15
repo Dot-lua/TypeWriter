@@ -31,6 +31,11 @@ return function(Args)
     end)
 
     if not EntryWorked then
+        Logger.Error("Error in runtime, " .. EntryError)
+    end
+
+    --[[
+    if not EntryWorked then
 
         local ParseStepOne = Split(EntryError, "\\")
 
@@ -51,7 +56,7 @@ return function(Args)
         Logger.Info("Process complete")
         Logger.Info("Exiting...")
     end
-        
+        ]]
 
 
 
