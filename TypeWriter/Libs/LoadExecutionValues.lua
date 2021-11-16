@@ -11,6 +11,8 @@ return function()
     _G.LoadInternal = require("Run/LoadInternal")
     _G.CallEntrypoint = require("Run/CallEntrypoint")
     _G.Class = require("core").Object
+    _G.Class = require("core").Emitter
+
 
     table.ToString = require("Run/TableToString")
 end
