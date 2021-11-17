@@ -15,4 +15,5 @@ return function()
 
 
     table.ToString = require("Run/TableToString")
+    string.Random = require("RandomString")
 end
