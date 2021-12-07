@@ -12,6 +12,6 @@ return function(Args)
     FS.mkdirSync(RuntimeLocation .. "TypeWriter/Out")
 
     Logger.Info("Writing to '" .. CompiledData.PackageInfo.Name .. ".dua'!")
-    FS.writeFileSync(RuntimeLocation .. "TypeWriter/Out/" .. CompiledData.PackageInfo.Name .. ".dua", Json.stringify(CompiledData, nil, 4))
+    FS.writeFileSync(RuntimeLocation .. "TypeWriter/Out/" .. CompiledData.PackageInfo.Name .. ".dua", Json.stringify(CompiledData, {indent = true}))
     Logger.Info("Done writing")
 end
