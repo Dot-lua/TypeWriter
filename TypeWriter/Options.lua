@@ -1,13 +1,6 @@
 local Logger = require("Logger")
-
-local Arguments = {
-    h = "help",
-    i = "info",
-    r = "run",
-    c = "compile",
-    e = "execute",
-    s = "setup"
-}
+local FS = require("FS")
+local Json = require("Json")
 
 local Executors = {
     help = require("./Actions/Help/Init.lua"),
@@ -27,53 +20,25 @@ local ArgumentInfo = {
     setup = "Setup a development envoirment"
 }
 
-local Prefixes = {
-    Short = "-",
-    Long = "--"
-}
+local CommandName = string.lower(RuntimeArgs[1])
+local Command = Executors[CommandName]
 
-_G.RuntimeGlobal = {
-    Arguments = Arguments,
-    Executors = Executors,
-    Prefixes = Prefixess
-}
+local Metrics = Json.decode(FS.readFileSync(RuntimePath .. "/Config/Metrics.json"))
 
-local Executor = nil
-local Command = RuntimeArgs[1]
+Metrics.TotalRuns = Metrics.TotalRuns + 1
 
-local Long = string.sub(Command, 1, #Prefixes.Long) == Prefixes.Long
-local Short = false
-if not Long then
-    Short = string.sub(Command, 1, #Prefixes.Short) == Prefixes.Short
-end
-
-local SplitCommand
-
-if Long then
-    SplitCommand = string.sub(Command, #Prefixes.Long + 1)
-elseif Short then
-    SplitCommand = string.sub(Command, #Prefixes.Short + 1)
-end
-
-
-if Long then
-    for i, v in pairs(Arguments) do
-        if v == SplitCommand then
-            Executor = Executors[v]
-            break
-        end
-    end
-elseif Short then
-    for i, v in pairs(Arguments) do
-        if i == SplitCommand then
-            Executor = Executors[v]
-            break
-        end
-    end
-end
-
-if Executor then
-    Executor(RuntimeArgs)
+if Command ~= nil then
+    Metrics.CompleteRuns = Metrics.CompleteRuns + 1
+    Metrics.Commands[CommandName] = (Metrics.Commands[CommandName] or 0) + 1
 else
-    Logger.Error("Command " .. tostring(Command or SplitCommand) .. " Does not exist")
+    Metrics.FailedRuns = Metrics.FailedRuns + 1
+end
+
+FS.writeFileSync(RuntimePath .. "/Config/Metrics.json", Json.encode(Metrics, {indent = true}))
+
+if not Command then
+    Logger.Error("The given command does not exist!")
+    Logger.Error("For Help run 'TypeWriter help'")
+else
+    Command(RuntimeArgs)
 end
