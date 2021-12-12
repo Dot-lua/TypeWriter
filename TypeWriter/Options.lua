@@ -8,7 +8,9 @@ local Executors = {
     run = require("./Actions/Run/Init.lua"),
     compile = require("./Actions/Compile/Init.lua"),
     execute = require("./Actions/Execute/Init.lua"),
-    setup = require("./Actions/Setup/Init.lua")
+    setup = require("./Actions/Setup/Init.lua"),
+    update = require("./Actions/Update/Init.lua")
+
 }
 
 local ArgumentInfo = {
@@ -23,7 +25,7 @@ local ArgumentInfo = {
 local CommandName = string.lower(RuntimeArgs[1])
 local Command = Executors[CommandName]
 
-local Metrics = Json.decode(FS.readFileSync(RuntimePath .. "/Config/Metrics.json"))
+local Metrics = Json.decode(FS.readFileSync(RuntimePath .. "/Config/Metrics.json") or FS.readFileSync(RuntimePath .. "/Config/MetricsTemplate.json"))
 
 Metrics.TotalRuns = Metrics.TotalRuns + 1
 

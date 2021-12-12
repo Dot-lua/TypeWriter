@@ -5,7 +5,7 @@ return function()
     local Map = {
         ['win32'] = 'Windows',
         ['linux'] = 'Linux',
-        ['darwin'] = 'OSX',
+        ['darwin'] = 'Mac',
         ['bsd'] = 'BSD',
         ['posix'] = 'POSIX',
         ['other'] = 'Other'
@@ -16,11 +16,11 @@ return function()
     local Supported = {
         ["Windows"] = true,
         ["Linux"] = true,
-        ["OSX"] = true,
+        ["Mac"] = true,
     }
 
     if not Supported[OS] then
-        Logger.Error("Your operating system (" .. OS .. ") is not supported for TypeWriter")
+        Logger.Error("Your operating system (" .. OS .. ") is not supported by TypeWriter")
         print()
         Logger.Error("Supported Types Are:")
         for i, v in pairs(Supported) do
