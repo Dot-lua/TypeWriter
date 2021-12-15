@@ -37,6 +37,7 @@ return function(Args)
             TempName = TempPath .. "/TW-Installer.exe"
         elseif RuntimeOS == "Mac" then
             TempPath = _G.process.env.TMPDIR
+            Logger:Error("Hey Guess what? This is not yet supported for your system type.")
         end
 
         FS.writeFileSync(TempName, Body)
