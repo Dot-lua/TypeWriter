@@ -10,6 +10,8 @@ return function()
     _G.LoadPackage = require("Run/LoadPackage")
     _G.LoadInternal = require("Run/LoadInternal")
     _G.CallEntrypoint = require("Run/CallEntrypoint")
+    _G.CallEntrypoint = require("Run/ResourceHelper")
+
     _G.Class = require("core").Object
     _G.Class = require("core").Emitter
 
