@@ -13,7 +13,7 @@ return function()
     _G.CallEntrypoint = require("Run/ResourceHelper")
 
     _G.Class = require("core").Object
-    _G.Class = require("core").Emitter
+    _G.Emitter = require("core").Emitter
 
 
     table.ToString = require("Run/TableToString")
