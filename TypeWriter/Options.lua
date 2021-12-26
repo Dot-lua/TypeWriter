@@ -22,7 +22,7 @@ local ArgumentInfo = {
     setup = "Setup a development envoirment"
 }
 
-local CommandName = string.lower(RuntimeArgs[1])
+local CommandName = string.lower(RuntimeArgs[1] or "help")
 local Command = Executors[CommandName]
 
 local Metrics = Json.decode(FS.readFileSync(RuntimePath .. "/Config/Metrics.json") or FS.readFileSync(RuntimePath .. "/Config/MetricsTemplate.json"))
