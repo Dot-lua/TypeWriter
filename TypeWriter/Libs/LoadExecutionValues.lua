@@ -5,6 +5,7 @@ return function()
     _G.Sleep = Timer.sleep
     _G.Wait = function(Sec) return Sleep(Sec * 1000) end
     _G.LOS = require("los")
+    _G.Split = require("Split")
 
     _G.Import = require("Run/Import")
     _G.LoadPackage = require("Run/LoadPackage")
