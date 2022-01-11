@@ -3,22 +3,19 @@ local Logger = require("Logger")
 local Json = require("json")
 local SemVer = require("semver")
 
-p(SemVer)
 return function (Author, Name)
     
-    p(string.format("https://lit.luvit.io/packages/%s/%s", Author, Name))
     local Response, Data = Request.Json("GET", string.format("https://lit.luvit.io/packages/%s/%s", Author, Name))
-    p(Data)
 
-    print(Json.encode(Data, {indent=true}))
+    local Latest = "0.0.0"
 
-    for i, v in pairs(Data) do print(i, v) end
+    for Version, Link in pairs(Data) do
+        if SemVer.gte(Latest, Version) then
+        else
+            Latest = Version
+        end
+    end
 
-    p(
-        SemVer.gte(
-            "1.0.0",
-            "0.0.1"
-        )
-    )
+    return Latest, Data[Latest]
 
 end
