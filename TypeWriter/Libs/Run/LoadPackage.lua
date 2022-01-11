@@ -2,6 +2,7 @@ local FS = require("fs")
 local Json = require("json")
 local Path = require("path")
 local Logger = require("Logger")
+local FetchPackage = require("LIT/FetchPackage")
 
 return function(PackagePath, Log, IsMain)
 
@@ -28,6 +29,10 @@ return function(PackagePath, Log, IsMain)
     local UnpackedData = Json.decode(DuaData)
 
     local PackageInfo = UnpackedData.PackageInfo
+
+    for Index, Dep in pairs(PackageInfo.Dependencies.Luvit) do
+        FetchPackage(Dep)
+    end
 
     LoadedPackages[PackageInfo.ID] = UnpackedData
 

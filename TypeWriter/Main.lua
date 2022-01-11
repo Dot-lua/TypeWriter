@@ -11,10 +11,7 @@ return function()
     local FS = require("fs")
 
     FS.mkdirSync(RuntimePath .. "/Cache")
-
-    FS.mkdirSync(RuntimePath .. "/Cache/Run")
-    FS.mkdirSync(RuntimePath .. "/Cache/Setup")
-    FS.mkdirSync(RuntimePath .. "/Cache/Compile")
+    FS.mkdirSync(RuntimePath .. "/Cache/Dependencies/")
 
     local Options = require("./Options")
 end
