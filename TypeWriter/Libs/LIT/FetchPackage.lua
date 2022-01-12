@@ -34,10 +34,11 @@ local function FetchPackage(Name)
     local Found = false
     for Index, Folder in pairs(FS.readdirSync(RuntimePath .. "/Cache/Dependencies/")) do
         print(Index, Folder)
-        Found = (string.match(Folder, Author .. "-" .. PackageName .. "@*") ~= nil) or Found
+        Found = (string.match(Folder, Author .. "%-" .. PackageName .. "@*") ~= nil) or Found
     end
+    p(Found)
 
-    if FS.existsSync(RuntimePath .. "/Cache/Dependencies/" .. Author .. "-" .. PackageName .. "@*") then return end
+    if Found then return end
     Logger.Info("Downloading " .. Name)
 
 
@@ -55,6 +56,7 @@ local function FetchPackage(Name)
 
     local _, PackageData = Request.Json("GET", Link)
     FS.mkdirSync(FolderName)
+    FS.writeFileSync(FolderName .. "/Package.json", Json.encode(PackageData, {indent = true}))
 
 
     p(PackageData)

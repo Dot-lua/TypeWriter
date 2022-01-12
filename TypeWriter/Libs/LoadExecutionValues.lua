@@ -19,4 +19,18 @@ return function()
 
     table.ToString = require("Run/TableToString")
     string.Random = require("RandomString")
+
+    local RequireLoader = function (ModuleName)
+        for Index, Folder in pairs(FS.readdirSync(RuntimePath .. "/Cache/Dependencies/")) do
+            if string.match(Folder, "%-" .. ModuleName .. "@*") then
+                local Data = FS.readFileSync(RuntimePath .. "/Cache/Dependencies/" .. Folder .. "/init.lua")
+                return loadstring(Data)()
+            end
+        end
+
+        print(debug.traceback())
+        return "\n\tno module '" .. ModuleName .. "' in typewriter cache (did you forget it in your dependencies)"
+    end
+
+    table.insert(package.loaders, 2, RequireLoader)
 end
