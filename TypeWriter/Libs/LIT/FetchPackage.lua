@@ -2,27 +2,32 @@ local FS = require("FS")
 local Logger = require("Logger.lua")
 local Split = require("Split")
 local Request = require("LIT/Request")
+local Sleep = require("timer").sleep
 
 local BASEURL = "https://lit.luvit.io"
 
 local function DownloadTree(Folder, Url)
     local _, Data = Request.Json("GET", Url)
-    --p(Data)
 
+    local Complete = 0
     for Index, File in pairs(Data) do
-        --p(Index, File)
-        if File.mode == 33188 then
-            p(File.url)
-            p(Folder)
-            p(Folder .. File.name)
-            local _, FileData = Request.Raw("GET", File.url)
-            p(FS.writeFileSync(Folder .. File.name, FileData))
-            p()
-        elseif File.mode == 16384 then
-            FS.mkdirSync(Folder .. File.name .. "/")
-            DownloadTree(Folder .. File.name .. "/", File.url)
-        end
+        coroutine.wrap(function ()
+            if File.mode == 33188 then
+                Logger.Info("Fetching file " .. File.name)
+                local _, FileData = Request.Raw("GET", File.url)
+                FS.writeFileSync(Folder .. File.name, FileData)
+            elseif File.mode == 16384 then
+                Logger.Info("Fetching folder " .. File.name)
+                FS.mkdirSync(Folder .. File.name .. "/")
+                DownloadTree(Folder .. File.name .. "/", File.url)
+            end
+            Complete = Complete + 1
+        end)()
     end
+
+    repeat
+        Sleep(50)
+    until Complete == #Data
 end
 
 local function FetchPackage(Name)
@@ -33,10 +38,8 @@ local function FetchPackage(Name)
 
     local Found = false
     for Index, Folder in pairs(FS.readdirSync(RuntimePath .. "/Cache/Dependencies/")) do
-        print(Index, Folder)
-        Found = (string.match(Folder, Author .. "%-" .. PackageName .. "@*") ~= nil) or Found
+        Found = (string.match(Folder, PackageName) ~= nil) or Found
     end
-    p(Found)
 
     if Found then return end
     Logger.Info("Downloading " .. Name)
@@ -49,25 +52,24 @@ local function FetchPackage(Name)
         Link = string.format(BASEURL .. "/packages/%s/%s/v%s", Author, PackageName, Version)
     end
 
-    print(Link)
-
-
-    local FolderName = RuntimePath .. string.format("/Cache/Dependencies/%s-%s@%s/", Author, PackageName, Version)
+    local FolderName = RuntimePath .. string.format("/Cache/Dependencies/%s/", PackageName)
 
     local _, PackageData = Request.Json("GET", Link)
     FS.mkdirSync(FolderName)
     FS.writeFileSync(FolderName .. "/Package.json", Json.encode(PackageData, {indent = true}))
 
 
-    p(PackageData)
     if PackageData.type == "tree" then
         DownloadTree(FolderName, BASEURL .. PackageData.url)
     elseif PackageData.type == "blob" then
         local _, Data = Request.Raw("GET", "https://lit.luvit.io" .. PackageData.url)
+        Logger.Info("Downloading " .. PackageData.name .. " to init.lua")
         FS.writeFileSync(FolderName .. "init.lua", Data)
     else
         Logger.Error("Unknown package type: " .. PackageData.type)
     end
+
+    Logger.Info()
 
     for Index, Dep in pairs(PackageData.dependencies or {}) do
         FetchPackage(Dep)

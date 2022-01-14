@@ -20,11 +20,11 @@ return function()
     table.ToString = require("Run/TableToString")
     string.Random = require("RandomString")
 
-    local RequireLoader = function (ModuleName)
+    local RequireLoader = function (ModuleName, one, two)
         for Index, Folder in pairs(FS.readdirSync(RuntimePath .. "/Cache/Dependencies/")) do
-            if string.match(Folder, "%-" .. ModuleName .. "@*") then
+            if string.match(Folder, ModuleName) then
                 local Data = FS.readFileSync(RuntimePath .. "/Cache/Dependencies/" .. Folder .. "/init.lua")
-                return loadstring(Data)()
+                return loadfile(RuntimePath .. "/Cache/Dependencies/" .. Folder .. "/init.lua")
             end
         end
 
