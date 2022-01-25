@@ -177,6 +177,10 @@ local function moduleRequire(base, name)
         mod, path, key = fixedRequire(pathJoin(base, "TypeWriter/Cache/Dependencies", name))
         if mod then return mod, path, key end
       end
+      if isDir(pathJoin(base, ".TypeWriter/Cache/Dependencies")) then
+        mod, path, key = fixedRequire(pathJoin(base, ".TypeWriter/Cache/Dependencies", name))
+        if mod then return mod, path, key end
+      end
       if isDir(pathJoin(base, "libs")) then
         mod, path, key = fixedRequire(pathJoin(base, "libs", name))
         if mod then return mod, path, key end
