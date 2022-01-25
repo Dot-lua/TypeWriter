@@ -37,7 +37,7 @@ do -- parse config
 end
 
 
-function Logger.Log(level, msg, ...)
+function Logger.Log(level, msg)
 
 	local tag = config[level]
 	if not tag then return end
@@ -52,21 +52,29 @@ function Logger.Log(level, msg, ...)
 end
 
 function Logger.Error(Msg, ...)
-	Logger.Log(1, Msg, ... or "")
+	for I, v in pairs(require("Split")(Msg or "", "\n")) do
+		Logger.Log(1, v)
+	end
 end
 
 function Logger.Warn(Msg, ...)
-	Logger.Log(2, Msg, ... or "")
+	for I, v in pairs(require("Split")(Msg or "", "\n")) do
+		Logger.Log(2, v)
+	end
 end
 
 function Logger.Info(Msg, ...)
-	Logger.Log(3, Msg, ... or "")
+	for I, v in pairs(require("Split")(Msg or "", "\n")) do
+		Logger.Log(3, v)
+	end
 end
 
 function Logger.Debug(Msg, ...)
 	local IsDevMode = require(RuntimePath .. "Config/DevMode.lua")
 	if IsDevMode == true then
-		Logger.Log(4, Msg, ... or "")
+		for I, v in pairs(require("Split")(Msg or "", "\n")) do
+			Logger.Log(4, v)
+		end
 	end
 end
 

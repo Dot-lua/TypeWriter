@@ -16,21 +16,9 @@ return function()
     _G.Class = require("core").Object
     _G.Emitter = require("core").Emitter
 
+    _G.require = ({require(RuntimePath .. "/Libs/require.lua")(RuntimePath)})[1]
+
 
     table.ToString = require("Run/TableToString")
     string.Random = require("RandomString")
-
-    local RequireLoader = function (ModuleName, one, two)
-        for Index, Folder in pairs(FS.readdirSync(RuntimePath .. "/Cache/Dependencies/")) do
-            if string.match(Folder, ModuleName) then
-                local Data = FS.readFileSync(RuntimePath .. "/Cache/Dependencies/" .. Folder .. "/init.lua")
-                return loadfile(RuntimePath .. "/Cache/Dependencies/" .. Folder .. "/init.lua")
-            end
-        end
-
-        print(debug.traceback())
-        return "\n\tno module '" .. ModuleName .. "' in typewriter cache (did you forget it in your dependencies)"
-    end
-
-    table.insert(package.loaders, 2, RequireLoader)
 end
