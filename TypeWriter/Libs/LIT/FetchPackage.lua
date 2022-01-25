@@ -36,12 +36,8 @@ local function FetchPackage(Name)
     local PackageName = Split(Split(Name, "/")[2], "@")[1]
     local Version = Split(Name, "@")[2] or ""
 
-    local Found = false
-    for Index, Folder in pairs(FS.readdirSync(RuntimePath .. "/Cache/Dependencies/")) do
-        Found = (string.match(Folder, PackageName) ~= nil) or Found
-    end
-
-    if Found then return end
+    if FS.existsSync(RuntimePath .. "/Cache/Dependencies/" .. PackageName) then return end
+    
     Logger.Info("Downloading " .. Name)
 
 
