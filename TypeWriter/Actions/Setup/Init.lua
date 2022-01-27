@@ -19,8 +19,8 @@ return function(Args)
 
     if RuntimeOS == "Windows" then
         Handle = io.popen(CommandWindows)
-    elseif RuntimeOS == "OSX" then
-        Handle = io.popen(CommandMac, "r")
+    elseif RuntimeOS == "Mac" then
+        Handle = io.popen(CommandMac)
     end
 
     for Line in Handle:lines() do
