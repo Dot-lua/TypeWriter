@@ -16,8 +16,6 @@ return function()
     Logger.Info("Writing to '" .. CompiledData.PackageInfo.Name .. ".dua'!")
     FS.writeFileSync(RuntimeLocation .. "TypeWriter/Out/" .. CompiledData.PackageInfo.Name .. ".dua", Json.stringify(CompiledData, {indent = true}))
 
-    Logger.Info("Starting process with id: " .. RuntimeSession)
-
     _G.LoadedPackages = {}
         
     require("LoadExecutionValues.lua")()

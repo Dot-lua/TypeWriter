@@ -11,8 +11,6 @@ return function(Args)
         return
     end
 
-    Logger.Info("Starting process with id: " .. RuntimeSession)
-
     _G.LoadedPackages = {}
         
     require("LoadExecutionValues.lua")()
