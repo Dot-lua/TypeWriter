@@ -1,5 +1,8 @@
 Binary
-TypeWriter.exe
-TypeWriter.ps1
 deps
+TypeWriter.exe
+
+TypeWriter.ps1
 Update.ps1
+Build.sh
+Update.sh

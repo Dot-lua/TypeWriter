@@ -43,7 +43,9 @@ coroutine.wrap(function ()
     _G.package.path = _G.package.path .. TypeWriter.Folder .. "\\PackageCache\\?.lua;".. TypeWriter.Folder .. "\\PackageCache\\?\\init.lua;"
 
     local ActionHelper = require("./ActionHelper"):new()
-    ActionHelper:RegisterAction("Help")
+    ActionHelper:RegisterAction("Help", require("Actions/Help/Help"))
+
+    ActionHelper:ExecuteAction()
 
 end)()
 require("uv").run()
