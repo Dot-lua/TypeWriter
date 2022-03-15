@@ -9,7 +9,12 @@ function ActionHelper:RegisterAction(Name, Function)
 end
 
 function ActionHelper:ExecuteAction(ActionName, ...)
-    return self.Actions[ActionName](...)
+    if self.Actions[string.lower(ActionName)] then
+        return self.Actions[string.lower(ActionName)](...) or true
+    else
+        return false
+    end
+    
 end
 
 return ActionHelper
