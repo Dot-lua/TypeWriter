@@ -1,6 +1,6 @@
-local Logger = require("Logger")
 local FS = require("fs")
+local Bundle = require("luvi").bundle
 
 return function ()
-    Logger:Info(FS.readFileSync("./Usage.txt"))
+    TypeWriter.Logger.Info(Bundle.readfile("/Actions/Help/Usage.txt"))
 end
