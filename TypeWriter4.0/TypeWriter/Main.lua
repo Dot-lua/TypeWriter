@@ -34,18 +34,30 @@ coroutine.wrap(function ()
         This = Path.resolve(args[0]),
         Here = Path.resolve("./")
     }
+    TypeWriter.Logger = require("Logger")
     TypeWriter.Args[0] = nil
     TypeWriter.Arguments = TypeWriter.Args
     TypeWriter.ArgumentParser = require("./ArgumentParser"):new(args):Parse()
-    p(TypeWriter)
 
     --Require helper
     _G.package.path = _G.package.path .. TypeWriter.Folder .. "\\PackageCache\\?.lua;".. TypeWriter.Folder .. "\\PackageCache\\?\\init.lua;"
 
+    -- Run the actions
     local ActionHelper = require("./ActionHelper"):new()
-    ActionHelper:RegisterAction("Help", require("Actions/Help/Help"))
+    ActionHelper:RegisterAction("Help", require("./Actions/Help/Help.lua"))
 
-    ActionHelper:ExecuteAction()
+    p(TypeWriter.ArgumentParser:GetRaw(1))
+
+    local ActionResult = ActionHelper:ExecuteAction(TypeWriter.ArgumentParser:GetRaw(1))
+    if ActionResult == true then
+        
+    elseif type(ActionResult) == "string" then
+        TypeWriter.Logger.Error("The requested action did not finish")
+        TypeWriter.Logger.Error(ActionResult)
+    elseif ActionResult == false then
+        TypeWriter.Logger.Error("The requested action does not exist")
+        ActionHelper:ExecuteAction("help")
+    end
 
 end)()
 require("uv").run()
