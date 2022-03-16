@@ -46,8 +46,6 @@ coroutine.wrap(function ()
     local ActionHelper = require("./ActionHelper"):new()
     ActionHelper:RegisterAction("Help", require("./Actions/Help/Help.lua"))
 
-    p(TypeWriter.ArgumentParser:GetRaw(1))
-
     local ActionResult = ActionHelper:ExecuteAction(TypeWriter.ArgumentParser:GetRaw(1))
     if ActionResult == true then
         
@@ -55,7 +53,7 @@ coroutine.wrap(function ()
         TypeWriter.Logger.Error("The requested action did not finish")
         TypeWriter.Logger.Error(ActionResult)
     elseif ActionResult == false then
-        TypeWriter.Logger.Error("The requested action does not exist")
+        TypeWriter.Logger.Error("The requested action (" .. TypeWriter.ArgumentParser:GetRaw(1) .. ") does not exist")
         ActionHelper:ExecuteAction("help")
     end
 
