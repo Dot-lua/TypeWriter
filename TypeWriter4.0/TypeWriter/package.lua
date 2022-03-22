@@ -16,7 +16,8 @@ return {
         "luvit/core",
         "luvit/pretty-print",
         "luvit/fs",
-        "luvit/path"
+        "luvit/path",
+        "luvit/json"
     },
     files = {
         "**.lua",
