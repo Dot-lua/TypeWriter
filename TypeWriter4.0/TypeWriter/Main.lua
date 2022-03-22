@@ -28,32 +28,34 @@ coroutine.wrap(function ()
             Version = Package.version,
             Licence = Package.license
         },
-        Config = require("./ConfigHelper"):new():ExportConfig(),
         Args = args,
         Folder = Path.resolve(args[0], "../"),
         This = Path.resolve(args[0]),
         Here = Path.resolve("./")
     }
+    TypeWriter.Config = require("ConfigHelper"):new():ExportConfig()
     TypeWriter.Logger = require("Logger")
     TypeWriter.Args[0] = nil
     TypeWriter.Arguments = TypeWriter.Args
-    TypeWriter.ArgumentParser = require("./ArgumentParser"):new(args):Parse()
+    TypeWriter.ArgumentParser = require("ArgumentParser"):new(args):Parse()
 
     --Require helper
     _G.package.path = _G.package.path .. TypeWriter.Folder .. "\\PackageCache\\?.lua;".. TypeWriter.Folder .. "\\PackageCache\\?\\init.lua;"
 
     -- Run the actions
-    local ActionHelper = require("./ActionHelper"):new()
+    local ActionHelper = require("ActionHelper"):new()
     ActionHelper:RegisterAction("Help", require("./Actions/Help/Help.lua"))
+    ActionHelper:RegisterAction("Build", require("./Actions/Build/Build.lua"))
 
-    local ActionResult = ActionHelper:ExecuteAction(TypeWriter.ArgumentParser:GetRaw(1))
+    local Action = TypeWriter.ArgumentParser:GetRaw(1)
+    local ActionResult = ActionHelper:ExecuteAction(Action)
     if ActionResult == true then
         
     elseif type(ActionResult) == "string" then
         TypeWriter.Logger.Error("The requested action did not finish")
         TypeWriter.Logger.Error(ActionResult)
     elseif ActionResult == false then
-        TypeWriter.Logger.Error("The requested action (" .. TypeWriter.ArgumentParser:GetRaw(1) .. ") does not exist")
+        TypeWriter.Logger.Error("The requested action (" .. Action .. ") does not exist")
         ActionHelper:ExecuteAction("help")
     end
 
