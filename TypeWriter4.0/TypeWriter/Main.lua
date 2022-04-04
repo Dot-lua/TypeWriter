@@ -48,12 +48,14 @@ coroutine.wrap(function ()
     ActionHelper:RegisterAction("Build", require("./Actions/Build/Build.lua"))
 
     local Action = TypeWriter.ArgumentParser:GetRaw(1)
-    local ActionResult = ActionHelper:ExecuteAction(Action)
+    local ActionResult = ActionHelper:ExecuteAction(Action or "")
     if ActionResult == true then
         
     elseif type(ActionResult) == "string" then
         TypeWriter.Logger.Error("The requested action did not finish")
         TypeWriter.Logger.Error(ActionResult)
+    elseif ActionResult == false and Action == nil then
+        ActionHelper:ExecuteAction("help")
     elseif ActionResult == false then
         TypeWriter.Logger.Error("The requested action (" .. Action .. ") does not exist")
         ActionHelper:ExecuteAction("help")
