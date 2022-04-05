@@ -1,6 +1,7 @@
 coroutine.wrap(function ()
     -- Globals
-    _G.require = require("./deps/require")("./")
+    _G.require = require("bundle:/deps/require.lua")("./")
+
     _G.process = require('process').globalProcess()
     _G.class = require("core").Object
     _G.emitter = require("core").Emitter
@@ -40,7 +41,8 @@ coroutine.wrap(function ()
     TypeWriter.ArgumentParser = require("ArgumentParser"):new(args):Parse()
 
     --Require helper
-    _G.package.path = _G.package.path .. TypeWriter.Folder .. "\\PackageCache\\?.lua;".. TypeWriter.Folder .. "\\PackageCache\\?\\init.lua;"
+    _G.package.path = TypeWriter.Folder .. "PackageCache\\?\\init.lua;" .. _G.package.path
+    print(package.path)
 
     -- Run the actions
     local ActionHelper = require("ActionHelper"):new()
