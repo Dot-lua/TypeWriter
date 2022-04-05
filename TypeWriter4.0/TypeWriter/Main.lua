@@ -48,6 +48,7 @@ coroutine.wrap(function ()
     ActionHelper:RegisterAction("Build", require("./Actions/Build/Build.lua"))
     ActionHelper:RegisterAction("ExecuteBuild", require("./Actions/ExecuteBuild/ExecuteBuild.lua"))
     ActionHelper:RegisterAction("Execute", require("./Actions/Execute/Execute.lua"))
+    ActionHelper:RegisterAction("Init", require("./Actions/Init/Init.lua"))
 
 
 
