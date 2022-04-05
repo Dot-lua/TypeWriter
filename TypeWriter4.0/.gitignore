@@ -6,3 +6,5 @@ TypeWriter.ps1
 Update.ps1
 Build.sh
 Update.sh
+
+PackageCache
