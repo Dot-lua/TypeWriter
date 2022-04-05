@@ -17,7 +17,11 @@ return {
         "luvit/pretty-print",
         "luvit/fs",
         "luvit/path",
-        "luvit/json"
+        "luvit/json",
+
+        "luvit/secure-socket",
+        "creationix/coro-http",
+        "creationix/semver",
     },
     files = {
         "**.lua",
