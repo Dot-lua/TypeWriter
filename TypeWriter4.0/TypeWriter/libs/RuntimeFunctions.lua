@@ -3,6 +3,7 @@ local RuntimeFunctions = {}
 local Json = require("json")
 local FS = require("fs")
 local PathLibrary = require("path")
+local FetchPackage = require("LIT/FetchPackage")
 
 function RuntimeFunctions.LoadFile(Path, Check)
     if Check == nil then
@@ -31,6 +32,11 @@ function RuntimeFunctions.LoadRaw(Data)
     if not TypeWriter.LoadedPackages then
         TypeWriter.LoadedPackages = {}
     end
+
+    for Index, Dependency in pairs(Data.Package.Dependencies.Luvit) do
+        FetchPackage(Dependency)
+    end
+
     TypeWriter.LoadedPackages[Data.Package.ID] = Data
     return Data.Package
 end
@@ -47,6 +53,7 @@ function RuntimeFunctions.Import(Path)
             end
         end
     end
+    return nil
 end
 
 return RuntimeFunctions
