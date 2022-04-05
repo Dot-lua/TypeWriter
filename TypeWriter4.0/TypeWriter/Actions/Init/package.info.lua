@@ -28,7 +28,7 @@ return { InfoVersion = 1, -- Dont touch this
     },
 
     Entrypoints = {
-        Main = "nl.cubic-inc.template.Main"
+        Main = "ga.corebyte.template.Main"
         -- CubyPackage = "some.other.entry.caused.by.another.package", -- a package can call another packages entrypoints
     }
 
