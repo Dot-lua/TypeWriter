@@ -1,7 +1,8 @@
 local FS = require("FS")
-local Logger = require("Logger.lua")
-local Split = require("Split")
+local Logger = TypeWriter.Logger
+local Split = string.split
 local Request = require("LIT/Request")
+local Json = require("json")
 local Sleep = require("timer").sleep
 
 local BASEURL = "https://lit.luvit.io"
@@ -36,7 +37,7 @@ local function FetchPackage(Name)
     local PackageName = Split(Split(Name, "/")[2], "@")[1]
     local Version = Split(Name, "@")[2] or ""
 
-    if FS.existsSync(RuntimePath .. "/Cache/Dependencies/" .. PackageName) then return end
+    if FS.existsSync(TypeWriter.Folder .. "/PackageCache/" .. PackageName) then return end
     
     Logger.Info("Downloading " .. Name)
 
@@ -48,7 +49,7 @@ local function FetchPackage(Name)
         Link = string.format(BASEURL .. "/packages/%s/%s/v%s", Author, PackageName, Version)
     end
 
-    local FolderName = RuntimePath .. string.format("/Cache/Dependencies/%s/", PackageName)
+    local FolderName = TypeWriter.Folder .. string.format("/PackageCache/%s/", PackageName)
 
     local _, PackageData = Request.Json("GET", Link)
     FS.mkdirSync(FolderName)
