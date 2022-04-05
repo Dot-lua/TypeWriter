@@ -46,6 +46,10 @@ coroutine.wrap(function ()
     local ActionHelper = require("ActionHelper"):new()
     ActionHelper:RegisterAction("Help", require("./Actions/Help/Help.lua"))
     ActionHelper:RegisterAction("Build", require("./Actions/Build/Build.lua"))
+    ActionHelper:RegisterAction("ExecuteBuild", require("./Actions/ExecuteBuild/ExecuteBuild.lua"))
+    ActionHelper:RegisterAction("Execute", require("./Actions/Execute/Execute.lua"))
+
+
 
     local Action = TypeWriter.ArgumentParser:GetRaw(1)
     local ActionResult = ActionHelper:ExecuteAction(Action or "")
