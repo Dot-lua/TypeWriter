@@ -42,22 +42,22 @@ end
 
 function BuildHelper:Compile()
     local function BuildScan(self, Parent, Folder)
-        p(Parent)
-        p(Folder)
+        TypeWriter.Logger.Debug("Compiling " .. Parent)
+        TypeWriter.Logger.Debug("Compiling folder " .. Folder)
         for FileName, FileType in FS.scandirSync(Folder) do
-            print(FileName, FileType)
+            TypeWriter.Logger.Debug("Compiling working on " .. FileName)
             if FileType == "directory" then
                 BuildScan(self, Parent .. "." .. FileName, Folder .. "/" .. FileName)
                 if FS.existsSync(Folder .. "/" .. FileName .. "/Main.lua") then
-                    self.Compiled.Code[Parent .. "." .. FileName] = {
+                    self.Compiled.Code[FixPath(Parent .. "." .. FileName)] = {
                         Type = "Redirect",
-                        RedirectTo = Parent .. "." .. FileName .. ".Main"
+                        RedirectTo = FixPath(Parent .. "." .. FileName .. ".Main")
                     }
                 end
             elseif FileType == "file" then
                 local FilePath = Folder .. "/" .. FileName
                 if Path.extname(FilePath) == ".lua" then
-                    self.Compiled.Code[Parent .. "." .. Path.basename(FilePath, ".lua")] = {
+                    self.Compiled.Code[FixPath(Parent .. "." .. Path.basename(FilePath, ".lua"))] = {
                         Type = "Code",
                         Code = FS.readFileSync(Folder .. "/" .. FileName)
                     }
@@ -76,18 +76,6 @@ function BuildHelper:Compile()
     end
 
     BuildScan(self, "", self.Folder .. "/lua/")
-
-    for CodePath, CodeData in pairs(self.Compiled.Code) do
-        print(CodePath)
-        p(CodeData)
-        if CodeData.Type == "Code" then
-            self.Compiled.Code[FixPath(CodePath)] = CodeData
-        elseif CodeData.Type == "Redirect" then
-            CodeData.RedirectTo = FixPath(CodeData.RedirectTo)
-            self.Compiled.Code[FixPath(CodePath)] = CodeData
-        end
-        --self.Compiled.Code[CodePath] = nil
-    end
 
     return self
 end
@@ -108,7 +96,13 @@ function BuildHelper:ExportJson(Indent)
     return Json.encode(
         self:ExportRaw(),
         {
-            indent = Indent
+            indent = Indent,
+            keyorder = {
+                "BuildInfo",
+                "Package",
+                "Code",
+                "Resources"
+            }
         }
     )
 end
