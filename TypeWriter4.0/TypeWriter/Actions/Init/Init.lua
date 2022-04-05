@@ -14,6 +14,6 @@ return function ()
 
     CreateFolder("src/Main/lua/ga/corebyte/template/", OutputPath)
     CreateFolder("src/Main/resources/", OutputPath)
-    FS.writeFileSync(OutputPath .. "/src/Main/lua/ga/corebyte/template/Main.lua", "")
+    FS.writeFileSync(OutputPath .. "/src/Main/lua/ga/corebyte/template/Main.lua", "print(\"Hello World!\")")
     FS.writeFileSync(OutputPath .. "/src/Main/resources/package.info.lua", Bundle.readfile("/Actions/Init/package.info.lua"))
 end
