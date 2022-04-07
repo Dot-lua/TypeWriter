@@ -4,13 +4,8 @@ local RuntimeFunctions = require("RuntimeFunctions")
 
 return function ()
 
-    TypeWriter.Logger.Info("Loading compiler")
     local Compiler = CompileHelper:new(TypeWriter.ArgumentParser:GetArgument("input", "i", "./src/"), "Main")
-    TypeWriter.Logger.Info("Compiling")
     Compiler:Compile()
-
-    TypeWriter.Logger.Info("Compiled!")
-    TypeWriter.Logger.Info("Writing compiled package")
 
     TypeWriter.Runtime = RuntimeFunctions
     _G.Import = RuntimeFunctions.Import
