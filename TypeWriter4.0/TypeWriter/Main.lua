@@ -41,7 +41,6 @@ coroutine.wrap(function ()
 
     --Require helper
     _G.package.path = TypeWriter.Folder .. "/PackageCache/?/init.lua;" .. "./libs/?.lua;" .. _G.package.path
-    print(package.path)
 
     require("fs").mkdirSync(TypeWriter.Folder .. "/PackageCache/")
 
