@@ -1,6 +1,5 @@
 coroutine.wrap(function ()
     -- Globals
-    _G.require = require("require")("bundle:/Main.lua")
 
     _G.process = require('process').globalProcess()
     _G.class = require("core").Object
@@ -53,7 +52,6 @@ coroutine.wrap(function ()
     ActionHelper:RegisterAction("ExecuteBuild", require("./Actions/ExecuteBuild/ExecuteBuild.lua"))
     ActionHelper:RegisterAction("Execute", require("./Actions/Execute/Execute.lua"))
     ActionHelper:RegisterAction("Init", require("./Actions/Init/Init.lua"))
-
 
 
     local Action = TypeWriter.ArgumentParser:GetRaw(1)

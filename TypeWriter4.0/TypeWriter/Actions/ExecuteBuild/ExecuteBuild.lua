@@ -15,7 +15,7 @@ return function ()
     TypeWriter.Runtime = RuntimeFunctions
     _G.Import = RuntimeFunctions.Import
 
-    _G.require = require("bundle:/libs/BetterRequire")(TypeWriter.Folder)
+    _G.require = RuntimeFunctions.Require
 
     RuntimeFunctions.LoadRaw(Compiler:ExportRaw())
     Import(Compiler:ExportRaw().Package.Entrypoints.Main)

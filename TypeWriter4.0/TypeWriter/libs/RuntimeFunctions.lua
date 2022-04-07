@@ -46,7 +46,7 @@ function RuntimeFunctions.Import(Path)
         for CodePath, CodeData in pairs(Package.Code) do
             if CodePath == Path then
                 if CodeData.Type == "Code" then
-                    return load(CodeData.Code)()
+                    return load(CodeData.Code)(Path)
                 elseif CodeData.Type == "Redirect" then
                     return RuntimeFunctions.Import(CodeData.RedirectTo)
                 end
@@ -54,6 +54,14 @@ function RuntimeFunctions.Import(Path)
         end
     end
     return nil
+end
+
+function RuntimeFunctions.Require(Path)
+    if FS.existsSync(TypeWriter.Folder .. "/PackageCache/" .. Path) then
+        return require(TypeWriter.Folder .. "/PackageCache/" .. Path .. "/init.lua")
+    else
+        return require(Path)
+    end
 end
 
 return RuntimeFunctions
