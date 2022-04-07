@@ -1,6 +1,8 @@
 Binary
 deps
 TypeWriter.exe
+TypeWriter_original.exe
+
 
 TypeWriter.ps1
 Update.ps1
