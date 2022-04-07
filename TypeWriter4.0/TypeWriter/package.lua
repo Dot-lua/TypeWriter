@@ -16,8 +16,12 @@ return {
         "luvit/core",
         "luvit/pretty-print",
         "luvit/fs",
+        "creationix/coro-fs",
         "luvit/path",
         "luvit/json",
+        "luvit/los",
+
+        "creationix/coro-spawn",
 
         "luvit/secure-socket",
         "creationix/coro-http",
