@@ -39,6 +39,13 @@ coroutine.wrap(function ()
     TypeWriter.Arguments = TypeWriter.Args
     TypeWriter.ArgumentParser = require("ArgumentParser"):new(args):Parse()
 
+    if not require("fs").existsSync(TypeWriter.Folder .. "/SessionStorage") then
+        TypeWriter.Logger.Error("Detected invalid installation")
+        TypeWriter.Logger.Info("Installing TypeWriter...")
+        require("./Installer/Main.lua")
+        process:exit()
+    end
+
     --Require helper
     _G.package.path = TypeWriter.Folder .. "/PackageCache/?/init.lua;" .. "./libs/?.lua;" .. _G.package.path
 
