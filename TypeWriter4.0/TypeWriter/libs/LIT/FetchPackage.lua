@@ -46,7 +46,7 @@ local function FetchPackage(Name)
     if Version == "" then
         Version, Link = require("LIT/GetLatest")(Author, PackageName)
     else
-        Link = string.format(BASEURL .. "/PackageCache/%s/%s/v%s", Author, PackageName, Version)
+        Link = string.format(BASEURL .. "/packages/%s/%s/v%s", Author, PackageName, Version)
     end
 
     local FolderName = TypeWriter.Folder .. string.format("/PackageCache/%s/", PackageName)
