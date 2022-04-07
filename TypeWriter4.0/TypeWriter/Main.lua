@@ -1,6 +1,6 @@
 coroutine.wrap(function ()
     -- Globals
-    _G.require = require("bundle:/libs/require.lua")("bundle:/Main.lua")
+    _G.require = require("require")("bundle:/Main.lua")
 
     _G.process = require('process').globalProcess()
     _G.class = require("core").Object
@@ -43,6 +43,8 @@ coroutine.wrap(function ()
     --Require helper
     _G.package.path = TypeWriter.Folder .. "/PackageCache/?/init.lua;" .. "./libs/?.lua;" .. _G.package.path
     print(package.path)
+
+    require("fs").mkdirSync(TypeWriter.Folder .. "/PackageCache/")
 
     -- Run the actions
     local ActionHelper = require("ActionHelper"):new()

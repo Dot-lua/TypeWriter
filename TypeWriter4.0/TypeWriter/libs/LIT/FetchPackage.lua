@@ -37,7 +37,7 @@ local function FetchPackage(Name)
     local PackageName = Split(Split(Name, "/")[2], "@")[1]
     local Version = Split(Name, "@")[2] or ""
 
-    if FS.existsSync(TypeWriter.Folder .. "/PackageCache/" .. PackageName) then return end
+    if FS.existsSync(TypeWriter.Folder .. "/deps/" .. PackageName) then return end
     
     Logger.Info("Downloading " .. Name)
 
@@ -46,7 +46,7 @@ local function FetchPackage(Name)
     if Version == "" then
         Version, Link = require("LIT/GetLatest")(Author, PackageName)
     else
-        Link = string.format(BASEURL .. "/packages/%s/%s/v%s", Author, PackageName, Version)
+        Link = string.format(BASEURL .. "/PackageCache/%s/%s/v%s", Author, PackageName, Version)
     end
 
     local FolderName = TypeWriter.Folder .. string.format("/PackageCache/%s/", PackageName)
