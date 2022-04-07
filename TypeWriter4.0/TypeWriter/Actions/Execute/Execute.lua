@@ -6,6 +6,8 @@ return function ()
     TypeWriter.Runtime = RuntimeFunctions
     _G.Import = RuntimeFunctions.Import
 
+    _G.require = RuntimeFunctions.Require
+
     local InputPath = TypeWriter.ArgumentParser:GetArgument("input", "i", "")
     if InputPath == "" then
         TypeWriter.Logger.Error("No input path specified")
