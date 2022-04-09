@@ -46,8 +46,6 @@ coroutine.wrap(function ()
     end
     TypeWriter.Config = require("ConfigHelper"):new():ExportConfig()
 
-
-
     --Require helper
     _G.package.path = TypeWriter.Folder .. "/PackageCache/?/init.lua;" .. "./libs/?.lua;" .. _G.package.path
 
