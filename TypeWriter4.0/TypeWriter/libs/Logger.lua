@@ -69,7 +69,10 @@ function Logger.Info(Msg, ...)
 	end
 end
 
-local DevMode = _G.TypeWriter.Config.DevMode.Enabled
+local DevMode = false
+if _G.TypeWriter.Config then
+	DevMode = _G.TypeWriter.Config.DevMode.Enabled
+end
 function Logger.Debug(Msg, ...)
 	if DevMode == true then
 		for I, v in pairs(String.Split(Msg or "", "\n")) do
