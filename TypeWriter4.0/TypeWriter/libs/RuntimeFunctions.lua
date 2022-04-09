@@ -4,6 +4,7 @@ local Json = require("json")
 local FS = require("fs")
 local PathLibrary = require("path")
 local FetchPackage = require("LIT/FetchPackage")
+local FetchRepository = require("GIT/FetchRepository")
 
 function RuntimeFunctions.LoadFile(Path, Check)
     if Check == nil then
@@ -33,8 +34,16 @@ function RuntimeFunctions.LoadRaw(Data)
         TypeWriter.LoadedPackages = {}
     end
 
+    if Data.Package.Dependencies == nil then Data.Package.Dependencies = {} end
+
+    if Data.Package.Dependencies.Luvit == nil then Data.Package.Dependencies.Luvit = {} end
     for Index, Dependency in pairs(Data.Package.Dependencies.Luvit) do
         FetchPackage(Dependency)
+    end
+
+    if Data.Package.Dependencies.Git == nil then Data.Package.Dependencies.Git = {} end
+    for Index, Dependency in pairs(Data.Package.Dependencies.Git) do
+        FetchRepository(Dependency)
     end
 
     TypeWriter.LoadedPackages[Data.Package.ID] = Data

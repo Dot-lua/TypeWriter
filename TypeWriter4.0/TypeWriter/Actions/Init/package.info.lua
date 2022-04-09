@@ -18,6 +18,7 @@ return { InfoVersion = 1, -- Dont touch this
         Luvit = {
             -- Luvit dependencies ("username/projectname")
         },
+        Git = {},
         Dua = {}
     },
 
