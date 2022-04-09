@@ -33,7 +33,6 @@ coroutine.wrap(function ()
         This = Path.resolve(args[0]),
         Here = Path.resolve("./")
     }
-    TypeWriter.Config = require("ConfigHelper"):new():ExportConfig()
     TypeWriter.Logger = require("Logger")
     TypeWriter.Args[0] = nil
     TypeWriter.Arguments = TypeWriter.Args
@@ -45,6 +44,9 @@ coroutine.wrap(function ()
         require("./Installer/Main.lua")
         process:exit()
     end
+    TypeWriter.Config = require("ConfigHelper"):new():ExportConfig()
+
+
 
     --Require helper
     _G.package.path = TypeWriter.Folder .. "/PackageCache/?/init.lua;" .. "./libs/?.lua;" .. _G.package.path
@@ -53,10 +55,11 @@ coroutine.wrap(function ()
 
     -- Run the actions
     local ActionHelper = require("ActionHelper"):new()
-    ActionHelper:RegisterAction("Help", require("./Actions/Help/Help.lua"))
     ActionHelper:RegisterAction("Build", require("./Actions/Build/Build.lua"))
-    ActionHelper:RegisterAction("ExecuteBuild", require("./Actions/ExecuteBuild/ExecuteBuild.lua"))
+    ActionHelper:RegisterAction("ClearCache", require("./Actions/ClearCache/ClearCache.lua"))
     ActionHelper:RegisterAction("Execute", require("./Actions/Execute/Execute.lua"))
+    ActionHelper:RegisterAction("ExecuteBuild", require("./Actions/ExecuteBuild/ExecuteBuild.lua"))
+    ActionHelper:RegisterAction("Help", require("./Actions/Help/Help.lua"))
     ActionHelper:RegisterAction("Init", require("./Actions/Init/Init.lua"))
 
 
