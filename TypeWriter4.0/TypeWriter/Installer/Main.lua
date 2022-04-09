@@ -75,6 +75,20 @@ local LuvitInstall = {
         FS.writeFileSync(InstallLocation() .. "/Binary/luvit-bin.zip", Body)
 
         require("./Unzip")(InstallLocation() .. "/Binary/luvit-bin.zip", InstallLocation() .. "/Binary/")
+    end,
+    ["darwin"] = function (Release)
+
+        local Response, Body = Request(
+            "GET",
+            FindTableWithKeyValue(Release.assets, "name", "luvit-bin-Darwin-x86_64.tar.gz").browser_download_url,
+            {
+                {"User-Agent", "TypeWriter"}
+            }
+        )
+
+        FS.writeFileSync(InstallLocation() .. "/Binary/luvit-bin.tar.gz", Body)
+
+        require("./Unzip")(InstallLocation() .. "/Binary/luvit-bin.tar.gz", InstallLocation() .. "/Binary/")
     end
 }
 
@@ -91,6 +105,11 @@ local Finish = {
             "@echo off\n" .. _G.process.env.APPDATA .. "/.TypeWriter/TypeWriter.exe %*"
         )
 
+    end,
+    ["darwin"] = function ()
+        os.execute("chmod +x '" .. InstallLocation() .. "/TypeWriter'")
+
+        
     end
 }
 
