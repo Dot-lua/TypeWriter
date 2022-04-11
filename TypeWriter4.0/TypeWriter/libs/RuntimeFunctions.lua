@@ -66,6 +66,7 @@ function RuntimeFunctions.Import(Path)
 end
 
 function RuntimeFunctions.Require(Path)
+    p(Path)
     if FS.existsSync(TypeWriter.Folder .. "/PackageCache/" .. Path) then
         return require(TypeWriter.Folder .. "/PackageCache/" .. Path .. "/init.lua")
     else
