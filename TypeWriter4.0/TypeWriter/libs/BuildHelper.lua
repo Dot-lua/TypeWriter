@@ -8,16 +8,11 @@ function BuildHelper:initialize(Folder, SubProject)
     self.SubProject = SubProject
     self.Folder = require("path").resolve(Folder) .. "/" .. SubProject .. "/"
 
-    local Success, CompiledPackage = pcall(
-        function ()
-            local Data, Error = load(FS.readFileSync(self.Folder .. "/Resources/package.info.lua"))
-            if Error then return error(Error) end
-            return Data()
-        end
-    )
+    local Data, Error = load(FS.readFileSync(self.Folder .. "/Resources/package.info.lua"))
 
-    if not Success then
-        error("Error while compiling package info ('" .. self.Folder .. "/Resources/package.info.lua" .. "')\n" .. CompiledPackage)
+    if Error then
+        TypeWriter.Logger.Error(Error)
+        TypeWriter.Logger.Error("Error while compiling package info ('" .. self.Folder .. "/Resources/package.info.lua" .. "')\n" .. CompiledPackage)
     end
 
     self.Compiled = {
@@ -25,7 +20,7 @@ function BuildHelper:initialize(Folder, SubProject)
             TypeWriter = TypeWriter.Package,
             Date = os.date()
         },
-        Package = CompiledPackage,
+        Package = Data(),
         Code = {},
         Resources = {}
     }
