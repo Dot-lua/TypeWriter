@@ -31,3 +31,4 @@ jobs:
             cd Binary/
             curl -L https://github.com/luvit/lit/raw/master/get-lit.sh | sh
             cd ..
+            ls ./Binary/
