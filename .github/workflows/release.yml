@@ -31,4 +31,17 @@ jobs:
             cd Binary/
             curl -L https://github.com/luvit/lit/raw/master/get-lit.sh | sh
             cd ..
-            ls ./Binary/
+            
+      - name: Download deps
+        run: |
+            ./Binary/lit install
+            
+      - name: Build
+        run: |
+            ./Binary/luvi ./TypeWriter -o TypeWriter
+            
+      - name: 'Upload Artifact'
+        uses: actions/upload-artifact@v3
+        with:
+          name: TypeWiter
+          path: ./TypeWriter
