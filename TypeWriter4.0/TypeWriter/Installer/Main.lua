@@ -109,6 +109,33 @@ local Finish = {
     ["darwin"] = function ()
         os.execute("chmod +x '" .. InstallLocation() .. "/TypeWriter'")
 
+        local ProfileLocation = process.env.HOME .. "/.bash_profiles"
+
+        if not FS.existsSync(ProfileLocation) then
+            FS.writeFileSync(ProfileLocation, "")
+        end
+
+        local Profile = FS.readFileSync(ProfileLocation)
+        local InsertLine = 'alias TypeWriter="\'' .. InstallLocation() .. '/TypeWriter\'"'
+
+        local Found = false
+        for Index, Line in pairs(String.Split(Profile, "\n")) do
+            if Line == InsertLine then
+                Found = true 
+                break
+            end
+        end
+
+        if Found == false then
+            TypeWriter.Logger.Info("Inserting into " .. ProfileLocation)
+            
+            FS.writeFileSync(
+                ProfileLocation,
+                Profile .. "\n\n" .. InsertLine
+            )
+
+            os.execute(". ~/.bash_profiles")
+        end
         
     end
 }
