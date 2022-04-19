@@ -22,5 +22,12 @@ jobs:
 
       - name: Enter folder
         run: |
-            cd TypeWriter
+            cd TypeWriter/TypeWriter4.0/
             ls
+            
+      - name: Download luvit
+        run: |
+            mkdir Binary/
+            cd Binary/
+            curl -L https://github.com/luvit/lit/raw/master/get-lit.sh | sh
+            cd ..
