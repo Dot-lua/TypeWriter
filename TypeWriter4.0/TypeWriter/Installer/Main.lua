@@ -111,30 +111,37 @@ local Finish = {
 
         local ProfileLocation = process.env.HOME .. "/.bash_profiles"
 
-        if not FS.existsSync(ProfileLocation) then
-            FS.writeFileSync(ProfileLocation, "")
-        end
+        local function FindAndInsert(FileLocation, InsertLine)
 
-        local Profile = FS.readFileSync(ProfileLocation)
-        local InsertLine = 'alias TypeWriter="\'' .. InstallLocation() .. '/TypeWriter\'"'
-
-        local Found = false
-        for Index, Line in pairs(String.Split(Profile, "\n")) do
-            if Line == InsertLine then
-                Found = true 
-                break
+            if not FS.existsSync(FileLocation) then
+                FS.writeFileSync(FileLocation, "")
             end
-        end
 
-        if Found == false then
-            TypeWriter.Logger.Info("Inserting into " .. ProfileLocation)
-            
+            local Profile = FS.readFileSync(FileLocation)
+
+            local Found = false
+            for Index, Line in pairs(String.Split(Profile, "\n")) do
+                if Line == InsertLine then
+                    Found = true 
+                    break
+                end
+            end
+
             FS.writeFileSync(
-                ProfileLocation,
+                FileLocation,
                 Profile .. "\n\n" .. InsertLine
             )
 
-            os.execute(". ~/.bash_profiles")
+            return not Found
+        end
+
+
+        if FindAndInsert(ProfileLocation, 'alias TypeWriter="\'' .. InstallLocation() .. '/TypeWriter\'"') then
+            TypeWriter.Logger.Info("Added TypeWriter to your bash profile")
+        end
+
+        if FindAndInsert(process.env.HOME .. "/.zshenv", ". ~/.bash_profiles") then 
+            TypeWriter.Logger.Info("Added bash profile to your zshrc")
         end
         
     end
