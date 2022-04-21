@@ -55,7 +55,13 @@ function RuntimeFunctions.Import(Path)
         for CodePath, CodeData in pairs(Package.Code) do
             if CodePath == Path then
                 if CodeData.Type == "Code" then
-                    return load(CodeData.Code)(Path)
+                    local Func, Error = load(CodeData.Code)
+                    if Func == nil then
+                        TypeWriter.Logger.Error("Error while Importing: " .. Path)
+                        TypeWriter.Logger.Error(Error)
+                    else
+                        return Func(Path)
+                    end
                 elseif CodeData.Type == "Redirect" then
                     return RuntimeFunctions.Import(CodeData.RedirectTo)
                 end
