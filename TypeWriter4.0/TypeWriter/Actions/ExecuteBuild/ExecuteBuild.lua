@@ -4,7 +4,7 @@ local RuntimeFunctions = require("RuntimeFunctions")
 
 return function ()
 
-    local Compiler = CompileHelper:new(TypeWriter.ArgumentParser:GetArgument("input", "i", "./src/"), "Main")
+    local Compiler = CompileHelper:new(TypeWriter.ArgumentParser:GetArgument("input", "i", "./src/"), TypeWriter.ArgumentParser:GetArgument("branch", "b", "Main"))
     Compiler:Compile()
 
     TypeWriter.Runtime = RuntimeFunctions

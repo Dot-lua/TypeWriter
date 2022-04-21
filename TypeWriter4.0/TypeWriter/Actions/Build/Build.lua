@@ -4,7 +4,7 @@ local CompileHelper = require("BuildHelper")
 return function ()
 
     TypeWriter.Logger.Info("Loading compiler")
-    local Compiler = CompileHelper:new(TypeWriter.ArgumentParser:GetArgument("input", "i", "./src/"), "Main")
+    local Compiler = CompileHelper:new(TypeWriter.ArgumentParser:GetArgument("input", "i", "./src/"), TypeWriter.ArgumentParser:GetArgument("branch", "b", "Main"))
     TypeWriter.Logger.Info("Compiling")
     Compiler:Compile()
 
