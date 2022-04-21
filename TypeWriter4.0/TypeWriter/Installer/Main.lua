@@ -13,6 +13,10 @@ local function InstallLocation()
     return Locations[OS]
 end
 
+TypeWriter.Logger.Info("Currently running at " .. TypeWriter.Here)
+TypeWriter.Logger.Info("Currently running " .. TypeWriter.This)
+
+
 if FS.existsSync(InstallLocation()) then
     TypeWriter.Logger.Info("Removing old installation...")
     TypeWriter.Logger.Info("Deleting folder " .. InstallLocation())
