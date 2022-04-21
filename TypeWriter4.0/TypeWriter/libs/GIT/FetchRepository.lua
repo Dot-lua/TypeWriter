@@ -7,10 +7,6 @@ return function (Name)
     local Repository = string.split(string.split( Name, "/")[2], "@")[1]
     local Branch = string.split(string.split(Name, "/")[2], "@")[2]
 
-    p(Author)
-    p(Repository)
-    p(Branch)
-
     if FS.existsSync(TypeWriter.Folder .. "/PackageCache/" .. Repository) then
         return
     end
