@@ -19,6 +19,14 @@ coroutine.wrap(function ()
     string.split = require("String/Split")
     string.Split = string.split
 
+    _G.sleep = require("timer").sleep
+    _G.Sleep = sleep
+
+    _G.Wait = function (Time)
+        sleep(Time * 1000)
+    end
+    _G.wait = Wait
+
     --Special Global
     local Package = require("./package")
     local Path = require("path")
