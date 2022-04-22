@@ -50,6 +50,10 @@ function RuntimeFunctions.LoadRaw(Data)
     return Data.Package
 end
 
+function RuntimeFunctions.LoadInternal(Name)
+    return RuntimeFunctions.LoadFile(TypeWriter.Folder .. "/Internal/" .. Name .. ".twr")
+end
+
 function RuntimeFunctions.Import(Path)
     for _, Package in pairs(TypeWriter.LoadedPackages) do
         for CodePath, CodeData in pairs(Package.Code) do

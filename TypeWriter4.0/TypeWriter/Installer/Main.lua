@@ -13,9 +13,13 @@ local function InstallLocation()
     return Locations[OS]
 end
 
+local function JsonRequest(Method, Url, Headers, Body, Settings)
+    local Response, Body = Request(Method, Url, Headers, Body, Settings)
+    return Response, Json.decode(Body)
+end
+
 TypeWriter.Logger.Info("Currently running at " .. TypeWriter.Here)
 TypeWriter.Logger.Info("Currently running " .. TypeWriter.This)
-
 
 if FS.existsSync(InstallLocation()) then
     TypeWriter.Logger.Info("Removing old installation...")
@@ -100,6 +104,28 @@ local Release = GetLatestGithubRelease("truemedian/luvit-bin")
 TypeWriter.Logger.Info("Downloading truemedian/luvit-bin version " .. Release.name)
 LuvitInstall[OS](Release)
 TypeWriter.Logger.Info("Download complete")
+
+FS.mkdirSync(InstallLocation() .. "/Internal/")
+
+local _, PackageMeta = JsonRequest(
+    "GET",
+    "https://raw.githubusercontent.com/Dot-lua/Internal-packages/main/Releases/Meta.json",
+    {
+        {"User-Agent", "TypeWriter"}
+    }
+)
+
+for Index, Package in pairs(PackageMeta) do
+    TypeWriter.Logger.Info("Downloading " .. Package.Name .. " from \"" .. Package.Url .. "\"")
+    local Response, Body = Request(
+        "GET",
+        Package.Url,
+        {
+            {"User-Agent", "TypeWriter"}
+        }
+    )
+    FS.writeFileSync(InstallLocation() .. "/Internal/" .. Package.Name, Body)
+end
 
 local Finish = {
     ["win32"] = function ()
