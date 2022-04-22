@@ -34,6 +34,10 @@ function RuntimeFunctions.LoadRaw(Data)
         TypeWriter.LoadedPackages = {}
     end
 
+    if TypeWriter.LoadedPackages[Data.Package.ID] then
+        return false
+    end
+
     if Data.Package.Dependencies == nil then Data.Package.Dependencies = {} end
 
     if Data.Package.Dependencies.Luvit == nil then Data.Package.Dependencies.Luvit = {} end
