@@ -1,0 +1,25 @@
+{
+  "url":"/trees/cc91305152f86e60480b1fd3df0e8645dc79683b/luvit/secure-socket/v1.2.2",
+  "author":{
+    "name":"Tim Caswell"
+  },
+  "hash":"3f00879791f9309d6e9c8d1fa6930224c2f0235e",
+  "tagger":{
+    "email":"squeek502@hotmail.com",
+    "date":{
+      "offset":-420,
+      "seconds":1554180594
+    },
+    "name":"Ryan Liptak"
+  },
+  "dependencies":["luvit/resource@2.1.0"],
+  "name":"luvit/secure-socket",
+  "object":"cc91305152f86e60480b1fd3df0e8645dc79683b",
+  "license":"Apache 2",
+  "tags":["ssl","socket","tls"],
+  "homepage":"https://github.com/luvit/luvit/blob/master/deps/secure-socket",
+  "type":"tree",
+  "description":"Wrapper for luv streams to apply ssl/tls",
+  "version":"1.2.2",
+  "snapshot":"0d0e320e2d8525d987536117dd3637c1305138c7"
+}

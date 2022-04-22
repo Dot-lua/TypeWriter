@@ -1,0 +1,24 @@
+{
+  "url":"/blobs/50eee9eb146a3881f80c11b4afbe1141bc6c83d8/creationix/coro-websocket/v3.1.0.lua",
+  "author":{
+    "name":"Tim Caswell"
+  },
+  "hash":"fef429c61bf581bf166d04ddaa06009dcad02a28",
+  "tagger":{
+    "email":"tim@creationix.com",
+    "date":{
+      "offset":-300,
+      "seconds":1497562738
+    },
+    "name":"Tim Caswell"
+  },
+  "dependencies":["luvit/http-codec@3.0.0","creationix/websocket-codec@3.0.0","creationix/coro-net@3.0.0"],
+  "name":"creationix/coro-websocket",
+  "license":"MIT",
+  "object":"50eee9eb146a3881f80c11b4afbe1141bc6c83d8",
+  "homepage":"https://github.com/luvit/lit/blob/master/deps/coro-websocket.lua",
+  "type":"blob",
+  "description":"Websocket helpers assuming coro style I/O.",
+  "version":"3.1.0",
+  "tags":["coro","websocket"]
+}

@@ -1,0 +1,13 @@
+Usage: TypeWriter <Command> [Command Arguments]
+ 
+Available Commands:
+    TypeWriter Help                         (Show Help)
+    TypeWriter Compile                      (Compile The 'src' Folder In Your Current Directory)
+    TypeWriter Execute                      (Same As Execute But Also Runs It)
+    TypeWriter Run <*.Dua> [Arguments]      (Run A Dua Archive)
+    TypeWriter Setup                        (Create A src Folder In Your Current Folder)
+ 
+[Github](https://github.com/Dot-lua/TypeWriter)
+[Discord](http://cubidiscord.ga)
+ 
+Copyright (c) 2020-2021 CoreByte (MIT)

@@ -1,0 +1,22 @@
+{
+  "url":"/blobs/ce20f77d4364ab62a402715eb4494b0a762bbaa9/creationix/pathjoin/v2.0.0.lua",
+  "author":{
+    "name":"Tim Caswell"
+  },
+  "hash":"e25cde43fa8d51b29b71a4f90fc5d2c45d11cca2",
+  "tagger":{
+    "email":"tim@creationix.com",
+    "date":{
+      "offset":-360,
+      "seconds":1455763737
+    },
+    "name":"Tim Caswell"
+  },
+  "license":"MIT",
+  "tags":["path"],
+  "version":"2.0.0",
+  "type":"blob",
+  "description":"The path utilities that used to be part of luvi",
+  "object":"ce20f77d4364ab62a402715eb4494b0a762bbaa9",
+  "name":"creationix/pathjoin"
+}

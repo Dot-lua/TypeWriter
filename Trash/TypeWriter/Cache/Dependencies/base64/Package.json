@@ -1,0 +1,22 @@
+{
+  "url":"/blobs/abe31918dd425f4e574c50234ea4906edb093768/creationix/base64/v2.0.0.lua",
+  "author":{
+    "name":"Tim Caswell"
+  },
+  "hash":"b8da1b08e7266999f71049cac5a62205377f4276",
+  "tagger":{
+    "email":"tim@creationix.com",
+    "date":{
+      "offset":-300,
+      "seconds":1458831969
+    },
+    "name":"Tim Caswell"
+  },
+  "license":"MIT",
+  "tags":["crypto","base64","bitop"],
+  "version":"2.0.0",
+  "type":"blob",
+  "description":"A pure lua implemention of base64 using bitop",
+  "object":"abe31918dd425f4e574c50234ea4906edb093768",
+  "name":"creationix/base64"
+}

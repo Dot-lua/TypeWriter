@@ -1,0 +1,18 @@
+{
+  "url":"/blobs/032b7f31aa781232f9dcfa265767b1cc577d6d08/creationix/sha1/v1.0.0.lua",
+  "hash":"e4a51d42e7539d9cb1b414196da76c7ff3607543",
+  "tagger":{
+    "email":"tim@creationix.com",
+    "date":{
+      "offset":-480,
+      "seconds":1456771402
+    },
+    "name":"Tim Caswell"
+  },
+  "object":"032b7f31aa781232f9dcfa265767b1cc577d6d08",
+  "version":"1.0.0",
+  "type":"blob",
+  "description":"Pure Lua implementation of SHA1 using bitop",
+  "homepage":"https://github.com/luvit/lit/blob/master/deps/sha1.lua",
+  "name":"creationix/sha1"
+}

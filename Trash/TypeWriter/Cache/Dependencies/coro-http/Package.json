@@ -1,0 +1,24 @@
+{
+  "url":"/blobs/0e0ef3f5b2ec8ead9884385c24f7c75176b331b3/creationix/coro-http/v3.1.0.lua",
+  "author":{
+    "name":"Tim Caswell"
+  },
+  "hash":"34306e74eec27c83e7c684ece4bca16cd4ae129b",
+  "tagger":{
+    "email":"tim@creationix.com",
+    "date":{
+      "offset":-300,
+      "seconds":1521289383
+    },
+    "name":"Tim Caswell"
+  },
+  "dependencies":["creationix/coro-net@3.0.0","luvit/http-codec@3.0.0"],
+  "name":"creationix/coro-http",
+  "license":"MIT",
+  "object":"0e0ef3f5b2ec8ead9884385c24f7c75176b331b3",
+  "homepage":"https://github.com/luvit/lit/blob/master/deps/coro-http.lua",
+  "type":"blob",
+  "description":"An coro style http(s) client and server helper.",
+  "version":"3.1.0",
+  "tags":["coro","http"]
+}
