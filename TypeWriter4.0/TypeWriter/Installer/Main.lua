@@ -105,6 +105,8 @@ TypeWriter.Logger.Info("Downloading truemedian/luvit-bin version " .. Release.na
 LuvitInstall[OS](Release)
 TypeWriter.Logger.Info("Download complete")
 
+FS.mkdirSync(InstallLocation() .. "/ApplicationData/")
+
 FS.mkdirSync(InstallLocation() .. "/Internal/")
 
 local _, PackageMeta = JsonRequest(

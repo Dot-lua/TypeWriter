@@ -18,6 +18,8 @@ coroutine.wrap(function ()
 
     string.split = require("String/Split")
     string.Split = string.split
+    string.random = require("String/Random")
+    string.Random = string.random
 
     _G.sleep = require("timer").sleep
     _G.Sleep = sleep
@@ -58,9 +60,11 @@ coroutine.wrap(function ()
     _G.package.path = TypeWriter.Folder .. "/PackageCache/?/init.lua;" .. "./libs/?.lua;" .. _G.package.path
 
     require("fs").mkdirSync(TypeWriter.Folder .. "/PackageCache/")
+    require("fs").mkdirSync(TypeWriter.Folder .. "/Temp/")
 
     -- Run the actions
     local ActionHelper = require("ActionHelper"):new()
+    ActionHelper:RegisterAction("BuildExecutable", require("./Actions/BuildExecutable/BuildExecutable.lua"))
     ActionHelper:RegisterAction("Build", require("./Actions/Build/Build.lua"))
     ActionHelper:RegisterAction("ClearCache", require("./Actions/ClearCache/ClearCache.lua"))
     ActionHelper:RegisterAction("Execute", require("./Actions/Execute/Execute.lua"))
