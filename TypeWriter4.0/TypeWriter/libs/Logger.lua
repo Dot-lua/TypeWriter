@@ -45,7 +45,7 @@ function Logger.Log(level, msg)
 	msg = msg or ""
 
 	local d = date("%Y-%m-%d %H:%M:%S")
-	stdout:write(format('[%s] %s: %s\n', d, tag[2], msg))
+	print(format('[%s] %s: %s', d, tag[2], msg))
 
 	return msg
 
