@@ -16,9 +16,8 @@ coroutine.wrap(function ()
     _G.String = string
     _G.Table = table
 
-    string.split = require("String/Split")
+    require("Extensions")()
     string.Split = string.split
-    string.random = require("String/Random")
     string.Random = string.random
 
     _G.sleep = require("timer").sleep
