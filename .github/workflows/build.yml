@@ -36,4 +36,5 @@ jobs:
           cd /Binary/
           curl --output ./luvit.zip --url https://github.com/truemedian/luvit-bin/releases/latest/download/luvit-bin-Windows-x86_64.zip
           ls
-          tar
+          tar -xf ./luvit.zip -C ./
+          ls
