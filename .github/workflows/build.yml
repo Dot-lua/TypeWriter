@@ -31,4 +31,6 @@ jobs:
       - name: Download luvit
         working-directory: ./TypeWriter4.0/
         run: |
+          ls
+          ls ./Scripts
           ./Scripts/Build.ps1
