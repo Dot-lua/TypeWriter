@@ -24,7 +24,7 @@ jobs:
     steps:
       - name: Clone
         run: |
-          git clone https://github.com/Dot-lua/TypeWriter/
+          git clone https://github.com/Dot-lua/TypeWriter/ ./
           ls
 
       # Runs a single command using the runners shell
