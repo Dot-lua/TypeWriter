@@ -26,17 +26,13 @@ jobs:
         run: |
           git clone https://github.com/Dot-lua/TypeWriter/ ./
           ls
-
-      - name: Change dir
-        run: cd ./TypeWriter4.0/
+          pwd
 
       - name: Download luvit
+        working-directory: /
         run: |
           mkdir ./Binary/
           cd ./Binary/
           curl --output ./luvit.zip --url https://github.com/truemedian/luvit-bin/releases/latest/download/luvit-bin-Windows-x86_64.zip
           tar.exe -xf ./luvit.zip
           ls /
-          
-      - name: Dir
-        run: pwd
