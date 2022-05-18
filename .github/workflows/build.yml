@@ -27,13 +27,13 @@ jobs:
 
       # Runs a single command using the runners shell
       - name: Change dir
-        run: cd TypeWriter4.0/
+        run: cd ./TypeWriter4.0/
 
       # Runs a set of commands using the runners shell
       - name: Download luvit
         run: |
-          mkdir /Binary/
-          cd /Binary/
+          mkdir ./Binary/
+          cd ./Binary/
           curl --output ./luvit.zip --url https://github.com/truemedian/luvit-bin/releases/latest/download/luvit-bin-Windows-x86_64.zip
           ls
           tar -xf "./luvit.zip" -C "./"
