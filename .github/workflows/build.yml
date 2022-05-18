@@ -38,4 +38,4 @@ jobs:
           ls
           Expand-Archive ./luvit.zip -DestinationPath ./
           ls ./
-          pwd
+          Get-Location
