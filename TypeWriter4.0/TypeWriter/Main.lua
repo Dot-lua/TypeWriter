@@ -18,6 +18,7 @@ coroutine.wrap(function ()
 
     require("Extensions")()
     string.Split = string.split
+    string.random = require("String/Random")
     string.Random = string.random
 
     _G.sleep = require("timer").sleep
@@ -40,7 +41,8 @@ coroutine.wrap(function ()
         Args = args,
         Folder = Path.resolve(args[0], "../"),
         This = Path.resolve(args[0]),
-        Here = Path.resolve("./")
+        Here = Path.resolve("./"),
+        Os = require("los").type()
     }
     TypeWriter.Logger = require("Logger")
     TypeWriter.Args[0] = nil
