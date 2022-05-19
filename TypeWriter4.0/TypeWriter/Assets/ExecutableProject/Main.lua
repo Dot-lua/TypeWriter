@@ -30,7 +30,7 @@ coroutine.wrap(function ()
     FS.writeFileSync(TempLocation .. "Pkg.twr", require("luvi").bundle.readfile("/pkg.twr"))
 
     local Result, Error = Spawn(
-        InstallLocation() .. "/TypeWriter.exe",
+        InstallLocation() .. "/TypeWriter",
         {
             args = {
                 "execute",
@@ -39,26 +39,39 @@ coroutine.wrap(function ()
             }
         }
     )
-
+    p(1)
+    p(Result)
     p(Error)
     if Error then 
         error(Error)
     end
+    p(2)
 
     coroutine.wrap(function ()
-        p("a")
         for Message in Result.stdout.read do
+            print("Ms")
             print(Message)
         end
     end)()
+    p(3)
 
     coroutine.wrap(function ()
         for Message in Result.stderr.read do
             print(Message)
         end
     end)()
+    p(4)
+
 
     Result.waitExit()
-    p(Result.stdout.read())
+    p(5)
+
+    --p(Result.stdout:read())
+    --p(6)
+--
+    --p(Result.stderr:read())
+    --p(7)
+
+    p("done")
 
 end)()
