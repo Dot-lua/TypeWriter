@@ -29,12 +29,16 @@ jobs:
       - name: Install TypeWriter Deps
         working-directory: ./TypeWriter4.0/TypeWriter/
         run: |
-          ../Binary/lit install
+          function timeout() { perl -e 'alarm shift; exec @ARGV' "$@"; }
+          for i in {1..5}; do timeout 10 ../Binary/lit install && break || sleep 15; done
           ls
           
       - name: Install Executable deps
         working-directory: ./TypeWriter4.0/TypeWriter/Assets/ExecutableProject/
-        run: ../../../Binary/lit install
+        run: |
+          function timeout() { perl -e 'alarm shift; exec @ARGV' "$@"; }
+          for i in {1..5}; do timeout 10 ../../../Binary/lit install && break || sleep 15; done
+          ls
       
       - name: Build TypeWriter
         working-directory: ./TypeWriter4.0/
