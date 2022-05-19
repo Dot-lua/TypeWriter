@@ -1,49 +1,22 @@
-# This is a basic workflow to help you get started with Actions
+name: Upload release assets
 
-name: Release
-
-# Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the master branch
   release:
-    types: [published]
-
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  Compile-Ubuntu:
-    runs-on: ubuntu-latest
-
+  Build-Workflow:
+    uses: ./.github/workflows/build.yml
+    
+  Upload-Release-Assets:
+    runs-on: windows-latest
+    needs: [Build-Workflow]
     steps:
-      - name: Download TypeWriter
-        run: git clone https://github.com/Dot-lua/TypeWriter
-
-      - name: Enter folder
-        run: |
-            cd TypeWriter/TypeWriter4.0/
-            ls
-            
-      - name: Download luvit
-        run: |
-            mkdir Binary/
-            cd Binary/
-            curl -L https://github.com/luvit/lit/raw/master/get-lit.sh | sh
-            cd ..
-            
-      - name: Download deps
-        run: |
-            cd ./TypeWriter/
-            ../Binary/lit install
-            cd ..
-            
-      - name: Build
-        run: |
-            ./Binary/luvi ./TypeWriter -o TypeWriter
-            
-      - name: 'Upload Artifact'
-        uses: actions/upload-artifact@v3
+      - uses: actions/download-artifact@v3
         with:
-          name: TypeWiter
-          path: ./TypeWriter
+          path: ./
+    
+      - name: List artifacts
+        run: |
+          ls
+          
