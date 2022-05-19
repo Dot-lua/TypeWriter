@@ -65,11 +65,11 @@ jobs:
           
       - name: Install TypeWriter Deps
         working-directory: ./TypeWriter4.0/TypeWriter/
-        run: for i in {1..5}; do ../Binary/lit install && break || sleep 15; done
+        run: for i in {1..5}; do timeout 10 ../Binary/lit install && break || sleep 15; done
           
       - name: Install Executable deps
         working-directory: ./TypeWriter4.0/TypeWriter/Assets/ExecutableProject/
-        run: for i in {1..5}; do ../../../Binary/lit install && break || sleep 15; done
+        run: for i in {1..5}; do timeout 10 ../../../Binary/lit install && break || sleep 15; done
       
       - name: Build TypeWriter
         working-directory: ./TypeWriter4.0/
