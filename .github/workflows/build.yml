@@ -29,15 +29,13 @@ jobs:
       - name: Install TypeWriter Deps
         working-directory: ./TypeWriter4.0/TypeWriter/
         run: |
-          function timeout() { perl -e 'alarm shift; exec @ARGV' "$@"; }
-          for i in {1..5}; do timeout 10 ../Binary/lit install && break || sleep 15; done
+          ../Binary/lit install
           ls
           
       - name: Install Executable deps
         working-directory: ./TypeWriter4.0/TypeWriter/Assets/ExecutableProject/
         run: |
-          function timeout() { perl -e 'alarm shift; exec @ARGV' "$@"; }
-          for i in {1..5}; do timeout 10 ../../../Binary/lit install && break || sleep 15; done
+          ../../../Binary/lit install
           ls
       
       - name: Build TypeWriter
@@ -69,11 +67,17 @@ jobs:
           
       - name: Install TypeWriter Deps
         working-directory: ./TypeWriter4.0/TypeWriter/
-        run: for i in {1..5}; do timeout 10 ../Binary/lit install && break || sleep 15; done
+        run: |
+          function timeout() { perl -e 'alarm shift; exec @ARGV' "$@"; }
+          for i in {1..5}; do timeout 10 ../Binary/lit install && break || sleep 15; done
+          ls
           
       - name: Install Executable deps
         working-directory: ./TypeWriter4.0/TypeWriter/Assets/ExecutableProject/
-        run: for i in {1..5}; do timeout 10 ../../../Binary/lit install && break || sleep 15; done
+        run: |
+          function timeout() { perl -e 'alarm shift; exec @ARGV' "$@"; }
+          for i in {1..5}; do timeout 10 ../../../Binary/lit install && break || sleep 15; done
+          ls
       
       - name: Build TypeWriter
         working-directory: ./TypeWriter4.0/
