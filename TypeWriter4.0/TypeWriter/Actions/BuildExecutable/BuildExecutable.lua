@@ -54,7 +54,4 @@ return function ()
         }
     )
     Result.waitExit()
-    print(Error)
-    print(Result.stderr.read())
-    print(Result.stdout.read())
 end

@@ -5,10 +5,13 @@ coroutine.wrap(function ()
     local FS = require("fs")
     local Spawn = require("coro-spawn")
     local Random = require("Random")
+    local Json = require("json")
+    local Base = require("base64")
+    local QueryString = require("querystring")
 
     local function InstallLocation()
         local Locations = {
-            ["win32"] = (process.env.APPDATA or "") .. "\\.TypeWriter\\",
+            ["win32"] = "C:/Users/Thijmen/Documents/Github/Dot-Lua/TypeWriter/TypeWriter4.0/", -- (process.env.APPDATA or "") .. "\\.TypeWriter\\",
             ["darwin"] = (process.env.HOME or "") .. "/Library/Application Support/TypeWriter/"
         }
     
@@ -23,11 +26,12 @@ coroutine.wrap(function ()
         error("Typewriter is not installed, please install from https://github.com/Dot-lua/TypeWriter/releases")
     end
 
-    p("Hello")
-
     local TempLocation = InstallLocation() .. "/Temp/" .. Random(30) .. "/"
     FS.mkdirSync(TempLocation)
     FS.writeFileSync(TempLocation .. "Pkg.twr", require("luvi").bundle.readfile("/pkg.twr"))
+
+    local ExeName = process.argv[0]
+    process.argv[0] = nil
 
     local Result, Error = Spawn(
         InstallLocation() .. "/TypeWriter",
@@ -35,43 +39,22 @@ coroutine.wrap(function ()
             args = {
                 "execute",
                 "-i=" .. TempLocation .. "Pkg.twr",
-                "--exe=true"
+                "--isexe=true",
+                "--exearg=" .. QueryString.urlencode(Base.encode(Json.encode(process.argv))),
+                "--exename=" .. ExeName
+            },
+            stdio = {
+                process.stdin.handle,
+                process.stdout.handle,
+                process.stderr.handle
             }
         }
     )
-    p(1)
-    p(Result)
-    p(Error)
+
     if Error then 
         error(Error)
     end
-    p(2)
-
-    coroutine.wrap(function ()
-        for Message in Result.stdout.read do
-            print("Ms")
-            print(Message)
-        end
-    end)()
-    p(3)
-
-    coroutine.wrap(function ()
-        for Message in Result.stderr.read do
-            print(Message)
-        end
-    end)()
-    p(4)
-
 
     Result.waitExit()
-    p(5)
-
-    --p(Result.stdout:read())
-    --p(6)
---
-    --p(Result.stderr:read())
-    --p(7)
-
-    p("done")
-
 end)()
+require("uv").run()

@@ -45,9 +45,26 @@ coroutine.wrap(function ()
         Os = require("los").type()
     }
     TypeWriter.Logger = require("Logger")
+
+    --#region Arg stuff
     TypeWriter.Args[0] = nil
     TypeWriter.Arguments = TypeWriter.Args
     TypeWriter.ArgumentParser = require("ArgumentParser"):new(args):Parse()
+
+    local ActionOverride
+    if TypeWriter.ArgumentParser:GetArgument("isexe", "isexe", "false") == "true" then
+        TypeWriter.ExeName = TypeWriter.ArgumentParser:GetArgument("exename", "exename", "")
+        local ExeArgs = require("json").decode(require("base64").decode(require("querystring").urldecode(TypeWriter.ArgumentParser:GetArgument("exearg", "exearg", ""))))
+
+        ActionOverride = "executeexecutable"
+        TypeWriter.Input = TypeWriter.ArgumentParser:GetArgument("input", "i", "")
+
+        TypeWriter.Args = ExeArgs
+        TypeWriter.Arguments = TypeWriter.Args
+        TypeWriter.ArgumentParser = require("ArgumentParser"):new(TypeWriter.Args):Parse()
+
+    end
+    --#endregion
 
     if not require("fs").existsSync(TypeWriter.Folder .. "/SessionStorage") then
         TypeWriter.Logger.Error("Detected invalid installation")
@@ -70,11 +87,12 @@ coroutine.wrap(function ()
     ActionHelper:RegisterAction("ClearCache", require("./Actions/ClearCache/ClearCache.lua"))
     ActionHelper:RegisterAction("Execute", require("./Actions/Execute/Execute.lua"))
     ActionHelper:RegisterAction("ExecuteBuild", require("./Actions/ExecuteBuild/ExecuteBuild.lua"))
+    ActionHelper:RegisterAction("ExecuteExecutable", require("./Actions/ExecuteExecutable/ExecuteExecutable.lua"))
     ActionHelper:RegisterAction("Help", require("./Actions/Help/Help.lua"))
     ActionHelper:RegisterAction("Init", require("./Actions/Init/Init.lua"))
 
 
-    local Action = TypeWriter.ArgumentParser:GetRaw(1)
+    local Action = ActionOverride or TypeWriter.ArgumentParser:GetRaw(1)
     local ActionResult = ActionHelper:ExecuteAction(Action or "")
     if ActionResult == true then
         

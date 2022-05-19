@@ -22,6 +22,8 @@ return {
         "luvit/los",
 
         "creationix/coro-spawn",
+        "creationix/base64",
+        "luvit/querystring",
 
         "luvit/secure-socket",
         "creationix/coro-http",
