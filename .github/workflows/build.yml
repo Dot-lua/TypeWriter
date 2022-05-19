@@ -34,3 +34,14 @@ jobs:
       - name: Install Executable deps
         working-directory: ./TypeWriter4.0/TypeWriter/Assets/ExecutableProject/
         run: ../../../Binary/lit install
+      
+      - name: Build TypeWriter
+        working-directory: ./TypeWriter4.0/
+        run: ./Binary/luvi ./TypeWriter -o ./TypeWriter.exe
+        
+      - name: Upload a Build Artifact
+        uses: actions/upload-artifact@v3.0.0
+        with:
+          path: ./TypeWriter4.0/TypeWriter.exe
+          # The desired behavior if no files are found using the provided path.
+          warn: Output a warning but do not fail the action
