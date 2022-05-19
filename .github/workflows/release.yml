@@ -12,10 +12,11 @@ jobs:
     runs-on: windows-latest
     needs: [Build-Workflow]
     steps:
-      - name: Run a one-line script
-        run: echo Hello, world!
-
-      - name: Run a multi-line script
+      - uses: actions/download-artifact@v3
+        with:
+          path: /
+    
+      - name: List artifacts
         run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
+          ls
+          
