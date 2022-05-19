@@ -1,6 +1,7 @@
 local FS = require("fs")
 local OS = require("los").type()
-local Request = require("coro-http").request
+local Request = require("./Request").Request
+local JsonRequest = require("./Request").JsonRequest
 local Json = require("json")
 local Bundle = require("luvi").bundle
 
@@ -13,9 +14,20 @@ local function InstallLocation()
     return Locations[OS]
 end
 
-local function JsonRequest(Method, Url, Headers, Body, Settings)
-    local Response, Body = Request(Method, Url, Headers, Body, Settings)
-    return Response, Json.decode(Body)
+local IgnoreDelete = {
+    ["ApplicationData"] = true,
+    ["Config"] = true
+}
+
+local Rmrf = require("coro-fs").rmrf
+local function ClearFolder()
+    local Files = FS.readdirSync(InstallLocation())
+
+    for Index, FileName in pairs(Files) do
+        if not IgnoreDelete[FileName] then
+            Rmrf(InstallLocation() .. FileName)
+        end
+    end
 end
 
 TypeWriter.Logger.Info("Currently running at " .. TypeWriter.Here)
@@ -25,7 +37,9 @@ if FS.existsSync(InstallLocation()) then
     TypeWriter.Logger.Info("Removing old installation...")
     TypeWriter.Logger.Info("Deleting folder " .. InstallLocation())
     --require("timer").sleep(3000)
-    require("coro-fs").rmrf(InstallLocation())
+    ClearFolder()
+
+    --require("coro-fs").rmrf(InstallLocation())
 end
 
 FS.mkdirSync(InstallLocation())
@@ -39,11 +53,13 @@ local FileNames = {
 FS.writeFileSync(InstallLocation() .. "/" .. FileNames[OS], FS.readFileSync(TypeWriter.This))
 
 FS.mkdirSync(InstallLocation() .. "/Binary/")
-FS.mkdirSync(InstallLocation() .. "/Config/")
 
-FS.writeFileSync(InstallLocation() .. "/Config/Compiler.json", Bundle.readfile("Installer/Config/Compiler.json"))
-FS.writeFileSync(InstallLocation() .. "/Config/DeveloperMode.json", Bundle.readfile("Installer/Config/DeveloperMode.json"))
+if not FS.existsSync(InstallLocation() .. "/Config/") then
+    FS.mkdirSync(InstallLocation() .. "/Config/")
 
+    FS.writeFileSync(InstallLocation() .. "/Config/Compiler.json", Bundle.readfile("Installer/Config/Compiler.json"))
+    FS.writeFileSync(InstallLocation() .. "/Config/DeveloperMode.json", Bundle.readfile("Installer/Config/DeveloperMode.json"))
+end
 
 local function GetLatestGithubRelease(Name)
     local Response, Body = Request(
@@ -107,27 +123,7 @@ TypeWriter.Logger.Info("Download complete")
 
 FS.mkdirSync(InstallLocation() .. "/ApplicationData/")
 
-FS.mkdirSync(InstallLocation() .. "/Internal/")
-
-local _, PackageMeta = JsonRequest(
-    "GET",
-    "https://raw.githubusercontent.com/Dot-lua/Internal-packages/main/Releases/Meta.json",
-    {
-        {"User-Agent", "TypeWriter"}
-    }
-)
-
-for Index, Package in pairs(PackageMeta) do
-    TypeWriter.Logger.Info("Downloading " .. Package.Name .. " from \"" .. Package.Url .. "\"")
-    local Response, Body = Request(
-        "GET",
-        Package.Url,
-        {
-            {"User-Agent", "TypeWriter"}
-        }
-    )
-    FS.writeFileSync(InstallLocation() .. "/Internal/" .. Package.Name, Body)
-end
+require("./DownloadInternal")(InstallLocation())
 
 local Finish = {
     ["win32"] = function ()
