@@ -24,4 +24,13 @@ jobs:
           cd ./Binary/
           curl -L --output ./luvit.zip --url https://github.com/truemedian/luvit-bin/releases/latest/download/luvit-bin-Windows-x86_64.zip
           tar -xf ./luvit.zip -C ./
+          
+      - name: Install TypeWriter Deps
+        working-directory: ./TypeWriter4.0/TypeWriter/
+        run: |
+          ../Binary/lit install
           ls
+          
+      - name: Install Executable deps
+        working-directory: ./TypeWriter4.0/TypeWriter/Assets/ExecutableProject/
+        run: ../../../Binary/lit install
