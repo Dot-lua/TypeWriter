@@ -11,7 +11,7 @@ coroutine.wrap(function ()
 
     local function InstallLocation()
         local Locations = {
-            ["win32"] = "C:/Users/Thijmen/Documents/Github/Dot-Lua/TypeWriter/TypeWriter4.0/", -- (process.env.APPDATA or "") .. "\\.TypeWriter\\",
+            ["win32"] = (process.env.APPDATA or "") .. "\\.TypeWriter\\",
             ["darwin"] = (process.env.HOME or "") .. "/Library/Application Support/TypeWriter/"
         }
     
