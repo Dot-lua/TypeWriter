@@ -44,3 +44,40 @@ jobs:
         with:
           name: Windows
           path: ./TypeWriter4.0/TypeWriter.exe
+          
+  Mac-Build:
+    runs-on: macos-latest
+    steps:
+      - name: Clone
+        run: |
+          git clone https://github.com/Dot-lua/TypeWriter/ ./
+          ls
+          pwd
+
+      - name: Download luvit
+        working-directory: ./TypeWriter4.0/
+        run: |
+          mkdir ./Binary/
+          cd ./Binary/
+          curl -L --output ./luvit.zip --url https://github.com/truemedian/luvit-bin/releases/latest/download/luvit-bin-Darwin-x86_64.tar.gz
+          tar -xf ./luvit.zip -C ./
+          
+      - name: Install TypeWriter Deps
+        working-directory: ./TypeWriter4.0/TypeWriter/
+        run: |
+          ../Binary/lit install
+          ls
+          
+      - name: Install Executable deps
+        working-directory: ./TypeWriter4.0/TypeWriter/Assets/ExecutableProject/
+        run: ../../../Binary/lit install
+      
+      - name: Build TypeWriter
+        working-directory: ./TypeWriter4.0/
+        run: ./Binary/luvi ./TypeWriter -o ./TypeWriter
+        
+      - name: Upload a Build Artifact
+        uses: actions/upload-artifact@v3.0.0
+        with:
+          name: Windows
+          path: ./TypeWriter4.0/TypeWriter
