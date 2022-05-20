@@ -1,14 +1,14 @@
-local Request = require("/Installer/Request").Request
+local Request = require("../Installer/Request").Request
 
 return function ()
     
-    local Success, Response = pcall(Request, "GET", "https://github.com/Dot-lua/TypeWriter")
+    local Success, Response = pcall(Request, "GET", "https://ping.github.com")
 
     if not Success then
         return false
     end
 
-    if Response.statusCode ~= 200 then
+    if Response.code ~= 404 then
         return false
     end
     return true

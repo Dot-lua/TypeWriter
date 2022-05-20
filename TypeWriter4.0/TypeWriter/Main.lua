@@ -106,5 +106,7 @@ coroutine.wrap(function ()
         ActionHelper:ExecuteAction("help")
     end
 
+    require("./Updater/Main.lua")()
+
 end)()
 require("uv").run()
