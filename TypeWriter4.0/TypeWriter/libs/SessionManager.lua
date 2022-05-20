@@ -31,15 +31,10 @@ local function Stop(self)
 end
 
 local function HookCheck(self)
-    p(1)
     local Signal = Uv.new_signal()
-    p(2)
 	Signal:start(Uv.constants.SIGINT, function()
-        p(3)
 		Signal:stop()
-        p(3)
 		Signal:close()
-        p(3)
 		return coroutine.wrap(Stop)(self)
 	end)
 end
