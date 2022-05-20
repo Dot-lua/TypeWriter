@@ -15,5 +15,8 @@ return function (From, To)
         }
     )
     Result.waitExit()
+    --print(Error)
+    --print(Result.stdout.read())
+    --print(Result.stderr.read())
 
 end
