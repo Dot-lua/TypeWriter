@@ -5,6 +5,8 @@ local JsonRequest = require("./Request").JsonRequest
 local Json = require("json")
 local Bundle = require("luvi").bundle
 
+Sleep(2000)
+
 local function InstallLocation()
     local Locations = {
         ["win32"] = (process.env.APPDATA or "") .. "\\.TypeWriter\\",
@@ -176,3 +178,5 @@ local Finish = {
 }
 
 Finish[OS]()
+
+Sleep(5000)
