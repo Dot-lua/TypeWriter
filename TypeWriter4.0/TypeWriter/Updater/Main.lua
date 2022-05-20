@@ -8,7 +8,6 @@ return function ()
     end
     local Latest = require("./GetLatestRelease")()
     if Latest.tag_name == Package.version then
-        p("Is Latest")
         return
     end
     require("./Update")(Latest)
