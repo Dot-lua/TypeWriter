@@ -1,12 +1,15 @@
 local Package = require("../package")
-p(Package)
 return function ()
+    if TypeWriter.SessionManager:GetRunningCount() ~= 0 then
+        return
+    end
     if not require("./HasInternet")() then
         return
     end
-
-    if require("./GetLatestRelease")() == Package.version then
-        p("This is latest")
+    local Latest = require("./GetLatestRelease")()
+    if Latest.tag_name == Package.version then
+        p("Is Latest")
         return
     end
+    require("./Update")(Latest)
 end

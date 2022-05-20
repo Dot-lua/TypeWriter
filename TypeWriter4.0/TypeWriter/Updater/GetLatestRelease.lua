@@ -8,7 +8,7 @@ return function (Pre)
     for Index, Release in pairs(Releases) do
         --print(require("json").encode(Release, {indent = true}))
         if Release.prerelease == Pre then
-            return Release.tag_name
+            return Release
         end
     end
 end

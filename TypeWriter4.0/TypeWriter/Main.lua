@@ -73,6 +73,7 @@ coroutine.wrap(function ()
         process:exit()
     end
     TypeWriter.Config = require("ConfigHelper"):new():ExportConfig()
+    TypeWriter.SessionManager = require("SessionManager"):new():Hook()
 
     --Require helper
     _G.package.path = TypeWriter.Folder .. "/PackageCache/?/init.lua;" .. "./libs/?.lua;" .. _G.package.path
@@ -106,6 +107,7 @@ coroutine.wrap(function ()
         ActionHelper:ExecuteAction("help")
     end
 
+    TypeWriter.SessionManager:Stop()
     require("./Updater/Main.lua")()
 
 end)()
