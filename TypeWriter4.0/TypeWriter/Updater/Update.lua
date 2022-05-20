@@ -6,10 +6,11 @@ local function FindTableWithKey(SearchTable, Key, Value)
     end
 end
 
+local FS = require("fs")
+
 return function (Release)
     TypeWriter.Logger.Info()
     TypeWriter.Logger.Info("Downloading new version " .. Release.tag_name)
-    p(Release)
 
     local FileNames = {
         ["darwin"] = "MacOs.zip",
@@ -17,10 +18,13 @@ return function (Release)
         ["win32"] = "Windows.zip"
     }
 
-    local Asset = FindTableWithKey(Release.assets, "name", FileNames[TypeWriter.Os])
-    p(Asset)
+    local Asset = FindTableWithKey(Release.assets, "name", "TypeWriter-" .. FileNames[TypeWriter.Os])
 
     if Asset == nil then
+        TypeWriter.Logger.Error("A new release was found but no asset was found for this platform")
+        TypeWriter.Logger.Error("This could be because the release was just published")
+        TypeWriter.Logger.Error("If this error persists, please update manually")
+        TypeWriter.Logger.Error("https://github.com/Dot-lua/TypeWriter/releases")
         return
     end
 
@@ -33,5 +37,22 @@ return function (Release)
             {"User-Agent", "TypeWriter Updater"}
         }
     )
-    print(Data)
+
+    local Paths = {
+        ["win32"] = process.env.TEMP,
+        ["darwin"] = process.env.TMPDIR,
+        ["linux"] = process.env.TMPDIR
+    }
+    local TempPath = Paths[TypeWriter.Os] .. "/TypeWriter.zip"
+    FS.writeFileSync(TempPath, Data)
+    require("../Installer/Unzip")(TempPath, Paths[TypeWriter.Os])
+    --FS.unlinkSync(TypeWriter.Folder .. "/SessionStorage")
+
+    require("coro-spawn")(
+        Paths[TypeWriter.Os] .. "/TypeWriter" .. (({["win32"] = ".exe"})[TypeWriter.Os] or ""),
+        {
+            detached = false,
+            hide = false,
+        }
+    )
 end
