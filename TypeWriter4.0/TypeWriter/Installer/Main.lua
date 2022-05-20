@@ -179,4 +179,4 @@ local Finish = {
 
 Finish[OS]()
 
-Sleep(5000)
+Sleep(3000)
