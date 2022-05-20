@@ -38,7 +38,6 @@ TypeWriter.Logger.Info("Currently running " .. TypeWriter.This)
 if FS.existsSync(InstallLocation()) then
     TypeWriter.Logger.Info("Removing old installation...")
     TypeWriter.Logger.Info("Deleting folder " .. InstallLocation())
-    --require("timer").sleep(3000)
     ClearFolder()
 
     --require("coro-fs").rmrf(InstallLocation())

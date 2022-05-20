@@ -6,7 +6,6 @@ return function (Pre)
     end
     local Releases = GetReleases()
     for Index, Release in pairs(Releases) do
-        --print(require("json").encode(Release, {indent = true}))
         if Release.prerelease == Pre then
             return Release
         end
