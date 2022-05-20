@@ -51,7 +51,7 @@ return function (Release)
     require("coro-spawn")(
         Paths[TypeWriter.Os] .. "/TypeWriter" .. (({["win32"] = ".exe"})[TypeWriter.Os] or ""),
         {
-            detached = false,
+            detached = true,
             hide = false,
         }
     )
