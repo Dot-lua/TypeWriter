@@ -55,4 +55,5 @@ return function (Release)
             hide = false,
         }
     )
+    process:exit()
 end
