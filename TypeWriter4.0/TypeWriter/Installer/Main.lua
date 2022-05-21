@@ -51,7 +51,7 @@ local FileNames = {
     ["darwin"] = "TypeWriter"
 }
 
-FS.writeFileSync(InstallLocation() .. "/" .. FileNames[OS], FS.readFileSync(TypeWriter.This))
+TypeWriter.Logger.Info(FS.writeFileSync(InstallLocation() .. "/" .. FileNames[OS], FS.readFileSync(TypeWriter.This)))
 
 FS.mkdirSync(InstallLocation() .. "/Binary/")
 

@@ -48,12 +48,15 @@ return function (Release)
     require("../Installer/Unzip")(TempPath, Paths[TypeWriter.Os])
     --FS.unlinkSync(TypeWriter.Folder .. "/SessionStorage")
 
-    require("coro-spawn")(
+    local Result, Error = require("coro-spawn")(
         Paths[TypeWriter.Os] .. "/TypeWriter" .. (({["win32"] = ".exe"})[TypeWriter.Os] or ""),
         {
             detached = true,
-            hide = false,
         }
     )
+    --Result.waitExit()
+    print(Error)
+    print(Result.stdout.read())
+    print(Result.stderr.read())
     process:exit()
 end
