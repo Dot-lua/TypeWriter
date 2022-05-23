@@ -8,11 +8,17 @@ function BuildHelper:initialize(Folder, SubProject)
     self.SubProject = SubProject
     self.Folder = require("path").resolve(Folder) .. "/" .. SubProject .. "/"
 
+    local RawData, Error = FS.readFileSync(self.Folder .. "/Resources/package.info.lua")
+    if Error then
+        TypeWriter.Logger.Error("Failed to read package.info.lua, %s", Error)
+        Process:exit()
+    end
     local Data, Error = load(FS.readFileSync(self.Folder .. "/Resources/package.info.lua"))
 
     if Error then
         TypeWriter.Logger.Error(Error)
         TypeWriter.Logger.Error("Error while compiling package info ('" .. self.Folder .. "/Resources/package.info.lua" .. "')\n" .. CompiledPackage)
+        Process:exit()
     end
 
     self.Compiled = {

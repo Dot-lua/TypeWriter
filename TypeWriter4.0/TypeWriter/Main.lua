@@ -54,6 +54,7 @@ coroutine.wrap(function ()
     local ActionOverride
     if TypeWriter.ArgumentParser:GetArgument("isexe", "isexe", "false") == "true" then
         TypeWriter.ExeName = TypeWriter.ArgumentParser:GetArgument("exename", "exename", "")
+        TypeWriter.ExeFolder = Path.resolve(TypeWriter.ExeName, "../")
         local ExeArgs = require("json").decode(require("base64").decode(require("querystring").urldecode(TypeWriter.ArgumentParser:GetArgument("exearg", "exearg", ""))))
 
         ActionOverride = "executeexecutable"

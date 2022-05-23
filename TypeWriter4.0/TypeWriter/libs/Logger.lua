@@ -51,22 +51,27 @@ function Logger.Log(level, msg)
 
 end
 
-function Logger.Error(Msg, ...)
-	for I, v in pairs(String.Split(Msg or "", "\n")) do
-		Logger.Log(1, v)
+local function ParsedLog(Level, Message, ...)
+	if Message == nil then
+		Message = ""
 	end
+	Message = tostring(Message)
+	Message = string.format(Message, ...)
+	for Index, Line in pairs(string.Split(Message, "\n")) do
+		Logger.Log(Level, Line)
+	end
+end
+
+function Logger.Error(Msg, ...)
+	ParsedLog(1, Msg, ...)
 end
 
 function Logger.Warn(Msg, ...)
-	for I, v in pairs(String.Split(Msg or "", "\n")) do
-		Logger.Log(2, v)
-	end
+	ParsedLog(2, Msg, ...)
 end
 
 function Logger.Info(Msg, ...)
-	for I, v in pairs(String.Split(Msg or "", "\n")) do
-		Logger.Log(3, v)
-	end
+	ParsedLog(3, Msg, ...)
 end
 
 local DevMode = false
@@ -75,9 +80,7 @@ if _G.TypeWriter.Config then
 end
 function Logger.Debug(Msg, ...)
 	if DevMode == true then
-		for I, v in pairs(String.Split(Msg or "", "\n")) do
-			Logger.Log(4, v)
-		end
+		ParsedLog(4, Msg, ...)
 	end
 end
 
