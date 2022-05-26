@@ -178,4 +178,9 @@ local Finish = {
 
 Finish[OS]()
 
+require("coro-spawn")(
+    InstallLocation() .. "/" .. FileNames[OS],
+    {}
+).waitExit()
+
 Sleep(3000)
