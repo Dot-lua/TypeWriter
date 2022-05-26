@@ -11,10 +11,10 @@ return function ()
     TypeWriter.Logger.Info("Compiled!")
     TypeWriter.Logger.Info("Writing compiled package")
     local OutputLocation = TypeWriter.ArgumentParser:GetArgument("output", "o", "./")
-    FS.mkdirSync(OutputLocation .. "/TypeWriter/")
-    FS.mkdirSync(OutputLocation .. "/TypeWriter/Build/")
+    FS.mkdirSync(OutputLocation .. "/.TypeWriter/")
+    FS.mkdirSync(OutputLocation .. "/.TypeWriter/Build/")
 
-    FS.writeFileSync(OutputLocation .. "/TypeWriter/Build/" .. Compiler.Compiled.Package.ID .. ".twr", Compiler:ExportJson(true))
+    FS.writeFileSync(OutputLocation .. "/.TypeWriter/Build/" .. Compiler.Compiled.Package.ID .. ".twr", Compiler:ExportJson(true))
     TypeWriter.Logger.Info("Wrote compiled package")
     TypeWriter.Logger.Info("Task complete")
 end

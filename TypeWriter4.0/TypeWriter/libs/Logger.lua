@@ -36,7 +36,12 @@ do -- parse config
 	end
 end
 
+local LogFiles = {}
 
+function Logger.RegisterLogFile(File)
+	table.insert(LogFiles, File)
+end
+local FS = require("fs")
 function Logger.Log(level, msg)
 
 	local tag = config[level]
@@ -46,6 +51,10 @@ function Logger.Log(level, msg)
 
 	local d = date("%Y-%m-%d %H:%M:%S")
 	print(format('[%s] %s: %s', d, tag[2], msg))
+
+	for Index, File in pairs(LogFiles) do
+		FS.appendFileSync(File, format('[%s] %s: %s\n', d, tag[1], msg))
+	end
 
 	return msg
 

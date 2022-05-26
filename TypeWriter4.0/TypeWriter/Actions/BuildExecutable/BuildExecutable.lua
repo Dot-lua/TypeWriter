@@ -35,10 +35,10 @@ return function ()
     ExtractFolder("/Assets/ExecutableProject/", JobLocation)
 
     local OutputLocation = TypeWriter.ArgumentParser:GetArgument("output", "o", "./")
-    FS.mkdirSync(OutputLocation .. "/TypeWriter/")
-    FS.mkdirSync(OutputLocation .. "/TypeWriter/Build/")
+    FS.mkdirSync(OutputLocation .. "/.TypeWriter/")
+    FS.mkdirSync(OutputLocation .. "/.TypeWriter/Build/")
 
-    local ExeLocation = OutputLocation .. "/TypeWriter/Build/" .. Compiler.Compiled.Package.ID .. (({["win32"] = ".exe"})[TypeWriter.Os] or "")
+    local ExeLocation = OutputLocation .. "/.TypeWriter/Build/" .. Compiler.Compiled.Package.ID .. (({["win32"] = ".exe"})[TypeWriter.Os] or "")
 
     if FS.existsSync(ExeLocation) then
         FS.unlinkSync(ExeLocation)
