@@ -66,7 +66,7 @@ local function GetLatestGithubRelease(Name)
     local Response, Body = Request(
         "GET",
         string.format(
-            "https://api.github.com/repos/%s/releases?per_page=1",
+            "https://api.github.com/repos/%s/releases?per_page=5",
             Name
         ),
         {
