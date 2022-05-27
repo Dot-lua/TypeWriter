@@ -41,7 +41,8 @@ coroutine.wrap(function ()
                 "-i=" .. TempLocation .. "Pkg.twr",
                 "--isexe=true",
                 "--exearg=" .. QueryString.urlencode(Base.encode(Json.encode(process.argv))),
-                "--exename=" .. ExeName
+                "--exename=" .. ExeName,
+                "--exepid=" .. process.pid
             },
             stdio = {
                 process.stdin.handle,

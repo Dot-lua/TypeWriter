@@ -42,7 +42,8 @@ coroutine.wrap(function ()
         Folder = Path.resolve(args[0], "../"),
         This = Path.resolve(args[0]),
         Here = Path.resolve("./"),
-        Os = require("los").type()
+        Os = require("los").type(),
+        Pid = process.pid
     }
     TypeWriter.Logger = require("Logger")
 
@@ -59,11 +60,11 @@ coroutine.wrap(function ()
 
         ActionOverride = "executeexecutable"
         TypeWriter.Input = TypeWriter.ArgumentParser:GetArgument("input", "i", "")
+        TypeWriter.Pid = tonumber(TypeWriter.ArgumentParser:GetArgument("exepid", "exepid", ""))
 
         TypeWriter.Args = ExeArgs
         TypeWriter.Arguments = TypeWriter.Args
         TypeWriter.ArgumentParser = require("ArgumentParser"):new(TypeWriter.Args):Parse()
-
     end
     --#endregion
 
