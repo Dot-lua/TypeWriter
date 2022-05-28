@@ -83,7 +83,7 @@ jobs:
         working-directory: ./TypeWriter4.0/
         run: |
           ./Binary/luvi ./TypeWriter -o ../TypeWriter
-          tar -cvf ./TypeWriter.tar ./TypeWriter
+          tar -cvf ./TypeWriter.tar ../TypeWriter
         
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v3.0.0
