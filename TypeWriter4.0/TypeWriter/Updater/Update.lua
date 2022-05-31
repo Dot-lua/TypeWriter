@@ -46,6 +46,9 @@ return function (Release)
     local TempPath = Paths[TypeWriter.Os] .. "/TypeWriter.zip"
     FS.writeFileSync(TempPath, Data)
     require("../Installer/Unzip")(TempPath, Paths[TypeWriter.Os])
+    if TypeWriter.Os == "darwin" then
+        require("../Installer/Unzip")(Paths[TypeWriter.Os] .. "/TypeWriter.tar", Paths[TypeWriter.Os])
+    end
     --FS.unlinkSync(TypeWriter.Folder .. "/SessionStorage")
 
     local Result, Error = require("coro-spawn")(
