@@ -7,6 +7,10 @@ return function ()
         return
     end
     local Latest = require("./GetLatestRelease")()
+    if Latest == nil then
+        -- Might be rate limited?
+        return end
+    end
     if Latest.tag_name == Package.version then
         return
     end
