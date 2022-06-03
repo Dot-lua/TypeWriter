@@ -157,7 +157,9 @@ Finish[OS]()
 
 require("coro-spawn")(
     InstallLocation() .. "/" .. FileNames[OS],
-    {}
+    {
+        cwd = InstallLocation()
+    }
 ).waitExit()
 
 Sleep(3000)
