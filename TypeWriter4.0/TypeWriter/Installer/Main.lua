@@ -62,36 +62,14 @@ if not FS.existsSync(InstallLocation() .. "/Config/") then
     FS.writeFileSync(InstallLocation() .. "/Config/DeveloperMode.json", Bundle.readfile("Installer/Config/DeveloperMode.json"))
 end
 
-local function GetLatestGithubRelease(Name)
-    local Response, Body = Request(
-        "GET",
-        string.format(
-            "https://api.github.com/repos/%s/releases?per_page=5",
-            Name
-        ),
-        {
-            {"User-Agent", "TypeWriter"}
-        }
-    )
-    local DecodedResponse = Json.decode(Body)
-
-    return DecodedResponse[1]
-end
-
-local function FindTableWithKeyValue(Table, Key, Value)
-    for Index, Item in pairs(Table) do
-        if Item[Key] == Value then
-            return Item
-        end
-    end
-end
+local BaseUrl = "https://github.com/truemedian/luvit-bin/releases/latest/download/"
 
 local LuvitInstall = {
-    ["win32"] = function (Release)
+    ["win32"] = function ()
 
         local Response, Body = Request(
             "GET",
-            FindTableWithKeyValue(Release.assets, "name", "luvit-bin-Windows-x86_64.zip").browser_download_url,
+            BaseUrl .. "luvit-bin-Windows-x86_64.zip",
             {
                 {"User-Agent", "TypeWriter"}
             }
@@ -101,11 +79,11 @@ local LuvitInstall = {
 
         require("./Unzip")(InstallLocation() .. "/Binary/luvit-bin.zip", InstallLocation() .. "/Binary/")
     end,
-    ["darwin"] = function (Release)
+    ["darwin"] = function ()
 
         local Response, Body = Request(
             "GET",
-            FindTableWithKeyValue(Release.assets, "name", "luvit-bin-Darwin-x86_64.tar.gz").browser_download_url,
+            BaseUrl .. "luvit-bin-Darwin-x86_64.tar.gz",
             {
                 {"User-Agent", "TypeWriter"}
             }
@@ -117,9 +95,8 @@ local LuvitInstall = {
     end
 }
 
-local Release = GetLatestGithubRelease("truemedian/luvit-bin")
-TypeWriter.Logger.Info("Downloading truemedian/luvit-bin version " .. Release.name)
-LuvitInstall[OS](Release)
+TypeWriter.Logger.Info("Downloading luvit binaries...")
+LuvitInstall[OS]()
 TypeWriter.Logger.Info("Download complete")
 
 FS.mkdirSync(InstallLocation() .. "/ApplicationData/")
