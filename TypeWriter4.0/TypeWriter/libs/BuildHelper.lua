@@ -30,7 +30,6 @@ function BuildHelper:initialize(Folder, SubProject)
         Code = {},
         Resources = {}
     }
-
 end
 
 local MainNames = {
@@ -41,42 +40,55 @@ local function FixPath(Name)
     return string.sub(Name, 2, -1)
 end
 
-function BuildHelper:Compile()
-    local function BuildScan(self, Parent, Folder)
-        TypeWriter.Logger.Debug("Compiling " .. Parent)
-        TypeWriter.Logger.Debug("Compiling folder " .. Folder)
-        for FileName, FileType in FS.scandirSync(Folder) do
-            TypeWriter.Logger.Debug("Compiling working on " .. FileName)
-            if FileType == "directory" then
-                BuildScan(self, Parent .. "." .. FileName, Folder .. "/" .. FileName)
-                if FS.existsSync(Folder .. "/" .. FileName .. "/Main.lua") then
-                    self.Compiled.Code[FixPath(Parent .. "." .. FileName)] = {
-                        Type = "Redirect",
-                        RedirectTo = FixPath(Parent .. "." .. FileName .. ".Main")
-                    }
-                end
-            elseif FileType == "file" then
-                local FilePath = Folder .. "/" .. FileName
-                if Path.extname(FilePath) == ".lua" then
-                    self.Compiled.Code[FixPath(Parent .. "." .. Path.basename(FilePath, ".lua"))] = {
-                        Type = "Code",
-                        Code = FS.readFileSync(Folder .. "/" .. FileName)
-                    }
-                    if FS.existsSync(Folder .. "/" .. Path.basename(FileName, ".lua")) then
-                        TypeWriter.Logger.Error("Found 2 duplicate file/folders in " .. FixPath(Parent))
-                        TypeWriter.Logger.Error("Please fix before recompiling")
-                        process:exit(1)
-                    end
-                else
-                    TypeWriter.Logger.Error("Found a non .lua file (" .. FixPath(Parent .. "." .. FileName) .. ")")
+local function BuildScan(self, Parent, Folder)
+    TypeWriter.Logger.Debug("Compiling " .. Parent)
+    TypeWriter.Logger.Debug("Compiling folder " .. Folder)
+    for FileName, FileType in FS.scandirSync(Folder) do
+        TypeWriter.Logger.Debug("Compiling working on " .. FileName)
+        if FileType == "directory" then
+            BuildScan(self, Parent .. "." .. FileName, Folder .. "/" .. FileName)
+            if FS.existsSync(Folder .. "/" .. FileName .. "/Main.lua") then
+                self.Compiled.Code[FixPath(Parent .. "." .. FileName)] = {
+                    Type = "Redirect",
+                    RedirectTo = FixPath(Parent .. "." .. FileName .. ".Main")
+                }
+            end
+        elseif FileType == "file" then
+            local FilePath = Folder .. "/" .. FileName
+            if Path.extname(FilePath) == ".lua" then
+                self.Compiled.Code[FixPath(Parent .. "." .. Path.basename(FilePath, ".lua"))] = {
+                    Type = "Code",
+                    Code = FS.readFileSync(Folder .. "/" .. FileName)
+                }
+                if FS.existsSync(Folder .. "/" .. Path.basename(FileName, ".lua")) then
+                    TypeWriter.Logger.Error("Found 2 duplicate file/folders in " .. FixPath(Parent))
                     TypeWriter.Logger.Error("Please fix before recompiling")
-                    Process:exit(1)
+                    process:exit(1)
                 end
+            elseif TypeWriter.Config.Compiler.Ignore.Code[FileName] then
+            else
+                TypeWriter.Logger.Error("Found a non .lua file (" .. FixPath(Parent .. "." .. FileName) .. ")")
+                TypeWriter.Logger.Error("Please fix before recompiling")
+                Process:exit(1)
             end
         end
     end
+end
 
+local function ResourceScan(self, Parent, Folder)
+    for FileName, FileType in FS.scandirSync(Folder) do
+        if FileType == "directory" then
+            ResourceScan(self, Parent .. "/" .. FileName, Folder .. "/" .. FileName)
+        elseif FileType == "file" and TypeWriter.Config.Compiler.Ignore.Resources[FileName] then
+        else
+            self.Compiled.Resources[Parent .. "/" .. FileName] = FS.readFileSync(Folder .. "/" .. FileName)
+        end
+    end
+end
+
+function BuildHelper:Compile()
     BuildScan(self, "", self.Folder .. "/lua/")
+    ResourceScan(self, "", self.Folder .. "/Resources/")
 
     return self
 end
