@@ -42,6 +42,17 @@ jobs:
         working-directory: ./TypeWriter4.0/
         run: ./Binary/luvi ./TypeWriter -o ./TypeWriter.exe
         
+      - name: Download resourcehacker
+        working-directory: ./TypeWriter4.0/
+        run: |
+          curl.exe -L --url http://www.angusj.com/resourcehacker/resource_hacker.zip --output ./RH.zip
+          tar -xf ./RH.zip
+          
+      - name: Change icon
+        working-directory: ./TypeWriter4.0/
+        run: |
+          ./ResourceHacker.exe -open ".\TypeWriter.exe" -save ".\TypeWriter.exe" -action addoverwrite -res .\Icon.ico -mask ICONGROUP,MAINICON
+        
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v3.0.0
         with:
