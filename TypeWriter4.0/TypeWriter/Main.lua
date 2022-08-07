@@ -1,3 +1,5 @@
+local Uv = require("uv")
+
 coroutine.wrap(function ()
     -- Globals
 
