@@ -30,15 +30,6 @@ local function Stop(self)
     Increment(-1, self)
 end
 
-local function HookCheck(self)
-    local Signal = Uv.new_signal()
-	Signal:start(Uv.constants.SIGINT, function()
-		Signal:stop()
-		Signal:close()
-		return coroutine.wrap(Stop)(self)
-	end)
-end
-
 function SessionManager:Hook()
     Start(self)
     local Signal = Uv.new_signal()
