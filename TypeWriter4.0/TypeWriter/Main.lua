@@ -120,4 +120,5 @@ coroutine.wrap(function ()
     require("./Updater/Main.lua")()
     
 end)()
-require("uv").run()
+Uv.run()
+return _G.process.exitCode
