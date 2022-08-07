@@ -30,6 +30,12 @@ coroutine.wrap(function ()
     end
     _G.wait = Wait
 
+    if jit.os ~= 'Windows' then
+        local sig = Uv.new_signal()
+        Uv.signal_start(sig, 'sigpipe')
+        Uv.unref(sig)
+    end
+
     --Special Global
     local Package = require("./package")
     local Path = require("path")
