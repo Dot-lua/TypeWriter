@@ -55,6 +55,8 @@ coroutine.wrap(function ()
         Pid = process.pid
     }
     TypeWriter.Logger = require("Logger")
+    TypeWriter.AppData = TypeWriter.Folder .. "/ApplicationData/"
+    TypeWriter.ApplicationData = TypeWriter.AppData
 
     --#region Arg stuff
     TypeWriter.Args[0] = nil
