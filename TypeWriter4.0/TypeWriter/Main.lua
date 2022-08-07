@@ -118,6 +118,6 @@ coroutine.wrap(function ()
 
     TypeWriter.SessionManager:Stop()
     require("./Updater/Main.lua")()
-
+    
 end)()
 require("uv").run()
