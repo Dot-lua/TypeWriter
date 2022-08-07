@@ -10,7 +10,11 @@ end
 
 function ActionHelper:ExecuteAction(ActionName, ...)
     if self.Actions[string.lower(ActionName)] then
-        return self.Actions[string.lower(ActionName)](...) or true
+        local Success = self.Actions[string.lower(ActionName)](...)
+        if Success == nil then
+            Success = true
+        end
+        return Success
     else
         return false
     end
