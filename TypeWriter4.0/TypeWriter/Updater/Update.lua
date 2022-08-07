@@ -58,8 +58,5 @@ return function (Release)
         }
     )
     --Result.waitExit()
-    print(Error)
-    print(Result.stdout.read())
-    print(Result.stderr.read())
     process:exit()
 end
