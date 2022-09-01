@@ -3,11 +3,10 @@ deps
 TypeWriter.exe
 TypeWriter_original.exe
 
-
 TypeWriter.ps1
-Update.ps1
-Build.sh
-Update.sh
+UpdateDeps.ps1
+TypeWriter.sh
+UpdateDeps.sh
 
 PackageCache
 
