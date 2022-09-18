@@ -200,7 +200,7 @@ jobs:
             for i in {1..5}; do timeout 10 ../../../Binary/lit install && break || sleep 15; done
             ls
             pwd
-            cd ../../../../
+            cd ../../../
             ls
             pwd
             ./Binary/luvi ./TypeWriter -o ./Binary/TypeWriter
