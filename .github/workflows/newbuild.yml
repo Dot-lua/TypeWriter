@@ -52,7 +52,7 @@ jobs:
         working-directory: ./TypeWriter/
         uses: actions/upload-artifact@v3.0.0
         with:
-          name: ${{ env.artifact }}
+          name: TypeWriter-linux-$(arch)
           path: ./TypeWriter.tar
   darwin:
     runs-on: macos-latest
