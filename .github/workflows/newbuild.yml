@@ -48,7 +48,7 @@ jobs:
           ./Binary/luvi ./TypeWriter -o ./Binary/TypeWriter
           arch
           ls ../
-          echo "::set-env arch=$(arch)::6"
+          echo "arch=$(arch)" >> $GITHUB_ENV
 
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v3.0.0
