@@ -182,7 +182,7 @@ jobs:
           shell: /bin/bash
           install: |
             apt-get update -q -y
-            apt-get install -q -y git
+            apt-get install -q -y git curl
           run: |
             cd ./TypeWriter/
             mkdir ./Binary/
