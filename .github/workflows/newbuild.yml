@@ -46,6 +46,7 @@ jobs:
         working-directory: ./TypeWriter/
         run: |
           ./Binary/luvi ./TypeWriter -o ./Binary/TypeWriter
+          arch
           ls ../
 
       - name: Upload a Build Artifact
