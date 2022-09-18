@@ -53,7 +53,7 @@ jobs:
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v3.0.0
         with:
-          name: "TypeWriter-linux-$arch"
+          name: "TypeWriter-linux-${{ env.artifact }}"
           path: ./TypeWriter/Binary/TypeWriter
   darwin:
     runs-on: macos-latest
