@@ -13,10 +13,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Clone
-        run: git clone https://github.com/Dot-lua/TypeWriter/ ./
+        run: |
+          git clone https://github.com/Dot-lua/TypeWriter/ ./
+          ls
 
-      - name: Clone
-        run: ls
+      - name: Download luvit
+        run: |
+          curl -fL https://github.com/truemedian/luvit-bin/raw/main/install.sh | sh
+          ls
   darwin:
     runs-on: macos-latest
     steps:
