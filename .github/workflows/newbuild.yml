@@ -48,12 +48,12 @@ jobs:
           ./Binary/luvi ./TypeWriter -o ./Binary/TypeWriter
           arch
           ls ../
-          set arch=$(arch)
+          echo "::set-env arch=$(arch)::6"
 
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v3.0.0
         with:
-          name: "TypeWriter-linux-${{ env.artifact }}"
+          name: "TypeWriter-linux-${{ env.arch }}"
           path: ./TypeWriter/Binary/TypeWriter
   darwin:
     runs-on: macos-latest
