@@ -204,8 +204,10 @@ jobs:
             ls
             pwd
             ./Binary/luvi ./TypeWriter -o ./Binary/TypeWriter
-            ls ../
-            echo "artifact=TypeWriter-$(uname -s)-$(uname -m)" >> $GITHUB_ENV
+
+      - name: Set Env var
+        run: |
+          echo "artifact=TypeWriter-$(uname -s)-$(uname -m)" >> $GITHUB_ENV
 
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v3.0.0
