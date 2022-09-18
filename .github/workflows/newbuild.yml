@@ -29,7 +29,8 @@ jobs:
       - name: Download Deps
         working-directory: TypeWriter/TypeWriter
         run: |
-          ../Binary/lit install
+          function timeout() { perl -e 'alarm shift; exec @ARGV' "$@"; }
+          for i in {1..5}; do timeout 10 ../Binary/lit install && break || sleep 15; done
           ls
           pwd
   darwin:
