@@ -50,7 +50,7 @@ jobs:
 
       - name: Set Env var
         run: |
-          echo "artifact=TypeWriter-${{ runner.os }}-$(arch)" >> $GITHUB_ENV
+          echo "artifact=TypeWriter-$(uname -s)-$(uname -m)" >> $GITHUB_ENV
 
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v3.0.0
@@ -98,7 +98,7 @@ jobs:
 
       - name: Set Env var
         run: |
-          echo "artifact=TypeWriter-${{ runner.os }}-$(arch)" >> $GITHUB_ENV
+          echo "artifact=TypeWriter-$(uname -s)-$(uname -m)" >> $GITHUB_ENV
 
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v3.0.0
