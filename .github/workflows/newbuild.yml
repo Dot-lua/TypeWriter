@@ -49,11 +49,10 @@ jobs:
           ls ../
 
       - name: Upload a Build Artifact
-        working-directory: ./TypeWriter/Binary/
         uses: actions/upload-artifact@v3.0.0
         with:
-          name: TypeWriter-linux-$(arch)
-          path: ./TypeWriter
+          name: "TypeWriter-linux-$(arch)"
+          path: ./TypeWriter/Binary/TypeWriter
   darwin:
     runs-on: macos-latest
     steps:
