@@ -201,8 +201,8 @@ jobs:
             ls
             pwd
             cd ../../../../
-            ls
             cd ../
+            ls
             pwd
             ./Binary/luvi ./TypeWriter -o ./Binary/TypeWriter
             ls ../
