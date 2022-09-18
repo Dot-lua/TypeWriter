@@ -45,7 +45,7 @@ jobs:
       - name: Build TypeWriter
         working-directory: ./TypeWriter/
         run: |
-          ./Binary/luvi ./TypeWriter -o ../TypeWriter
+          ./Binary/luvi ./TypeWriter -o ../TypeWriter.exe
           ls ../
   darwin:
     runs-on: macos-latest
