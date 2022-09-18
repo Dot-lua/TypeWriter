@@ -33,6 +33,14 @@ jobs:
           for i in {1..5}; do timeout 10 ../Binary/lit install && break || sleep 15; done
           ls
           pwd
+
+      - name: Install Executable deps
+        working-directory: ./TypeWriter/TypeWriter/Assets/ExecutableProject/
+        run: |
+          function timeout() { perl -e 'alarm shift; exec @ARGV' "$@"; }
+          for i in {1..5}; do timeout 10 ../../../Binary/lit install && break || sleep 15; done
+          ls
+          pwd
   darwin:
     runs-on: macos-latest
     steps:
