@@ -45,8 +45,15 @@ jobs:
       - name: Build TypeWriter
         working-directory: ./TypeWriter/
         run: |
-          ./Binary/luvi ./TypeWriter -o ../TypeWriter.exe
+          ./Binary/luvi ./TypeWriter -o ./Binary/TypeWriter
           ls ../
+
+      - name: Upload a Build Artifact
+        working-directory: ./TypeWriter/
+        uses: actions/upload-artifact@v3.0.0
+        with:
+          name: ${{ env.artifact }}
+          path: ./TypeWriter.tar
   darwin:
     runs-on: macos-latest
     steps:
