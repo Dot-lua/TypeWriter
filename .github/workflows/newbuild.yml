@@ -18,7 +18,7 @@ jobs:
           ls
 
       - name: Download luvit
-        working-directory: /TypeWriter/
+        working-directory: TypeWriter
         run: |
           mkdir ./Binary/
           cd ./Binary
