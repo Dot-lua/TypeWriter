@@ -202,8 +202,8 @@ jobs:
             pwd
             cd ../../../../
             ls
-            pwd
             cd ../
+            pwd
             ./Binary/luvi ./TypeWriter -o ./Binary/TypeWriter
             ls ../
             echo "artifact=TypeWriter-$(uname -s)-$(uname -m)" >> $GITHUB_ENV
