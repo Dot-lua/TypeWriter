@@ -18,9 +18,13 @@ jobs:
           ls
 
       - name: Download luvit
+        working-directory: /TypeWriter/
         run: |
+          mkdir ./Binary/
+          cd ./Binary
           curl -fL https://github.com/truemedian/luvit-bin/raw/main/install.sh | sh
           ls
+          pwd
   darwin:
     runs-on: macos-latest
     steps:
