@@ -49,7 +49,7 @@ jobs:
           ls ../
 
       - name: Upload a Build Artifact
-        working-directory: ./TypeWriter/Binary
+        working-directory: ./TypeWriter/Binary/
         uses: actions/upload-artifact@v3.0.0
         with:
           name: TypeWriter-linux-$(arch)
