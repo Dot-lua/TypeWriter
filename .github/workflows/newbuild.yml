@@ -207,7 +207,7 @@ jobs:
 
       - name: Set Env var
         run: |
-          echo "artifact=TypeWriter-$(uname -s)-$(uname -m)-${{ matrix.arch }}" >> $GITHUB_ENV
+          echo "artifact=TypeWriter-$(uname -s)-${{ matrix.arch }}" >> $GITHUB_ENV
 
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v3.0.0
