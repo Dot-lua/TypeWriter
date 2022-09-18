@@ -177,6 +177,7 @@ jobs:
         with:
           distro: stretch
           arch: ${{ matrix.arch }}
+          githubToken: ${{ github.token }}
 
           shell: /bin/bash
           install: |
