@@ -12,45 +12,8 @@ jobs:
   linux:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout truemedian/luvit-bin
-        uses: actions/checkout@v2
-
       - name: Clone
-        working-directory: ci
-        run: |
-          chmod u+x build.sh
-          chmod u+x headers.sh
-          ./build.sh clone
-      - name: Build Luvi
-        working-directory: ci
-        run: |
-          ./build.sh luvi
-      - name: Generate Headers
-        working-directory: ci
-        run: |
-          ./headers.sh
-      - name: Build Lit
-        working-directory: ci
-        run: |
-          ./build.sh lit
-      - name: Build Luvit
-        working-directory: ci
-        run: |
-          ./build.sh luvit
-      - name: Package
-        working-directory: ci
-        run: |
-          ./build.sh package
-      - uses: actions/upload-artifact@v2
-        with:
-          name: ${{ env.artifact }}
-          path: ci/build/${{ env.artifact }}
-
-      - uses: actions/upload-artifact@v2
-        with:
-          name: headers.tar.gz
-          path: ci/headers/headers.tar.gz
-
+        run: git clone https://github.com/Dot-lua/TypeWriter/
   darwin:
     runs-on: macos-latest
     steps:
