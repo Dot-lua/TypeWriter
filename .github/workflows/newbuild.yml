@@ -27,9 +27,9 @@ jobs:
           pwd
 
       - name: Download Deps
-        working-directory: TypeWriter
+        working-directory: TypeWriter/TypeWriter
         run: |
-          ./Binary/lit install
+          ../Binary/lit install
           ls
           pwd
   darwin:
