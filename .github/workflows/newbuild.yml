@@ -57,6 +57,7 @@ jobs:
         with:
           name: "${{ env.artifact }}"
           path: ./TypeWriter/Binary/TypeWriter
+
   darwin:
     runs-on: macos-latest
     steps:
@@ -166,14 +167,11 @@ jobs:
       matrix:
         arch: [armv6, armv7, aarch64]
     steps:
-      - name: Checkout truemedian/luvit-bin
-        uses: actions/checkout@v2
-
       - name: Clone
-        working-directory: ci
         run: |
-          chmod u+x build.sh
-          ./build.sh clone
+          git clone https://github.com/Dot-lua/TypeWriter/ ./
+          ls
+
       - uses: uraimo/run-on-arch-action@v2
         name: Build
         with:
@@ -183,14 +181,30 @@ jobs:
           shell: /bin/bash
           install: |
             apt-get update -q -y
-            apt-get install -q -y build-essential perl git cmake
+            apt-get install -q -y git
           run: |
-            cd ci
-            ./build.sh luvi
-            ./build.sh lit
-            ./build.sh luvit
-            ./build.sh package
-      - uses: actions/upload-artifact@v2
+            cd ./TypeWriter/
+            mkdir ./Binary/
+            cd ./Binary
+            curl -fL https://github.com/truemedian/luvit-bin/raw/main/install.sh | sh
+            ls
+            pwd
+            cd ./TypeWriter/
+            function timeout() { perl -e 'alarm shift; exec @ARGV' "$@"; }
+            for i in {1..5}; do timeout 10 ../Binary/lit install && break || sleep 15; done
+            ls
+            pwd
+            cd ./Assets/ExecutableProject/
+            for i in {1..5}; do timeout 10 ../../../Binary/lit install && break || sleep 15; done
+            ls
+            pwd
+            cd ../../../../
+            ./Binary/luvi ./TypeWriter -o ./Binary/TypeWriter
+            ls ../
+            echo "artifact=TypeWriter-$(uname -s)-$(uname -m)" >> $GITHUB_ENV
+
+      - name: Upload a Build Artifact
+        uses: actions/upload-artifact@v3.0.0
         with:
-          name: ${{ env.artifact }}
-          path: ci/build/${{ env.artifact }}
+          name: "${{ env.artifact }}"
+          path: ./TypeWriter/Binary/TypeWriter
