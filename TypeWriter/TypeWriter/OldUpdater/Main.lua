@@ -1,6 +1,5 @@
 local Package = require("../package")
 return function ()
-    TypeWriter.ProcessMonitor:GetInstancesOf("TypeWriter.exe")
     if TypeWriter.SessionManager:GetRunningCount() ~= 0 then
         return
     end

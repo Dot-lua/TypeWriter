@@ -52,6 +52,7 @@ coroutine.wrap(function ()
         This = Path.resolve(args[0]),
         Here = Path.resolve("./"),
         Os = require("los").type(),
+        OS = require("los").type(),
         Pid = process.pid
     }
     TypeWriter.Logger = require("Logger")
@@ -87,6 +88,7 @@ coroutine.wrap(function ()
     end
     TypeWriter.Config = require("ConfigHelper"):new():ExportConfig()
     TypeWriter.SessionManager = require("SessionManager"):new():Hook()
+    TypeWriter.ProcessMonitor = require("ProcessMonitor"):new()
 
     --Require helper
     _G.package.path = TypeWriter.Folder .. "/PackageCache/?/init.lua;" .. "./libs/?.lua;" .. _G.package.path
