@@ -39,8 +39,6 @@ if FS.existsSync(InstallLocation()) then
     TypeWriter.Logger.Info("Removing old installation...")
     TypeWriter.Logger.Info("Deleting folder " .. InstallLocation())
     ClearFolder()
-
-    --require("coro-fs").rmrf(InstallLocation())
 end
 
 FS.mkdirSync(InstallLocation())
