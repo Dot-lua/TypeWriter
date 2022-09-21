@@ -3,48 +3,29 @@ local ProcessMonitor = Object:extend()
 local Spawn = require("coro-spawn")
 local Path = require("path")
 local FS = require("fs")
+local Json = require("json")
 
 local Getters = {
     [true] = function () -- windows
         local Result = Spawn(
-            "cmd",
+            "powershell",
             {
                 args = {
-                    "/c",
-                    "wmic process get ProcessId,ParentProcessId,CommandLine"
+                    "-Command",
+                    "tasklist /FO csv | convertfrom-csv | convertto-json"
                 }
             }
         )
-        local Output = ""
-        for Data in Result.stdout.read do
-            Output = Output .. Data
-        end
         Result.waitExit()
-
-        local Lines = {}
-        for Index, SplitStage1 in pairs(Output.split(Output, "\r\n")) do
-            local Command = table.concat(
-                string.split(
-                    SplitStage1,
-                    " "
-                ),
-                " "
-            )
-            table.insert(Lines, Command)
-        end
-        table.remove(Lines, 1)
-        require("fs").writeFileSync("./a.json", require("json").encode(Lines, {indent = true}))
-        for Index, Line in pairs(Lines) do
+        local Data = Json.decode(Result.stdout.read())
+        local Processes = {}
+        for Index, ProcessData in pairs(Data) do
             local Process = {}
-            local SplitLine = Line:Split(" ")
-            Process.PID = SplitLine[#SplitLine]
-            Process.PPID = SplitLine[#SplitLine - 1]
-            table.remove(SplitLine)
-            table.remove(SplitLine)
-            Process.CommandLine = table.concat(SplitLine, " ")
-            p(Process)
-            p("")
+            Process.Exe = ProcessData["Image Name"]
+            Process.PID = ProcessData.PID
+            table.insert(Processes, Process)
         end
+        return Processes
     end,
     [false] = function () --then it must be linux
         local Result = Spawn(
@@ -78,10 +59,6 @@ local Getters = {
             Process.Arguments = SplitLine
             table.insert(Processes, Process)
         end
-        p(Processes)
-        require("fs").writeFileSync(
-            require("json").encode(Processes, {indent = true})
-        )
         return Processes
     end
 }
@@ -92,13 +69,18 @@ end
 
 function ProcessMonitor:GetInstances()
     local Data = Getters[TypeWriter.OS == "win32"]()
-    for Index, Process in pairs(Data) do
-        p(Process.CommandLine)
-    end
+    return Data
 end
 
 function ProcessMonitor:GetInstancesOf(File)
-    self:GetInstances()
+    local All = self:GetInstances()
+    local Count = 0
+    for Index, Process in pairs(All) do
+        if Process.Exe:lower():startswith("typewriter") == true then
+            Count = Count + 1
+        end
+    end
+    return Count
 end
 
 return ProcessMonitor
