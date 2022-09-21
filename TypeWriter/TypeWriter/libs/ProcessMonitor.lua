@@ -21,7 +21,7 @@ local Getters = {
         end
         Result.waitExit()
 
-        local RunningCommands = {}
+        local Lines = {}
         for Index, SplitStage1 in pairs(Output.split(Output, "\r\n")) do
             local Command = table.concat(
                 string.split(
@@ -30,10 +30,21 @@ local Getters = {
                 ),
                 " "
             )
-            table.insert(RunningCommands, Command)
+            table.insert(Lines, Command)
         end
-        p(RunningCommands)
-        require("fs").writeFileSync("./a.json", require("json").encode(RunningCommands, {indent = true}))
+        table.remove(Lines, 1)
+        require("fs").writeFileSync("./a.json", require("json").encode(Lines, {indent = true}))
+        for Index, Line in pairs(Lines) do
+            local Process = {}
+            local SplitLine = Line:Split(" ")
+            Process.PID = SplitLine[#SplitLine]
+            Process.PPID = SplitLine[#SplitLine - 1]
+            table.remove(SplitLine)
+            table.remove(SplitLine)
+            Process.CommandLine = table.concat(SplitLine, " ")
+            p(Process)
+            p("")
+        end
     end,
     [false] = function () --then it must be linux
         local Result = Spawn(
