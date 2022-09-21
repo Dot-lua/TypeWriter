@@ -12,13 +12,19 @@ return function (Release)
     TypeWriter.Logger.Info()
     TypeWriter.Logger.Info("Downloading new version " .. Release.tag_name)
 
-    local FileNames = {
-        ["darwin"] = "MacOs.zip",
-        ["linux"] = "Linux.zip",
-        ["win32"] = "Windows.zip"
+    local OsNames = {
+        win32 = "Windows",
+        darwin = "Darwin",
+        linux = "Linux"
     }
 
-    local Asset = FindTableWithKey(Release.assets, "name", "TypeWriter-" .. FileNames[TypeWriter.Os])
+    local FileName = string.format(
+        "TypeWriter-%s-%s.tar.gz",
+        OsNames[TypeWriter.OS],
+        require("uv").os_uname().machine
+    )
+
+    local Asset = FindTableWithKey(Release.assets, "name", FileName)
 
     if Asset == nil then
         TypeWriter.Logger.Error("A new release was found but no asset was found for this platform")
@@ -49,7 +55,6 @@ return function (Release)
     if TypeWriter.Os == "darwin" then
         require("../Installer/Unzip")(Paths[TypeWriter.Os] .. "/TypeWriter.tar", Paths[TypeWriter.Os])
     end
-    --FS.unlinkSync(TypeWriter.Folder .. "/SessionStorage")
 
     local Result, Error = require("coro-spawn")(
         Paths[TypeWriter.Os] .. "/TypeWriter" .. (({["win32"] = ".exe"})[TypeWriter.Os] or ""),
@@ -57,6 +62,5 @@ return function (Release)
             detached = true,
         }
     )
-    --Result.waitExit()
     process:exit()
 end
