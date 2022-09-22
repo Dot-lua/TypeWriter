@@ -7,7 +7,7 @@ on:
 
 jobs:
   Build-Workflow:
-    uses: ./.github/workflows/newbuild.yml
+    uses: ./.github/workflows/build.yml
     
   Upload-Release-Assets:
     runs-on: ubuntu-latest
