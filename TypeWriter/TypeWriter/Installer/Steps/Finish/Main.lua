@@ -56,6 +56,7 @@ return function (InstallCache)
     Finish[TypeWriter.Os == "win32"]()
     FS.mkdirSync(InstallCache.Location .. "/ApplicationData/")
 
+    p(InstallCache.Location .. "/TypeWriter")
     local Result, Error = require("coro-spawn")(
         InstallCache.Location .. "/TypeWriter",
         {
