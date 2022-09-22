@@ -87,7 +87,6 @@ coroutine.wrap(function ()
         process:exit()
     end
     TypeWriter.Config = require("ConfigHelper"):new():ExportConfig()
-    TypeWriter.SessionManager = require("SessionManager"):new():Hook()
     TypeWriter.ProcessMonitor = require("ProcessMonitor"):new()
 
     --Require helper
@@ -121,8 +120,7 @@ coroutine.wrap(function ()
         TypeWriter.Logger.Error("The requested action (" .. Action .. ") does not exist")
         ActionHelper:ExecuteAction("help")
     end
-
-    TypeWriter.SessionManager:Stop()
+    
     require("./Updater/Main.lua")()
     
 end)()
