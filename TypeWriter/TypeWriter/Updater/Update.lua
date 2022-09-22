@@ -56,10 +56,19 @@ return function (Release)
         require("../Installer/Unzip")(Paths[TypeWriter.Os] .. "/TypeWriter.tar", Paths[TypeWriter.Os])
     end
 
+    local InstallOverWrite
+    if FS.existsSync(TypeWriter.Folder .. "/DevEnv") == false then
+        InstallOverWrite = TypeWriter.Folder
+    end
+
     local Result, Error = require("coro-spawn")(
         Paths[TypeWriter.Os] .. "/TypeWriter" .. (({["win32"] = ".exe"})[TypeWriter.Os] or ""),
         {
-            detached = true,
+            detached = false,
+            hide = false,
+            args = {
+                InstallOverWrite
+            }
         }
     )
     process:exit()
