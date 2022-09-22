@@ -19,9 +19,9 @@ local InstallCache = {
     FS = FS
 }
 FS.mkdirSync(InstallCache.Location)
-p(FS.writeFileSync(InstallCache.Location .. "/SessionStorage", "0"))
 
 require("./Steps/ClearFolder/Main.lua")(InstallCache)
+FS.writeFileSync(InstallCache.Location .. "/SessionStorage", "0")
 require("./Steps/InstallExe/Main.lua")(InstallCache)
 require("./Steps/LoadConfigs/Main.lua")(InstallCache)
 require("./Steps/DownloadBinaries/Main.lua")(InstallCache)
