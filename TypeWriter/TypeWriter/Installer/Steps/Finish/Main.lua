@@ -12,7 +12,7 @@ return function (InstallCache)
     
         end,
         [false] = function ()
-            os.execute("chmod +x '" .. InstallLocation() .. "/TypeWriter'")
+            os.execute("chmod +x '" .. InstallLocation .. "/TypeWriter'")
     
             local ProfileLocation = process.env.HOME .. "/.bash_profiles"
     
@@ -41,7 +41,7 @@ return function (InstallCache)
             end
     
     
-            if FindAndInsert(ProfileLocation, 'alias TypeWriter="\'' .. InstallLocation() .. '/TypeWriter\'"') then
+            if FindAndInsert(ProfileLocation, 'alias TypeWriter="\'' .. InstallLocation .. '/TypeWriter\'"') then
                 TypeWriter.Logger.Info("Added TypeWriter to your bash profile")
             end
     
