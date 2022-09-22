@@ -32,7 +32,7 @@ local Getters = {
             "ps",
             {
                 args = {
-                    "lx"
+                    "-eco", "pid,command"
                 }
             }
         )
@@ -41,24 +41,17 @@ local Getters = {
             Output = Output .. Data
         end
         Result.waitExit()
-        local Lines = Output:split("\n")
+        local Lines = Output:Split("\n")
         local Processes = {}
-        table.remove(Lines, 1)
         for Index, Line in pairs(Lines) do
-            local SplitLine = Line:Split(" ")
             local Process = {}
-            Process.PID = SplitLine[2]
-            Process.PPID = SplitLine[3]
-            for I = 1, 12 do
-                table.remove(SplitLine, 1)
-            end
-            Process.CommandLine = table.concat(SplitLine, " ")
-            local Command = SplitLine[1]
-            Process.Command = Command
+            local SplitLine = Line:Split(" ")
+            Process.PID = SplitLine[1]
             table.remove(SplitLine, 1)
-            Process.Arguments = SplitLine
+            Process.Exe = table.concat(SplitLine, " ")
             table.insert(Processes, Process)
         end
+        p(Processes)
         return Processes
     end
 }
