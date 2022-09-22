@@ -1,6 +1,6 @@
 return {
     name = "TypeWriter",
-    version = "4.7.0-beta.4",
+    version = "4.7.0-beta.7",
     description = "Lua package creator",
     tags = {
         "Package"
