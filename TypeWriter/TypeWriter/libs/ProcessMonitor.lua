@@ -51,7 +51,6 @@ local Getters = {
             Process.Exe = table.concat(SplitLine, " ")
             table.insert(Processes, Process)
         end
-        p(Processes)
         return Processes
     end
 }
