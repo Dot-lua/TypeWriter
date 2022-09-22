@@ -32,7 +32,7 @@ local Getters = {
             "ps",
             {
                 args = {
-                    "-eco", "pid,command"
+                    "--no-headers", "-eco", "pid,command"
                 }
             }
         )
