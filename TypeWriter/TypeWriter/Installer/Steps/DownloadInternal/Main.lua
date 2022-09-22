@@ -1,9 +1,12 @@
-local FS = require("fs")
-local Request = require("./Request").Request
-local JsonRequest = require("./Request").JsonRequest
-
-return function (Folder)
-    FS.mkdirSync(Folder .. "/Internal/")
+return function (InstallCache)
+    local FS = InstallCache.FS
+    local InstallLocation = InstallCache.Location
+    local RequestLib = require("../../Request.lua")
+    local Request = RequestLib.Request
+    local JsonRequest = RequestLib.JsonRequest
+    TypeWriter.Logger.Info("Downloading internal libraries")
+    
+    FS.mkdirSync(InstallLocation .. "/Internal/")
 
     local _, PackageMeta = JsonRequest(
         "GET",
@@ -22,6 +25,6 @@ return function (Folder)
                 {"User-Agent", "TypeWriter"}
             }
         )
-        FS.writeFileSync(Folder .. "/Internal/" .. Package.Name, Body)
+        FS.writeFileSync(InstallLocation .. "/Internal/" .. Package.Name, Body)
     end
 end
