@@ -32,7 +32,7 @@ local Getters = {
             "ps",
             {
                 args = {
-                    "--no-headers", "-eco", "pid,command"
+                    "-eco", "pid,command"
                 }
             }
         )
@@ -42,6 +42,7 @@ local Getters = {
         end
         Result.waitExit()
         local Lines = Output:Split("\n")
+        table.remove(Lines, 1)
         local Processes = {}
         for Index, Line in pairs(Lines) do
             local Process = {}
