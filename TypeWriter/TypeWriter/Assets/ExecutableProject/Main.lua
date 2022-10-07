@@ -1,6 +1,6 @@
 coroutine.wrap(function ()
     
-    _G.process = require('process').globalProcess()
+    --_G.process = require('process').globalProcess()
     local Os = require("los").type()
     local FS = require("fs")
     local Spawn = require("coro-spawn")
