@@ -11,11 +11,11 @@ coroutine.wrap(function ()
 
     local function InstallLocation()
         local Locations = {
-            ["win32"] = (process.env.APPDATA or "") .. "\\.TypeWriter\\",
-            ["darwin"] = (process.env.HOME or "") .. "/Library/Application Support/TypeWriter/"
+            [true] = (process.env.APPDATA or "") .. "\\.TypeWriter\\",
+            [false] = (process.env.HOME or "") .. "/.TypeWriter/"
         }
     
-        return Locations[Os]
+        return Locations[Os == "win32"]
     end
 
     local function IsInstalled()

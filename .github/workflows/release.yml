@@ -29,7 +29,13 @@ jobs:
           
       - name: Rezip files
         run: |
-          for file in *; do echo "./${file}"; cd ${file}; chmod +x ./*; tar czf $artifact ../${file}.tar.gz *; cd ..; rm -r ${file}; done
+          for file in *; do
+            echo "./${file}"
+            cd ${file}; chmod +x ./*
+            tar czf $artifact ../${file}.tar.gz *
+            cd ..
+            rm -r ${file}
+          done
           ls
       
       - name: Echo url
