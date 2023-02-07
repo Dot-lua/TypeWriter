@@ -8,8 +8,6 @@ const lualib = Fengari.lualib
 const to_luastring = Fengari.to_luastring
 
 //Create lua scope
-
-
 global.TypeWriter = {}
 {
     let L = lauxlib.luaL_newstate();
@@ -18,18 +16,11 @@ global.TypeWriter = {}
     if (!L) throw Error("failed to create lua state");
     global.TypeWriterLuaState = L
 }
-
-Flua.flua_setglobals(
-    TypeWriterLuaState,
-    {
-        TypeWriter: global.TypeWriter
-    }
-)
-
 TypeWriter.b = "asd"
 let luaCode = `
+    _G.TypeWriter = require("js").global.TypeWriter
     local a = "hello world"
-    print(require("js"))
+    print(require("test"))
     print(a)
     print(TypeWriter.b)
     return a
