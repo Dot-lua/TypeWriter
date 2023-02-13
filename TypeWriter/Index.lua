@@ -12,6 +12,3 @@ do -- Set globals
     --    
     --end
 end
-
-p("hi")
-p(process)

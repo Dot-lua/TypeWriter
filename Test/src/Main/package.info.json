@@ -28,6 +28,6 @@
     ],
 
     "Entrypoints": {
-        
+        "Main": "me.corebyte.test"
     }
 }

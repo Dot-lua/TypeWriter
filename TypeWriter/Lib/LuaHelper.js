@@ -9,7 +9,7 @@ const lauxlib = Fengari.lauxlib
 const lualib = Fengari.lualib
 const to_luastring = Fengari.to_luastring
 
-LuaHelper.CreateState = function() {
+function CreateState() {
     let L = lauxlib.luaL_newstate();
     lualib.luaL_openlibs(L);
     lauxlib.luaL_requiref(L, to_luastring("js"), Interop.luaopen_js, 1);
@@ -18,13 +18,17 @@ LuaHelper.CreateState = function() {
     return L
 }
 
-LuaHelper.LoadString = function(Str) {
-    lauxlib.luaL_loadstring(TypeWriterLuaState, to_luastring(Str));
-    lua.lua_call(TypeWriterLuaState, 0, -1);
+function LoadString(L, Str) {
+    lauxlib.luaL_loadstring(L, to_luastring(Str));
+    lua.lua_call(L, 0, -1);
 }
 
-LuaHelper.LoadFile = function(Path) {
-    LuaHelper.LoadString(require("fs").readFileSync(Path, "utf-8"))
+function LoadFile(L, Path) {
+    LoadString(L, require("fs").readFileSync(Path, "utf-8"))
 }
 
-module.export = LuaHelper
+module.exports = {
+    CreateState,
+    LoadString,
+    LoadFile
+}
