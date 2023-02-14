@@ -1,3 +1,6 @@
 #!/bin/zsh
 cd ./TypeWriter/
-nexe ./Index.js --build
+pkg -t node18-mac-x64 -o ../TestRuntime/TypeWriter ./
+cd ..
+
+./TestRuntime/TypeWriter "$@"

@@ -23,7 +23,8 @@
         {
             "Source": "LIT",
             "Package": "coro-spawn",
-            "Version": null
+            "Version": null,
+            "Type": "Packaged"
         }
     ],
 
