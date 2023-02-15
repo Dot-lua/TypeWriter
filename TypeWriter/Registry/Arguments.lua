@@ -1,1 +1,2 @@
-local ArgumentParser
+local ArgumentParser = jsnew(require("argparse"))
+p(ArgumentParser)

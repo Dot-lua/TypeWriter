@@ -20,7 +20,9 @@ function CreateState() {
 
 function LoadString(L, Str) {
     lauxlib.luaL_loadstring(L, to_luastring(Str));
-    lua.lua_call(L, 0, -1);
+    //lua.lua_call(L, 0, -1);
+    lua.lua_pcall(L, 1, 1, lua.lua_gettop(L))
+    console.error(lua.lua_tostring(L, -1))
 }
 
 function LoadFile(L, Path) {
