@@ -57,12 +57,24 @@ function LoadString(L, Str) {
 }
 
 function LoadFile(L, FilePath) {
-    var Ok = lauxlib.luaL_loadfile(L, to_luastring(Path.join(__dirname, FilePath)))
-    console.log(Ok)
-    if (Ok == lua.LUA_ERRSYNTAX) {
+    var LoadOk = lauxlib.luaL_loadfile(L, to_luastring(FilePath))
+    if (LoadOk == lua.LUA_ERRSYNTAX) {
         throw new SyntaxError(lua_tojsstring(L, -1))
     }
-    lua.lua_err
+
+    const CallOk = lua.lua_pcall(L, 0, 0, ErrorFunc)
+    console.log(CallOk)
+    console.log(lua.LUA_OK)
+    if (CallOk !== lua.LUA_OK) {
+        console.log(lua.lua_tostring(L, -1))
+        let e = Interop.tojs(L, -1);
+        lua.lua_pop(L, 1);
+        console.log(e)
+        console.log(e)
+        console.log(e)
+        console.log(e)
+        throw e;
+    }
 }
 
 module.exports = {

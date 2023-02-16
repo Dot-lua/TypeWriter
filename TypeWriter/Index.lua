@@ -66,4 +66,3 @@ end
 _G.TypeWriter.Arguments = require("Registry/Arguments.lua")
 print(_G.TypeWriter.Arguments)
 print("a")
-ahhh(
