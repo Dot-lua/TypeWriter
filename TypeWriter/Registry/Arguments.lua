@@ -1,2 +1,7 @@
-local ArgumentParser = jsnew(require("argparse"))
+local ArgumentParser = jsnew(
+    require("argparse"),
+    {
+        description = 'Argparse example'
+    }
+)
 p(ArgumentParser)

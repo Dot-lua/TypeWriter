@@ -44,37 +44,28 @@ function CreateState() {
     lua.lua_pushcfunction(L, luvi_traceback);
     ErrorFunc = lua.lua_gettop(L);
 
+
     return L
 }
 
-function LoadString(L, Str) {
-    const Err1 = lauxlib.luaL_loadstring(L, to_luastring(Str));
-    console.log(Err1)
-
-    const Err2 = lua.lua_pcall(L, 0, 0, ErrorFunc)
-    console.log(Err2)
-    
-}
-
 function LoadFile(L, FilePath) {
-    var LoadOk = lauxlib.luaL_loadfile(L, to_luastring(FilePath))
+    const LoadOk = lauxlib.luaL_loadfile(L, FilePath)
     if (LoadOk == lua.LUA_ERRSYNTAX) {
         throw new SyntaxError(lua_tojsstring(L, -1))
     }
-
-    const CallOk = lua.lua_pcall(L, 0, 0, ErrorFunc)
-    console.log(CallOk)
-    console.log(lua.LUA_OK)
-    if (CallOk !== lua.LUA_OK) {
-        console.log(lua.lua_tostring(L, -1))
-        let e = Interop.tojs(L, -1);
-        lua.lua_pop(L, 1);
-        console.log(e)
-        console.log(e)
-        console.log(e)
-        console.log(e)
-        throw e;
+    console.log(LoadOk)
+    if (LoadOk == lua.LUA_OK) {
+        const CallOk = lua.lua_pcall(L, 0, 0, ErrorFunc)
+        if (CallOk !== lua.LUA_OK) {
+            let e = Interop.tojs(L, -1);
+            lua.lua_pop(L, 1);
+            console.error(e)
+        }
     }
+}
+
+function LoadString() {
+
 }
 
 module.exports = {
