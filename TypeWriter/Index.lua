@@ -2,10 +2,6 @@ print("Hi from lua")
 
 local FS = js.global.process.mainModule:require("fs")
 
-for key, value in pairs(package) do
-    print(key, value)
-end
-
 do -- Set globals
     _G.TypeWriter = js.global.TypeWriter
     _G.p = function (T)
@@ -22,12 +18,9 @@ do -- Set globals
         --    return M
         --end
 
-        p(Module)
         local S, M = pcall(
             function ()
-                local RequireHelper = OriginalRequire("./Lib/RequireHelper.js")
-                RequireHelper("a")
-                --return OriginalRequire("js").global.process.mainModule:require(Module)
+                return js.global.process.mainModule:require("./Lib/RequireHelper.js"):RequireHelper(Module)
             end
         )
         if M then
@@ -49,9 +42,3 @@ do -- Set globals
     _G.jsnew = js.new
     _G.JsNew = jsnew
 end
-
-
-print(require("Registry/Arguments.lua"))
-_G.TypeWriter.Arguments = require("Registry/Arguments.lua")
-print(_G.TypeWriter.Arguments)
-print("a")

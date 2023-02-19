@@ -51,9 +51,8 @@ function CreateState() {
 function LoadFile(L, FilePath) {
     const LoadOk = lauxlib.luaL_loadfile(L, FilePath)
     if (LoadOk == lua.LUA_ERRSYNTAX) {
-        throw new SyntaxError(lua_tojsstring(L, -1))
+        throw new SyntaxError(lua.lua_tojsstring(L, -1))
     }
-    console.log(LoadOk)
     if (LoadOk == lua.LUA_OK) {
         const CallOk = lua.lua_pcall(L, 0, 0, ErrorFunc)
         if (CallOk !== lua.LUA_OK) {
