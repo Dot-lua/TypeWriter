@@ -15,9 +15,14 @@ MainParser.add_argument(
     }
 )
 
-const SubParsers = MainParser.add_subparsers({help: "action to execute"})
+const SubParsers = MainParser.add_subparsers(
+    {
+        title: "action",
+        description: "action to execute"
+    }
+)
 
-const BuildParser = SubParsers.add_parser("build")
+const BuildParser = SubParsers.add_parser("build", {help: "build a twr archive"})
 BuildParser.add_argument(
     "-i", "--input",
     {
@@ -25,4 +30,6 @@ BuildParser.add_argument(
     }
 )
 
-console.log(MainParser.parse_args())
+const Parsed = MainParser.parse_args()
+console.log(Parsed)
+module.exports = Parsed
