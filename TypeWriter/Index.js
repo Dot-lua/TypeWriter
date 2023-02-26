@@ -31,7 +31,6 @@ TypeWriter.Logger.Info("Hello")
 TypeWriter.Logger.Warn("Hello")
 TypeWriter.Logger.Error("Hello")
 
-console.log(TypeWriter.Arguments)
 LuaHelper.LoadFile(TypeWriterLuaState, require("path").join(__dirname, "/Index.lua"))
 
 require(`./Actions/List.js`)[TypeWriter.Arguments.action].Execute()
