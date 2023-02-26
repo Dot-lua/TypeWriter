@@ -9,6 +9,10 @@ const FS = require("fs")
 
 TypeWriter.OS = process.platform
 TypeWriter.Arguments = require("./Registry/Arguments")
+TypeWriter.Logger.Debug("Hello")
+TypeWriter.Logger.Info("Hello")
+TypeWriter.Logger.Warn("Hello")
+TypeWriter.Logger.Error("Hello")
 
 console.log(TypeWriter.Arguments)
 LuaHelper.LoadFile(TypeWriterLuaState, require("path").join(__dirname, "/Index.lua"))
