@@ -9,6 +9,18 @@ const FS = require("fs")
 
 TypeWriter.OS = process.platform
 TypeWriter.Arguments = require("./Registry/Arguments")
+{ //Create folders in Exe folder
+    function CreateDir(DirPath) {
+        if (FS.existsSync(DirPath)) {return}
+        FS.mkdirSync(DirPath)
+    }
+    CreateDir(TypeWriter.ApplicationData)
+    CreateDir(`${TypeWriter.Folder}/Cache/`)
+    CreateDir(`${TypeWriter.Folder}/Cache/BuildCache/`)
+    CreateDir(`${TypeWriter.Folder}/Cache/RunCache/`)
+    CreateDir(`${TypeWriter.Folder}/Cache/ModuleCache/`)
+}
+
 TypeWriter.Logger.Debug("Hello")
 TypeWriter.Logger.Info("Hello")
 TypeWriter.Logger.Warn("Hello")
