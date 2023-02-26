@@ -1,4 +1,5 @@
 const LuaHelper = require("./Lib/LuaHelper")
+const FS = require("fs")
 
 //Create lua scope
 {
