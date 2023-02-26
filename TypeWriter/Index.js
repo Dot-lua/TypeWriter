@@ -9,6 +9,11 @@ const FS = require("fs")
 
 TypeWriter.OS = process.platform
 TypeWriter.Arguments = require("./Registry/Arguments")
+TypeWriter.Executable = process.argv[0]
+TypeWriter.Folder = require("path").resolve(TypeWriter.Executable, "../")
+TypeWriter.ApplicationData = `${TypeWriter.Folder}/ApplicationData/`
+TypeWriter.Logger = require("./Lib/Logger")
+
 { //Create folders in Exe folder
     function CreateDir(DirPath) {
         if (FS.existsSync(DirPath)) {return}
