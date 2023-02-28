@@ -6,8 +6,6 @@ module.exports.Execute = function() {
 
     const BuildHelper = require("../../Lib/BuildHelper.js")
 
-    console.log(InputPath)
-
     const BuildId = BuildHelper.Build(InputPath, InputBranch)
     BuildHelper.CompressBuild(BuildId, TypeWriter.Arguments.output)
     BuildHelper.CleanupBuild(BuildId)
