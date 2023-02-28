@@ -22,7 +22,7 @@ TypeWriter.Logger = require("./Lib/Logger")
     CreateDir(TypeWriter.ApplicationData)
     CreateDir(`${TypeWriter.Folder}/Cache/`)
     CreateDir(`${TypeWriter.Folder}/Cache/BuildCache/`)
-    CreateDir(`${TypeWriter.Folder}/Cache/RunCache/`)
+    CreateDir(`${TypeWriter.Folder}/Cache/ExecuteCache/`)
     CreateDir(`${TypeWriter.Folder}/Cache/ModuleCache/`)
 }
 
