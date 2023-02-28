@@ -1,0 +1,34 @@
+{
+    "Id": "TypeWriterTest",
+    "Name": "TypeWriter Test",
+    "Description": "A Test for TypeWriter",
+    "Version": "1.0.0",
+
+    "Authors": {
+        "Developers": [
+            "CoreByte"
+        ],
+        "Contributors": [
+            
+        ]
+    },
+
+    "Contact": {
+        "Website": "",
+        "Source": "",
+        "Socials": {}
+    },
+
+    "Dependencies": [
+        {
+            "Source": "LIT",
+            "Package": "coro-spawn",
+            "Version": null,
+            "Type": "Packaged"
+        }
+    ],
+
+    "Entrypoints": {
+        "Main": "me.corebyte.test"
+    }
+}
