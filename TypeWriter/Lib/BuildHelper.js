@@ -18,8 +18,8 @@ BuildHelper.GetBuildFolder = function(BuildId) {
 
 BuildHelper.CleanupBuild = function(BuildId) {
     const BuildFolder = this.GetBuildFolder(BuildId)
-    console.log(BuildFolder)
-    //FS.rmSync(BuildFolder, { recursive: true, force: true });
+    TypeWriter.Logger.Debug(`Cleaning up ${BuildFolder}`)
+    FS.rmSync(BuildFolder, { recursive: true, force: true });
 }
 
 BuildHelper.Build = function(Folder, Branch) {
