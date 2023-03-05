@@ -2,7 +2,6 @@ const LuaHelper = {}
 
 const Fengari = require("fengari")
 const Interop = require('fengari-interop');
-const Flua = require("flua");
 const Path = require("path")
 
 const lua = Fengari.lua
@@ -48,6 +47,27 @@ function CreateState() {
     return L
 }
 
+function Load(L, source, chunkname) {
+	if (typeof source == "string")
+		source = to_luastring(source);
+	else if (!(source instanceof Uint8Array))
+		throw new TypeError("expects an array of bytes or javascript string");
+
+	chunkname = chunkname?to_luastring(chunkname):null;
+	let ok = lauxlib.luaL_loadbuffer(L, source, null, chunkname);
+	let res;
+	if (ok === lua.LUA_ERRSYNTAX) {
+		res = new SyntaxError(lua.lua_tojsstring(L, -1));
+	} else {
+		res = Interop.tojs(L, -1);
+	}
+	lua.lua_pop(L, 1);
+	if (ok !== lua.LUA_OK) {
+		throw res;
+	}
+    return res;
+}
+
 function LoadFile(L, FilePath) {
     const LoadOk = lauxlib.luaL_loadfile(L, FilePath)
     if (LoadOk == lua.LUA_ERRSYNTAX) {
@@ -63,12 +83,8 @@ function LoadFile(L, FilePath) {
     }
 }
 
-function LoadString() {
-
-}
-
 module.exports = {
     CreateState,
-    LoadString,
+    Load,
     LoadFile
 }
