@@ -55,6 +55,12 @@ BuildHelper.Build = function(Folder, Branch) {
                     Type: Type,
                     Code: FS.readFileSync(FilePath, "utf-8")
                 }
+                if (FileBaseName == "Main") {
+                    CompiledCode[CodePath] = {
+                        Type: "Redirect",
+                        Path: NewCodePath
+                    }
+                }
             }
 
         }
@@ -105,12 +111,14 @@ BuildHelper.Build = function(Folder, Branch) {
 BuildHelper.CompressBuild = function(BuildId, OutputFolder) {
     const BuildFolder = this.GetBuildFolder(BuildId)
     const OutputFile = Path.join(OutputFolder, FS.readJSONSync(`${BuildFolder}/package.info.json`).Id) + ".twr"
-    TypeWriter.Logger.Debug(`Outputting to ${OutputFile}`)
+    TypeWriter.Logger.Debug(`Outputting to ${OutputFile} in ${BuildFolder}`)
     Tar.create(
         {
             file: OutputFile,
             cwd: BuildFolder,
             sync: true,
+            noMtime: true,
+            portable: true
         },
         FS.readdirSync(BuildFolder)
     )
