@@ -1,12 +1,7 @@
 const LuaHelper = require("./Lib/LuaHelper")
 const FS = require("fs")
 
-//Create lua scope
-{
-    global.TypeWriter = {}
-    global.TypeWriterLuaState = LuaHelper.CreateState()
-}
-
+global.TypeWriter = {}
 TypeWriter.OS = process.platform
 TypeWriter.Arguments = require("./Registry/Arguments")
 TypeWriter.Executable = process.argv[0]
@@ -24,6 +19,9 @@ TypeWriter.Logger = require("./Lib/Logger")
     CreateDir(`${TypeWriter.Folder}/Cache/BuildCache/`)
     CreateDir(`${TypeWriter.Folder}/Cache/ExecuteCache/`)
     CreateDir(`${TypeWriter.Folder}/Cache/ModuleCache/`)
+    CreateDir(`${TypeWriter.Folder}/Cache/ModuleCache/NPM/`)
+    CreateDir(`${TypeWriter.Folder}/Cache/ModuleCache/LIT/`)
+    CreateDir(`${TypeWriter.Folder}/Cache/ModuleCache/Unpack/`)
 }
 
 TypeWriter.Logger.Debug("Hello")
