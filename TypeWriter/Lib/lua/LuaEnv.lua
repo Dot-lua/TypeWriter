@@ -1,5 +1,3 @@
-print("Hi from lua")
-
 local FS = js.global.process.mainModule:require("fs")
 
 do -- Set globals
@@ -7,7 +5,15 @@ do -- Set globals
     _G.p = function (T)
         return js.global.console:log(T)
     end
+    
+    p(Import)
     local OriginalRequire = require
+    
+    _G.jsnew = js.new
+    _G.JsNew = jsnew
+end
+
+do -- Require Fix
     _G.require = function (Module)
         if Module == "js" then
             return js
@@ -39,6 +45,10 @@ do -- Set globals
         end
 
     end
-    _G.jsnew = js.new
-    _G.JsNew = jsnew
+end
+
+do -- Proxy functions
+    _G.Import = function(Request)
+        return TypeWriter:Import(Request)
+    end
 end
