@@ -86,6 +86,22 @@ const SubParsers = MainParser.add_subparsers(
             help: "run the src in the cwd"
         }
     )
+    RunParser.add_argument(
+        "-i", "--input",
+        {
+            help: "input file",
+            metavar: "path",
+            default: "./src/"
+        }
+    )
+    RunParser.add_argument(
+        "-b", "--branch",
+        {
+            help: "input branch",
+            metavar: "branch",
+            default: "Main"
+        }
+    )
 }
 
 const Parsed = MainParser.parse_args()
