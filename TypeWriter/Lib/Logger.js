@@ -2,7 +2,6 @@ const Logger = {}
 
 const Colors = require("colors")
 const LogLevel = Number(process.env.TYPEWRITER_LOGLEVEL) || 2
-console.log(LogLevel)
 const Levels = [
     {
         Label: "[ERROR]      ",
