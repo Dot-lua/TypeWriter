@@ -25,6 +25,12 @@
             "Package": "coro-spawn",
             "Version": null,
             "Type": "Packaged"
+        },
+        {
+            "Source": "NPM",
+            "Package": "discord.js",
+            "Version": null,
+            "Type": "Packaged"
         }
     ],
 
