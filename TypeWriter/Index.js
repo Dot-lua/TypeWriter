@@ -1,9 +1,11 @@
 const LuaHelper = require("./Lib/LuaHelper")
 const FS = require("fs")
 
+const ArgumentData = require("./Registry/Arguments")
+
 global.TypeWriter = {}
 TypeWriter.OS = process.platform
-TypeWriter.Arguments = require("./Registry/Arguments")
+TypeWriter.Arguments = ArgumentData.Arguments
 TypeWriter.Executable = process.argv[0]
 TypeWriter.Folder = require("path").resolve(TypeWriter.Executable, "../")
 TypeWriter.ApplicationData = `${TypeWriter.Folder}/ApplicationData/`
