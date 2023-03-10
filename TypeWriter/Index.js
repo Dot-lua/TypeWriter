@@ -24,3 +24,8 @@ TypeWriter.Logger = require("./Lib/Logger")
     CreateDir(`${TypeWriter.Folder}/Cache/ModuleCache/Unpack/`)
 }
 
+if (TypeWriter.Arguments.action) {
+    require(`./Actions/List.js`)[TypeWriter.Arguments.action].Execute()
+} else {
+    ArgumentData.Parser.print_help()
+}
