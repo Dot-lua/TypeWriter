@@ -1,6 +1,6 @@
 const Logger = {}
 
-const Colors = require("colors")
+const Colors = require("colors/safe")
 const LogLevel = Number(process.env.TYPEWRITER_LOGLEVEL) || 2
 const Levels = [
     {
@@ -32,7 +32,7 @@ Logger.Log = function(Level, Message) {
     const LevelInfo = Levels[Level]
     const Time = new Date()
     console.log(
-        `[${Time.getFullYear()}-${Pad(Time.getMonth() + 1, 2)}-${Pad(Time.getDate(), 2)} ${Pad(Time.getHours(), 2)}:${Pad(Time.getMinutes(), 2)}:${Pad(Time.getSeconds(), 2)}] ${Colors[LevelInfo.Color](LevelInfo.Label).bold}: ${Message}`
+        `[${Time.getFullYear()}-${Pad(Time.getMonth() + 1, 2)}-${Pad(Time.getDate(), 2)} ${Pad(Time.getHours(), 2)}:${Pad(Time.getMinutes(), 2)}:${Pad(Time.getSeconds(), 2)}] ${Colors.bold(Colors[LevelInfo.Color](LevelInfo.Label))}: ${Message}`
     )
 }
 
