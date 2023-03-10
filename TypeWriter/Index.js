@@ -11,6 +11,14 @@ TypeWriter.Folder = require("path").resolve(TypeWriter.Executable, "../")
 TypeWriter.ApplicationData = `${TypeWriter.Folder}/ApplicationData/`
 TypeWriter.Logger = require("./Lib/Logger")
 
+if (FS.existsSync(`${TypeWriter.Folder}/InstallationDirectory`)) {
+    TypeWriter.Logger.Debug("Valid installation found")
+} else {
+    TypeWriter.Logger.Information("Invalid install found")
+    require("./Installer/")
+    process.exit(0)
+}
+
 { //Create folders in Exe folder
     function CreateDir(DirPath) {
         if (FS.existsSync(DirPath)) {return}
