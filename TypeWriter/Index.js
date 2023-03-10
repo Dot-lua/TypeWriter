@@ -24,9 +24,3 @@ TypeWriter.Logger = require("./Lib/Logger")
     CreateDir(`${TypeWriter.Folder}/Cache/ModuleCache/Unpack/`)
 }
 
-TypeWriter.Logger.Debug("Hello")
-TypeWriter.Logger.Info("Hello")
-TypeWriter.Logger.Warn("Hello")
-TypeWriter.Logger.Error("Hello")
-
-require(`./Actions/List.js`)[TypeWriter.Arguments.action].Execute()
