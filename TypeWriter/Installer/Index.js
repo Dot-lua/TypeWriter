@@ -95,4 +95,9 @@ if(TypeWriter.OS != "win32") {
     AddLineToFile(`${process.env.HOME}/.bash_profiles`, `alias typewriter="'${InstallLocation()}/TypeWriter'" #This line was added by TypeWriter v6 https://github.com/Dot-lua/TypeWriter/`)
     AddLineToFile(`${process.env.HOME}/.zshenv`, `alias TypeWriter="'${InstallLocation()}/TypeWriter'" #This line was added by TypeWriter v6 https://github.com/Dot-lua/TypeWriter/`)
     AddLineToFile(`${process.env.HOME}/.zshenv`, `alias typewriter="'${InstallLocation()}/TypeWriter'" #This line was added by TypeWriter v6 https://github.com/Dot-lua/TypeWriter/`)
+} else {
+    FS.writeFileSync(
+        `${process.env.LOCALAPPDATA}/Microsoft/WindowsApps/TypeWriter.bat`,
+        `@echo off\n${process.env.APPDATA}"/.TypeWriter/TypeWriter.exe %*`
+    )
 }
