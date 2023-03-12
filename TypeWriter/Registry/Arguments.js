@@ -105,8 +105,5 @@ const SubParsers = MainParser.add_subparsers(
 }
 
 const Parsed = MainParser.parse_args()
-if (!Parsed.action) {
-    MainParser.print_help()
-}
 module.exports.Arguments = Parsed
 module.exports.Parser = MainParser
