@@ -31,6 +31,12 @@
             "Package": "discord.js",
             "Version": null,
             "Type": "Packaged"
+        },
+        {
+            "Source": "NPM",
+            "Package": "electron",
+            "Version": null,
+            "Type": "Packaged"
         }
     ],
 
