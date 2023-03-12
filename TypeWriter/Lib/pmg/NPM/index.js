@@ -9,6 +9,33 @@ const SemVer = require("semver")
 const CacheFolder = `${TypeWriter.Folder}/Cache/ModuleCache/NPM/`
 const UnpackFolder = `${TypeWriter.Folder}/Cache/ModuleCache/Unpack/`
 
+function EncodePackageName(Name) {
+    return Base64.encode(Name)
+}
+
+function GetCacheFolder(Name) {
+    return `${CacheFolder}/${EncodePackageName(Name)}`
+}
+
+function PackageExists(Name) {
+    const PackagePath = GetCacheFolder(Name)
+    if (FS.existsSync(PackagePath)) {
+        return true
+    }
+    if (GetPackageInfo(Name)) {
+        FS.mkdirSync(PackagePath)
+        FS.mkdirSync(`${PackagePath}/Versions/`)
+        FS.writeJSONSync(
+            `${PackagePath}/PackageInfo.json`,
+            {
+                Name: Name
+            }
+        )
+        return true
+    }
+    return false
+}
+
 function GetSatisfyingVersion(Name, Version) {
     const Versions = Object.keys(JsonRequest(`https://registry.npmjs.org/${Name}`).versions)
     return SemVer.maxSatisfying(Versions, Version)
