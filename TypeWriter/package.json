@@ -17,6 +17,7 @@
         "get-caller-file": "^2.0.5",
         "is-core-module": "^2.11.0",
         "is-online": "^10.0.0",
+        "js-base64": "^3.7.5",
         "klaw-sync": "^6.0.0",
         "randomstring": "^1.2.3",
         "require-from-string": "^2.0.2",
