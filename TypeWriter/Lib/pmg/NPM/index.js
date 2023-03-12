@@ -5,6 +5,7 @@ const Path = require("path")
 const Tar = require("tar")
 const KlawSync = require("klaw-sync")
 const SemVer = require("semver")
+const Base64 = require("js-base64")
 
 const CacheFolder = `${TypeWriter.Folder}/Cache/ModuleCache/NPM/`
 const UnpackFolder = `${TypeWriter.Folder}/Cache/ModuleCache/Unpack/`
@@ -56,12 +57,10 @@ function GetPackageInfo(Name, Version) {
 }
 
 function DownloadPackage(Name, Version) {
-    if (!FS.existsSync(`${CacheFolder}/${Name}/`)) {
-        TypeWriter.Logger.Debug(`${Name} is not in the cache`)
-        TypeWriter.Logger.Information(`Downloading NPM package ${Name}.`)
-    } else {
-        TypeWriter.Logger.Debug(`${Name} is already cached`)
-        return 
+    Name = Name.toLowerCase()
+    if (!PackageExists(Name)) {
+        TypeWriter.Logger.Error(`Failed to find NPM package ${Name}, please fix!`)
+        process.exit(1)
     }
 
     const PackageInfo = GetPackageInfo(Name, Version)
@@ -69,8 +68,16 @@ function DownloadPackage(Name, Version) {
         DownloadPackage(Dependency, PackageInfo.dependencies[Dependency])
     }
 
+    const PackageFolder = GetCacheFolder(Name)
+    const OutputFolder = `${PackageFolder}/Versions/${PackageInfo.version}/`
+    if (FS.existsSync(OutputFolder)) {
+        return
+    }
+    FS.mkdirSync(OutputFolder)
+    TypeWriter.Logger.Information(`Downloading package ${Name} version ${PackageInfo.version}`)
+
     const FetchData = Fetch(PackageInfo.dist.tarball)
-    const OutputFile = `${CacheFolder}/${Name}.tgz`
+    const OutputFile = `${OutputFolder}/${Name}.tgz`
     FS.mkdirpSync(Path.dirname(OutputFile))
     FS.writeFileSync(OutputFile, FetchData.buffer())
 
@@ -78,14 +85,10 @@ function DownloadPackage(Name, Version) {
         {
             file: OutputFile,
             sync: true,
-            cwd: UnpackFolder
+            cwd: UnpackFolder,
+            preserveOwner: false
         }
     )
-
-    const OutputFolder = CacheFolder + Name
-    if (FS.existsSync(OutputFolder)) {
-        FS.rmdirSync(OutputFolder)
-    }
 
     const FileList = KlawSync(
         UnpackFolder,
@@ -104,7 +107,12 @@ function DownloadPackage(Name, Version) {
         }
     ).path)
 
-    FS.moveSync(MoveFolder, OutputFolder)
+    for (const FileName of FS.readdirSync(MoveFolder)) {
+        FS.moveSync(
+            `${MoveFolder}/${FileName}`,
+            `${OutputFolder}/${FileName}`
+        )
+    }
 }
 
 module.exports = DownloadPackage
