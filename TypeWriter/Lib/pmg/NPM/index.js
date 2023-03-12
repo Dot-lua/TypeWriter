@@ -48,7 +48,11 @@ function GetPackageInfo(Name, Version) {
         Version = GetSatisfyingVersion(Name, Version)
     }
 
-    return JsonRequest(`https://registry.npmjs.org/${Name}/${Version}`)
+    const Data = JsonRequest(`https://registry.npmjs.org/${Name}/${Version}`)
+    if (Data == "Not Found") {
+        return false
+    }
+    return Data
 }
 
 function DownloadPackage(Name, Version) {
