@@ -21,7 +21,6 @@ function GetPackageInfo(Name, Version) {
         Version = GetSatisfyingVersion(Name, Version)
     }
 
-    console.log(`https://registry.npmjs.org/${Name}/${Version}`)
     return JsonRequest(`https://registry.npmjs.org/${Name}/${Version}`)
 }
 
@@ -73,7 +72,6 @@ function DownloadPackage(Name, Version) {
             return a.path.length <= b.path.length ? a : b;
         }
     ).path)
-    console.log(MoveFolder)
 
     FS.moveSync(MoveFolder, OutputFolder)
 }
