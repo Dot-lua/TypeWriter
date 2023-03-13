@@ -82,13 +82,10 @@ RuntimeHelper.Require = function(Request) {
     function IsPackageIncluded(Request) {
         for (const PackageId in TypeWriter.LoadedPackages) {
             const Package = TypeWriter.LoadedPackages[PackageId]
-            console.log(Package)
         }
 
         return false
     }
-
-    console.log(Request)
 
     if (IsCoreModule(Request)) {
         return OriginalRequire(Request)
