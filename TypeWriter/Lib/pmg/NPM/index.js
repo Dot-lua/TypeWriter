@@ -1,4 +1,3 @@
-const JsonRequest = require("../../JsonRequest")
 const FS = require("fs-extra")
 const Fetch = require("sync-fetch")
 const Path = require("path")
@@ -6,6 +5,7 @@ const Tar = require("tar")
 const KlawSync = require("klaw-sync")
 const SemVer = require("semver")
 const Base64 = require("js-base64")
+const GetLatestVersion = require('get-latest-version')
 
 const CacheFolder = `${TypeWriter.Folder}/Cache/ModuleCache/NPM/`
 const UnpackFolder = `${TypeWriter.Folder}/Cache/ModuleCache/Unpack/`
@@ -61,6 +61,7 @@ function GetPackageInfo(Name, Version) {
         Version = GetSatisfyingVersion(Name, Version)
     }
 
+    console.log(`https://registry.npmjs.org/${Name}/${Version}`)
     const Data = JsonRequest(`https://registry.npmjs.org/${Name}/${Version}`)
     if (Data == "Not Found") {
         return false
@@ -68,8 +69,9 @@ function GetPackageInfo(Name, Version) {
     return Data
 }
 
-function DownloadPackage(Name, Version) {
+async function DownloadPackage(Name, Version) {
     Name = Name.toLowerCase()
+    console.log(await GetLatestVersion(Name, {range: Version, includeLatest: true, auth: false}))
     if (!PackageExists(Name)) {
         TypeWriter.Logger.Error(`Failed to find NPM package ${Name}, please fix!`)
         process.exit(1)
