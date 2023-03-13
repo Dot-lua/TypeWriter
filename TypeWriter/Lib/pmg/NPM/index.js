@@ -10,6 +10,18 @@ const Base64 = require("js-base64")
 const CacheFolder = `${TypeWriter.Folder}/Cache/ModuleCache/NPM/`
 const UnpackFolder = `${TypeWriter.Folder}/Cache/ModuleCache/Unpack/`
 
+function JsonRequest(Url) {
+    const Data = Fetch(
+        Url,
+        {
+            headers: {
+                Accept: "application/vnd.npm.install-v1+json"
+            }
+        }
+    )
+    //return Data.json()
+}
+
 function EncodePackageName(Name) {
     return Base64.encode(Name)
 }
