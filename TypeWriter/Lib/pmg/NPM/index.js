@@ -5,21 +5,16 @@ const Tar = require("tar")
 const KlawSync = require("klaw-sync")
 const SemVer = require("semver")
 const Base64 = require("js-base64")
-const GetLatestVersion = require('get-latest-version')
 
 const CacheFolder = `${TypeWriter.Folder}/Cache/ModuleCache/NPM/`
 const UnpackFolder = `${TypeWriter.Folder}/Cache/ModuleCache/Unpack/`
 
 function JsonRequest(Url) {
+    console.log(Url)
     const Data = Fetch(
-        Url,
-        {
-            headers: {
-                Accept: "application/vnd.npm.install-v1+json"
-            }
-        }
+        Url
     )
-    //return Data.json()
+    return Data.json()
 }
 
 function EncodePackageName(Name) {
@@ -50,7 +45,7 @@ function PackageExists(Name) {
 }
 
 function GetSatisfyingVersion(Name, Version) {
-    const Versions = Object.keys(JsonRequest(`https://registry.npmjs.org/${Name}`).versions)
+    const Versions = JsonRequest(`http://nva.corebyte.me:4431/versions/?q=${Name}`).versions
     return SemVer.maxSatisfying(Versions, Version)
 }
 
@@ -58,10 +53,11 @@ function GetPackageInfo(Name, Version) {
     if (Version == undefined) {
         Version = "latest"
     } else {
+        TypeWriter.Logger.Debug(`Getting ${Name} Version`)
         Version = GetSatisfyingVersion(Name, Version)
     }
 
-    console.log(`https://registry.npmjs.org/${Name}/${Version}`)
+    TypeWriter.Logger.Debug(`Requesting data`)
     const Data = JsonRequest(`https://registry.npmjs.org/${Name}/${Version}`)
     if (Data == "Not Found") {
         return false
@@ -69,9 +65,9 @@ function GetPackageInfo(Name, Version) {
     return Data
 }
 
-async function DownloadPackage(Name, Version) {
+function DownloadPackage(Name, Version) {
     Name = Name.toLowerCase()
-    console.log(await GetLatestVersion(Name, {range: Version, includeLatest: true, auth: false}))
+    TypeWriter.Logger.Debug(`Checking if ${Name} exists`)
     if (!PackageExists(Name)) {
         TypeWriter.Logger.Error(`Failed to find NPM package ${Name}, please fix!`)
         process.exit(1)
@@ -95,6 +91,7 @@ async function DownloadPackage(Name, Version) {
     FS.mkdirpSync(Path.dirname(OutputFile))
     FS.writeFileSync(OutputFile, FetchData.buffer())
 
+    TypeWriter.Logger.Debug(`Extracting ${Name}`)
     Tar.extract(
         {
             file: OutputFile,
@@ -127,6 +124,7 @@ async function DownloadPackage(Name, Version) {
             `${OutputFolder}/${FileName}`
         )
     }
+    TypeWriter.Logger.Debug(`Done getting ${Name}`)
 }
 
 module.exports = DownloadPackage
