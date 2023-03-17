@@ -41,7 +41,7 @@ RuntimeHelper.LoadFile = function(FilePath) {
     FS.mkdirSync(PackagePath)
 
     for (const Dependency of PackageInfo.Dependencies) {
-        PMG[Dependency.Source](Dependency.Package, Dependency.Version)
+        PMG[Dependency.Source].LoadPackage(Dependency.Package, Dependency.Version, PackagePath)
     }
 
     TypeWriter.LoadedPackages[PackageInfo.Id] = {

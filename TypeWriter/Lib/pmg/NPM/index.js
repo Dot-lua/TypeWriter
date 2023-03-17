@@ -68,6 +68,8 @@ function GetPackageInfo(Name, Version) {
 function DownloadPackage(Name, Version) {
     Name = Name.toLowerCase()
     TypeWriter.Logger.Debug(`Checking if ${Name} exists`)
+
+    var PackageExists = PackageExists(Name)
     if (!PackageExists(Name)) {
         TypeWriter.Logger.Error(`Failed to find NPM package ${Name}, please fix!`)
         process.exit(1)
@@ -88,6 +90,7 @@ function DownloadPackage(Name, Version) {
 
     const FetchData = Fetch(PackageInfo.dist.tarball)
     const OutputFile = `${OutputFolder}/${Name}.tgz`
+    console.log(OutputFile)
     FS.mkdirpSync(Path.dirname(OutputFile))
     FS.writeFileSync(OutputFile, FetchData.buffer())
 
@@ -127,4 +130,19 @@ function DownloadPackage(Name, Version) {
     TypeWriter.Logger.Debug(`Done getting ${Name}`)
 }
 
-module.exports = DownloadPackage
+function LoadPackage(PackageName, PackageVersion, ExecuteDirectory) {
+    console.log(PackageName)
+    console.log(PackageVersion)
+    console.log(ExecuteDirectory)
+    DownloadPackage(PackageName, PackageVersion)
+}
+
+function GetLatestPackageVersion(PackageName) {
+
+}
+
+module.exports = {
+    DownloadPackage: DownloadPackage,
+    LoadPackage: LoadPackage,
+    GetLatestPackageVersion: GetLatestPackageVersion
+}
