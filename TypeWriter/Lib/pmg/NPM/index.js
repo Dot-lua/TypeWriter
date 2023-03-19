@@ -136,10 +136,14 @@ function DownloadPackage(Name, Version, CheckExists=true) {
 }
 
 function LoadPackage(PackageName, PackageVersion, ExecuteDirectory) {
-    console.log(PackageName)
-    console.log(PackageVersion)
-    console.log(ExecuteDirectory)
-    DownloadPackage(PackageName, PackageVersion)
+    const ModulesFolder = `${ExecuteDirectory}/node_modules/`
+    const PackageFolder = DownloadPackage(PackageName, PackageVersion)
+    FS.ensureDirSync(ModulesFolder)
+
+    if (PackageName.split("/").length == 2) {
+        FS.ensureDirSync(`${ModulesFolder}/${PackageName.split("/")[0]}`)
+    }
+    FS.symlinkSync(PackageFolder, `${ModulesFolder}/${PackageName}/`, TypeWriter.OS == "win32" ? 'junction' : 'dir') // https://github.com/pnpm/symlink-dir/blob/main/src/index.ts#L10
 }
 
 function GetLatestPackageVersion(PackageName) {
