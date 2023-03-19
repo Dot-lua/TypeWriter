@@ -7,7 +7,9 @@ const Path = require("path")
 const LuaHelper = require("./LuaHelper")
 const PMG = require("./pmg/")
 const RequireString = require("require-from-string")
-const IsCoreModule = require("is-core-module")
+const IsCoreModule = require("is-builtin-module")
+const GetCallerFile = require("get-caller-file")
+const { Module } = require("module")
 
 function GetPackagedJson(FilePath, PackedFile) {
     return JSON.parse(SingleTarRead(FilePath, PackedFile))
