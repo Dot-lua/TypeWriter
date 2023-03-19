@@ -93,7 +93,7 @@ function LoadPackage(PackageName, PackageVersion, ExecuteDirectory) {
 }
 
 function GetLatestPackageVersion(PackageName) {
-
+    return JsonRequest(`https://registry.npmjs.org/${PackageName}/latest`).version
 }
 
 module.exports = {
