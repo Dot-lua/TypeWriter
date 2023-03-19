@@ -24,32 +24,67 @@ function GetPackageInfo(PackageName, PackageVersion) {
     )
 }
 
-function DownloadPackage(Name, Version) {
+function DownloadPackage(Name, Version, CheckExists=true) {
     Name = Name.toLowerCase()
-    TypeWriter.Logger.Debug(`Checking if ${Name} exists`)
-
-    var PackageExists = PackageExists(Name)
-    if (!PackageExists(Name)) {
-        TypeWriter.Logger.Error(`Failed to find NPM package ${Name}, please fix!`)
-        process.exit(1)
-    }
-
-    const PackageInfo = GetPackageInfo(Name, Version)
-    for (const Dependency in PackageInfo.dependencies) {
-        DownloadPackage(Dependency, PackageInfo.dependencies[Dependency])
-    }
-
     const PackageFolder = GetCacheFolder(Name)
+    {
+        var CreateFolders = false
+        if (!FS.existsSync(PackageFolder)) {
+            if (CheckExists) {
+                TypeWriter.Logger.Debug(`Checking if ${Name} exists`)
+                const PackageExists = JsonRequest(`https://nva.corebyte.me/exists/?q=${Name}`)
+                if (!PackageExists) {
+                    TypeWriter.Logger.Error(`NPM package ${Name} does not exist, please fix!`)
+                    process.exit(1)
+                }
+                CreateFolders = true
+            } else {
+                CreateFolders = true
+            }
+        }
+
+        if (CreateFolders) {
+            FS.mkdirSync(PackageFolder)
+            FS.mkdirSync(`${PackageFolder}/Versions`)
+            FS.writeFileSync(`${PackageFolder}/${Name.replaceAll("/", "-")}`, "")
+            FS.writeJSONSync(
+                `${PackageFolder}/PackageInfo.json`,
+                {
+                    Name: Name
+                }
+            )
+        }
+    }
+    if (FS.existsSync(`${PackageFolder}/Versions/${Version}`)) {
+        TypeWriter.Logger.Debug(`Package version ${Name}@${Version} is already in the cache`)
+        return `${PackageFolder}/Versions/${Version}`
+    }
+
+    const PackageInfo = GetPackageInfo(Name, Version).VersionData
+
     const OutputFolder = `${PackageFolder}/Versions/${PackageInfo.version}/`
     if (FS.existsSync(OutputFolder)) {
-        return
+        return OutputFolder
     }
     FS.mkdirSync(OutputFolder)
+    FS.mkdirSync(`${OutputFolder}/node_modules/`)
+
+    const DependencyTree = {}
+    for (const Dependency in PackageInfo.dependencies) {
+        const DependencyVersion = PackageInfo.dependencies[Dependency]
+        DependencyTree[Dependency] = GetPackageInfo(Dependency, DependencyVersion).Version
+        const DownloadedPath = DownloadPackage(Dependency, DependencyVersion, false)
+        if (Dependency.split("/").length == 2) {
+            FS.ensureDirSync(`${OutputFolder}/node_modules/${Dependency.split("/")[0]}`)
+        }
+        FS.symlinkSync(DownloadedPath, `${OutputFolder}/node_modules/${Dependency}/`, TypeWriter.OS == "win32" ? 'junction' : 'dir') // https://github.com/pnpm/symlink-dir/blob/main/src/index.ts#L10
+    }
+    FS.writeJSONSync(`${OutputFolder}/DependencyTree.json`, DependencyTree, {spaces: "\t"})
+    
     TypeWriter.Logger.Information(`Downloading package ${Name} version ${PackageInfo.version}`)
 
     const FetchData = Fetch(PackageInfo.dist.tarball)
-    const OutputFile = `${OutputFolder}/${Name}.tgz`
-    console.log(OutputFile)
+    const OutputFile = `${OutputFolder}/TarBall.tgz`
     FS.mkdirpSync(Path.dirname(OutputFile))
     FS.writeFileSync(OutputFile, FetchData.buffer())
 
@@ -63,6 +98,7 @@ function DownloadPackage(Name, Version) {
         }
     )
 
+    TypeWriter.Logger.Debug(`Moving files from ${Name}`)
     const FileList = KlawSync(
         UnpackFolder,
         {
@@ -81,12 +117,22 @@ function DownloadPackage(Name, Version) {
     ).path)
 
     for (const FileName of FS.readdirSync(MoveFolder)) {
-        FS.moveSync(
-            `${MoveFolder}/${FileName}`,
-            `${OutputFolder}/${FileName}`
-        )
+        var Moved = false
+        while (Moved == false) {
+            try {
+                FS.moveSync(
+                    `${MoveFolder}/${FileName}`,
+                    `${OutputFolder}/${FileName}`
+                )
+                Moved = true
+            } catch (E) {
+                TypeWriter.Logger.Warning(`Could not move downloaded package (${E})`)
+            }
+        }
+        
     }
     TypeWriter.Logger.Debug(`Done getting ${Name}`)
+    return OutputFolder
 }
 
 function LoadPackage(PackageName, PackageVersion, ExecuteDirectory) {
