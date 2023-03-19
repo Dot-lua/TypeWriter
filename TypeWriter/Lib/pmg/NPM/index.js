@@ -5,17 +5,10 @@ const Tar = require("tar")
 const KlawSync = require("klaw-sync")
 const SemVer = require("semver")
 const Base64 = require("js-base64")
+const JsonRequest = require("../../JsonRequest")
 
 const CacheFolder = `${TypeWriter.Folder}/Cache/ModuleCache/NPM/`
 const UnpackFolder = `${TypeWriter.Folder}/Cache/ModuleCache/Unpack/`
-
-function JsonRequest(Url) {
-    console.log(Url)
-    const Data = Fetch(
-        Url
-    )
-    return Data.json()
-}
 
 function EncodePackageName(Name) {
     return Base64.encode(Name)
