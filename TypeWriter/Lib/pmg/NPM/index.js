@@ -18,6 +18,10 @@ function GetCacheFolder(Name) {
     return `${CacheFolder}/${EncodePackageName(Name)}`
 }
 
+function GetPackageInfo(PackageName, PackageVersion) {
+    return JsonRequest(
+        `https://nva.corebyte.me/version?q=${PackageName}&v=${PackageVersion}`
+    )
 }
 
 function DownloadPackage(Name, Version) {
