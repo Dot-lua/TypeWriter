@@ -18,44 +18,6 @@ function GetCacheFolder(Name) {
     return `${CacheFolder}/${EncodePackageName(Name)}`
 }
 
-function PackageExists(Name) {
-    const PackagePath = GetCacheFolder(Name)
-    if (FS.existsSync(PackagePath)) {
-        return true
-    }
-    if (GetPackageInfo(Name)) {
-        FS.mkdirSync(PackagePath)
-        FS.mkdirSync(`${PackagePath}/Versions/`)
-        FS.writeJSONSync(
-            `${PackagePath}/PackageInfo.json`,
-            {
-                Name: Name
-            }
-        )
-        return true
-    }
-    return false
-}
-
-function GetSatisfyingVersion(Name, Version) {
-    const Versions = JsonRequest(`http://nva.corebyte.me:4431/versions/?q=${Name}`).versions
-    return SemVer.maxSatisfying(Versions, Version)
-}
-
-function GetPackageInfo(Name, Version) {
-    if (Version == undefined) {
-        Version = "latest"
-    } else {
-        TypeWriter.Logger.Debug(`Getting ${Name} Version`)
-        Version = GetSatisfyingVersion(Name, Version)
-    }
-
-    TypeWriter.Logger.Debug(`Requesting data`)
-    const Data = JsonRequest(`https://registry.npmjs.org/${Name}/${Version}`)
-    if (Data == "Not Found") {
-        return false
-    }
-    return Data
 }
 
 function DownloadPackage(Name, Version) {
