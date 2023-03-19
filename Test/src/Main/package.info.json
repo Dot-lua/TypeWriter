@@ -1,40 +1,33 @@
 {
-    "Id": "TypeWriterTest",
-    "Name": "TypeWriter Test",
-    "Description": "A Test for TypeWriter",
-    "Version": "1.0.0",
-
-    "Authors": {
-        "Developers": [
-            "CoreByte"
-        ],
-        "Contributors": [
-            
-        ]
-    },
-
-    "Contact": {
-        "Website": "",
-        "Source": "",
-        "Socials": {}
-    },
-
-    "Dependencies": [
-        {
-            "Source": "LIT",
-            "Package": "coro-spawn",
-            "Version": null,
-            "Type": "Packaged"
-        },
-        {
-            "Source": "NPM",
-            "Package": "discord.js",
-            "Version": null,
-            "Type": "Packaged"
-        }
-    ],
-
-    "Entrypoints": {
-        "Main": "me.corebyte.test"
-    }
+	"Id": "TypeWriterTest",
+	"Name": "TypeWriter Test",
+	"Description": "A Test for TypeWriter",
+	"Version": "1.0.0",
+	"Authors": {
+		"Developers": [
+			"CoreByte"
+		],
+		"Contributors": []
+	},
+	"Contact": {
+		"Website": "",
+		"Source": "",
+		"Socials": {}
+	},
+	"Dependencies": [
+		{
+			"Source": "LIT",
+			"Package": "coro-spawn",
+			"Type": "Packaged"
+		},
+		{
+			"Source": "NPM",
+			"Package": "discord.js",
+			"Version": "14.8.0",
+			"Type": "Packaged"
+		}
+	],
+	"Entrypoints": {
+		"Main": "me.corebyte.test"
+	}
 }
