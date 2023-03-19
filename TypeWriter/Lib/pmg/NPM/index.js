@@ -99,5 +99,8 @@ function GetLatestPackageVersion(PackageName) {
 module.exports = {
     DownloadPackage: DownloadPackage,
     LoadPackage: LoadPackage,
-    GetLatestPackageVersion: GetLatestPackageVersion
+    GetLatestPackageVersion: GetLatestPackageVersion,
+    GetPackageFolder: function(PackageName, PackageVersion) {
+        return `${GetCacheFolder(PackageName)}/Versions/${PackageVersion}`
+    }
 }
