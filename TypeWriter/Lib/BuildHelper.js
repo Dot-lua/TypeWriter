@@ -5,6 +5,7 @@ const FS = require("fs-extra")
 const Path = require("path")
 const KlawSync = require('klaw-sync')
 const Tar = require("tar")
+const Pmg = require("./pmg/index")
 
 const BuildCacheFolder = `${TypeWriter.Folder}/Cache/BuildCache/`
 
@@ -24,14 +25,37 @@ BuildHelper.CleanupBuild = function(BuildId) {
 
 BuildHelper.Build = function(Folder, Branch) {
     const BranchFolder = `${Folder}/${Branch}/`
-    if (!FS.existsSync(BranchFolder)) {TypeWriter.Logger.Error("The selected branch is not valid."); process.exit(1)}
+    if (!FS.existsSync(BranchFolder)) {TypeWriter.Logger.Error("The selected branch is not valid."); return false}
     const BuildId = RandomString.generate(32)
     const BuildFolder = this.GetBuildFolder(BuildId)
 
-    if (!this.CanBuild(BranchFolder)) {TypeWriter.Logger.Error("You need a valid package.info.json and resource folder to build."); process.exit(1)}
+    if (!this.CanBuild(BranchFolder)) {TypeWriter.Logger.Error("You need a valid package.info.json and resource folder to build."); return false}
 
     FS.mkdirSync(BuildFolder)
     FS.mkdirSync(`${BuildFolder}/resources/`)
+
+    try {
+        const PackageData = FS.readJSONSync(`${BranchFolder}/package.info.json`)
+        var NeedWrite = false
+
+        for (const Dependency of PackageData.Dependencies) {
+            if (!Dependency.Version) {
+                TypeWriter.Logger.Warning(`Missing version in ${Dependency.Source} package ${Dependency.Package}`)
+                TypeWriter.Logger.Warning(`Defaulting to latest version`)
+                NeedWrite = true
+                Dependency.Version = Pmg[Dependency.Source].GetLatestPackageVersion(Dependency.Package)
+            }
+        }
+
+        if (NeedWrite) {
+            TypeWriter.Logger.Warning(`Updating values in package.info.json`)
+            FS.writeJSONSync(`${BranchFolder}/package.info.json`, PackageData, {spaces: "\t"})
+        }
+        FS.writeJSONSync(`${BuildFolder}/package.info.json`, PackageData, {spaces: "\t"})
+    } catch (E) {
+        TypeWriter.Logger.Error(`Could not read package.info.json file. (${E})`)
+        return false
+    }
 
     const CompiledCode = {}
     function CodeScan(ScanFolder, CodePath, Type) {
@@ -50,7 +74,7 @@ BuildHelper.Build = function(Folder, Branch) {
             if (IsFileDir) {
                 CodeScan(FilePath, NewCodePath, Type)
             } else {
-                if (Path.extname(FilePath) != FileExt) {TypeWriter.Logger.Error(`Found ${FileName} in ${Path.resolve(FilePath)} but file extension needs to be ${FileExt}.`); process.exit(1)}
+                if (Path.extname(FilePath) != FileExt) {TypeWriter.Logger.Error(`Found ${FileName} in ${Path.resolve(FilePath)} but file extension needs to be ${FileExt}, skipping.`)}
                 CompiledCode[NewCodePath] = {
                     Type: Type,
                     Code: FS.readFileSync(FilePath, "utf-8")
@@ -76,14 +100,6 @@ BuildHelper.Build = function(Folder, Branch) {
             spaces: "\t"
         }
     )
-
-    try {
-        const PackageData = FS.readJSONSync(`${BranchFolder}/package.info.json`)
-        FS.writeJSONSync(`${BuildFolder}/package.info.json`, PackageData, {spaces: "\t"})
-    } catch {
-        TypeWriter.Logger.Error("Could not read package.info.json file.")
-        process.exit(1)
-    }
 
     const ResourceIndex = []
     const ResourceFolder = Path.resolve(`${BranchFolder}/resources/`)
