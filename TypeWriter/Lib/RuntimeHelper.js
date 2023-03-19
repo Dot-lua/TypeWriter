@@ -25,7 +25,7 @@ RuntimeHelper.LoadEnvoirment = function(ExecuteFolder) {
     TypeWriter.Import = this.Import
     global.Import = this.Import
     TypeWriter.LoadEntrypoint = this.LoadEntrypoint
-    require('app-module-path').addPath(`${TypeWriter.Folder}/Cache/ModuleCache/NPM/`)
+    Module.prototype.require = this.Require
 
     LuaHelper.LoadFile(TypeWriterLuaState, Path.join(__dirname, "./lua/LuaEnv.lua"))
 }
@@ -77,21 +77,89 @@ RuntimeHelper.LoadEntrypoint = function(PackageId, EntrypointName) {
     return this.Import(TypeWriter.LoadedPackages[PackageId].Package.Entrypoints[EntrypointName])
 }
 
-const OriginalRequire = require
+const OriginalRequire = Module.prototype.require
+const NPMCacheFolder = Path.resolve(`${TypeWriter.Folder}/Cache/ModuleCache/NPM/`)
 RuntimeHelper.Require = function(Request) {
-    function IsPackageIncluded(Request) {
-        for (const PackageId in TypeWriter.LoadedPackages) {
-            const Package = TypeWriter.LoadedPackages[PackageId]
+    const CallerFile = Path.resolve(GetCallerFile(3))
+
+    const Exts = ["js", "json", "node"]
+    function FindFileExt(FilePath) {
+        for (const Ext of Exts) {
+            const CheckPath = `${FilePath}.${Ext}`
+            if (FS.existsSync(CheckPath)) { 
+                return CheckPath
+            }
+        }
+    }
+    
+    { // Is it a core module
+        if (IsCoreModule(Request)) {
+            return OriginalRequire(Request)
+        }
+    }
+    
+    { // Is it included
+        function IsPackageIncluded(Request) {
+            for (const PackageId in TypeWriter.LoadedPackages) {
+                const Package = TypeWriter.LoadedPackages[PackageId].Package
+                const PackageDependencies = Package.Dependencies
+                for (const Dependency of PackageDependencies) {
+                    if (Dependency.Source == "NPM" && Dependency.Package == Request) {
+                        return Dependency.Version
+                    }
+                }
+            }
+    
+            return false
         }
 
-        return false
+        const IsIncluded = IsPackageIncluded(Request)
+        if (IsIncluded) {
+            return OriginalRequire(PMG.NPM.GetPackageFolder(Request, IsIncluded))
+        }
     }
 
-    if (IsCoreModule(Request)) {
-        return OriginalRequire(Request)
-    } else if (IsPackageIncluded(Request)) {
-        return OriginalRequire
+    { // Is it a sub dep
+        function GetCallerFolder() {
+            const SplitPath = CallerFile.split(NPMCacheFolder)
+            SplitPath.shift()
+            SplitPath.unshift(NPMCacheFolder)
+            const PackageCacheFolder = SplitPath[1].split(Path.sep)
+            return `${NPMCacheFolder}/${PackageCacheFolder.filter(function(_, I) {return I < 4}).join("/")}/`
+        }
+
+        const CallerFolder = GetCallerFolder()
+        const RequestModuleFolder = `${CallerFolder}/node_modules/${Request}`
+        if (FS.existsSync(RequestModuleFolder)) {
+            return OriginalRequire(RequestModuleFolder)
+        }
+
+        const WithExt = FindFileExt(RequestModuleFolder)
+        if (WithExt) {
+            return OriginalRequire(RequestModuleFolder)
+        }
     }
+    
+    { // Ext stuff
+        
+
+        const ResolvedPath = Path.resolve(`${Path.dirname(CallerFile)}/${Request}/`)
+
+        if (FS.existsSync(ResolvedPath)) {
+            return OriginalRequire(ResolvedPath)
+        }
+
+        const NoExt = FindFileExt(ResolvedPath)
+        if (NoExt) {
+            return OriginalRequire(NoExt)
+        }
+
+        const WithExt = FindFileExt(ResolvedPath + "/index")
+        if (WithExt) {
+            return OriginalRequire(WithExt)
+        }
+    }
+    console.error("Did not return")
 }
 
 module.exports = RuntimeHelper
