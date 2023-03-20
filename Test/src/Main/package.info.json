@@ -22,8 +22,8 @@
 		},
 		{
 			"Source": "NPM",
-			"Package": "discord.js",
-			"Version": "14.8.0",
+			"Package": "electron",
+			"Version": "23.1.4",
 			"Type": "Packaged"
 		}
 	],
