@@ -1,4 +1,3 @@
-const LuaHelper = require("./Lib/LuaHelper")
 const FS = require("fs")
 
 const ArgumentData = require("./Registry/Arguments")
