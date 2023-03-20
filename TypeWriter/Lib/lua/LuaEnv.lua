@@ -6,7 +6,6 @@ do -- Set globals
         return js.global.console:log(T)
     end
     
-    p(Import)
     local OriginalRequire = require
     
     _G.jsnew = js.new
