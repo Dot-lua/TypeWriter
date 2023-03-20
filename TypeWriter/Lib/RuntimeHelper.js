@@ -93,12 +93,30 @@ RuntimeHelper.Require = function(Request) {
             }
         }
     }
-    
+
     { // Is it a core module
         if (IsCoreModule(Request)) {
             return OriginalRequire(Request)
         }
     }
+
+    { // Ext stuff
+        const ResolvedPath = Path.resolve(`${Path.dirname(CallerFile)}/${Request}/`)
+
+        if (FS.existsSync(ResolvedPath)) {
+            return OriginalRequire(ResolvedPath)
+        }
+
+        const NoExt = FindFileExt(ResolvedPath)
+        if (NoExt) {
+            return OriginalRequire(NoExt)
+        }
+
+        const WithExt = FindFileExt(ResolvedPath + "/index")
+        if (WithExt) {
+            return OriginalRequire(WithExt)
+        }
+    }    
     
     { // Is it included
         function IsPackageIncluded(Request) {
@@ -126,8 +144,11 @@ RuntimeHelper.Require = function(Request) {
             const SplitPath = CallerFile.split(NPMCacheFolder)
             SplitPath.shift()
             SplitPath.unshift(NPMCacheFolder)
-            const PackageCacheFolder = SplitPath[1].split(Path.sep)
-            return `${NPMCacheFolder}/${PackageCacheFolder.filter(function(_, I) {return I < 4}).join("/")}/`
+            if (SplitPath[1]) {
+                const PackageCacheFolder = SplitPath[1].split(Path.sep)
+                return `${NPMCacheFolder}/${PackageCacheFolder.filter(function(_, I) {return I < 4}).join("/")}/`
+            }
+            
         }
 
         const CallerFolder = GetCallerFolder()
@@ -142,26 +163,7 @@ RuntimeHelper.Require = function(Request) {
         }
     }
     
-    { // Ext stuff
-        
-
-        const ResolvedPath = Path.resolve(`${Path.dirname(CallerFile)}/${Request}/`)
-
-        if (FS.existsSync(ResolvedPath)) {
-            return OriginalRequire(ResolvedPath)
-        }
-
-        const NoExt = FindFileExt(ResolvedPath)
-        if (NoExt) {
-            return OriginalRequire(NoExt)
-        }
-
-        const WithExt = FindFileExt(ResolvedPath + "/index")
-        if (WithExt) {
-            return OriginalRequire(WithExt)
-        }
-    }
-    console.error("Did not return")
+    
 }
 
 module.exports = RuntimeHelper
