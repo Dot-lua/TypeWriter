@@ -1,12 +1,13 @@
 const FS = require("fs")
+const Path = require("path")
 
 const ArgumentData = require("./Registry/Arguments")
 
 global.TypeWriter = {}
 TypeWriter.OS = process.platform
 TypeWriter.Arguments = ArgumentData.Arguments
-TypeWriter.Executable = process.argv[0]
-TypeWriter.Folder = require("path").resolve(TypeWriter.Executable, "../")
+TypeWriter.Folder = require("./Lib/FindUp")(Path.resolve(process.argv0, "../a/b/c/d/e/f/e/g"), "InstallationDirectory")
+TypeWriter.Executable = Path.resolve(`${TypeWriter.Folder}/TypeWriter${TypeWriter.OS == "win32" ? ".exe" : ""}`)
 TypeWriter.ApplicationData = `${TypeWriter.Folder}/ApplicationData/`
 TypeWriter.Logger = require("./Lib/Logger")
 

@@ -42,7 +42,7 @@ if (FS.existsSync(`${InstallLocation()}/InstallationDirectory`)) {
 FS.mkdirSync(`${InstallLocation()}/Cache`)
 FS.writeFileSync(`${InstallLocation()}/InstallationDirectory`, "")
 const ExecutablePath = `${InstallLocation()}/typewriter${TypeWriter.OS == "win32" ? ".exe" : ""}`
-FS.copySync(TypeWriter.Executable, ExecutablePath)
+FS.copySync(process.argv0, ExecutablePath)
 
 function RemoveLineFromFile(FilePath, RmLine) {
     if (FS.existsSync(FilePath) == false) {
