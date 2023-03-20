@@ -9,9 +9,7 @@ module.exports.Execute = function() {
     const InputPath = TypeWriter.Arguments.input
     const InputBranch = TypeWriter.Arguments.branch
 
-
     const BuildId = BuildHelper.Build(InputPath, InputBranch)
-    
     const ExecuteId = RandomString.generate(32)
     TypeWriter.Logger.Debug(`ExecuteId is ${ExecuteId}`)
     const ExecuteFolder = Path.normalize(`${TypeWriter.Folder}/Cache/ExecuteCache/${ExecuteId}/`)
