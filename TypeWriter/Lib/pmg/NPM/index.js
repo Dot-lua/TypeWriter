@@ -77,7 +77,7 @@ function DownloadPackage(Name, Version, CheckExists=true) {
         if (Dependency.split("/").length == 2) {
             FS.ensureDirSync(`${OutputFolder}/node_modules/${Dependency.split("/")[0]}`)
         }
-        FS.symlinkSync(DownloadedPath, `${OutputFolder}/node_modules/${Dependency}/`, TypeWriter.OS == "win32" ? 'junction' : 'dir') // https://github.com/pnpm/symlink-dir/blob/main/src/index.ts#L10
+        FS.symlinkSync(DownloadedPath, `${OutputFolder}/node_modules/${Dependency}`, TypeWriter.OS == "win32" ? 'junction' : 'dir') // https://github.com/pnpm/symlink-dir/blob/main/src/index.ts#L10
     }
     FS.writeJSONSync(`${OutputFolder}/DependencyTree.json`, DependencyTree, {spaces: "\t"})
     
@@ -143,7 +143,7 @@ function LoadPackage(PackageName, PackageVersion, ExecuteDirectory) {
     if (PackageName.split("/").length == 2) {
         FS.ensureDirSync(`${ModulesFolder}/${PackageName.split("/")[0]}`)
     }
-    FS.symlinkSync(PackageFolder, `${ModulesFolder}/${PackageName}/`, TypeWriter.OS == "win32" ? 'junction' : 'dir') // https://github.com/pnpm/symlink-dir/blob/main/src/index.ts#L10
+    FS.symlinkSync(PackageFolder, `${ModulesFolder}/${PackageName}`, TypeWriter.OS == "win32" ? 'junction' : 'dir') // https://github.com/pnpm/symlink-dir/blob/main/src/index.ts#L10
 }
 
 function GetLatestPackageVersion(PackageName) {
