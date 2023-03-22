@@ -1,4 +1,5 @@
 const FS = require("fs")
+const Path = require("path")
 
 function Repeat(Snippet, Times) {
     var S = ""
@@ -13,11 +14,11 @@ function FindUp(Root, FileName, MaxUp, I=0) {
         return null
     }
 
-    const Path = `${Root}/${Repeat("/../", I)}/${FileName}`
+    const FoundPath = `${Root}/${Repeat("/../", I)}/${FileName}`
     if (!FS.existsSync(Path)) {
         return FindUp(Root, FileName, MaxUp, I + 1)
     }
-    return require("path").resolve(Path + "/../") + "/"
+    return Path.resolve(FoundPath + "/../") + "/"
 }
 
 module.exports = FindUp

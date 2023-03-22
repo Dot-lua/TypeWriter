@@ -1,4 +1,5 @@
 const FS = require("fs-extra")
+const Path = require("path")
 
 module.exports.Name = "New"
 module.exports.Execute = function() {
@@ -10,7 +11,7 @@ module.exports.Execute = function() {
     FS.mkdirpSync("./src/Main/js/me/corebyte/template/")
     FS.mkdirpSync("./src/Main/lua/me/corebyte/template/")
     FS.mkdirpSync("./src/Main/resources/")
-    FS.copySync(require("path").join(__dirname, "../../Assets/package.info.json"), "./src/Main/package.info.json")
+    FS.copySync(Path.join(__dirname, "../../Assets/package.info.json"), "./src/Main/package.info.json")
     FS.writeFileSync("./src/Main/lua/me/corebyte/template/Main.lua", "print(\"Hello lua world\")")
     FS.writeFileSync("./src/Main/js/me/corebyte/template/JsMain.js", "console.log(\"Hello js world\")")
 

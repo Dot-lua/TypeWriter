@@ -2,7 +2,6 @@ const LuaHelper = {}
 
 const Fengari = require("fengari")
 const Interop = require('fengari-interop');
-const Path = require("path")
 
 const lua = Fengari.lua
 const lauxlib = Fengari.lauxlib
