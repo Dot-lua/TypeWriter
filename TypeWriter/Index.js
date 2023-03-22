@@ -6,10 +6,11 @@ const ArgumentData = require("./Registry/Arguments")
 global.TypeWriter = {}
 TypeWriter.OS = process.platform
 TypeWriter.Arguments = ArgumentData.Arguments
-TypeWriter.Folder = require("./Lib/FindUp")(Path.resolve(process.argv0, "../"), "InstallationDirectory")
+TypeWriter.Folder = require("./Lib/FindUp")(Path.resolve(process.argv0, "../"), "InstallationDirectory", 40) || Path.resolve(`${process.argv0}/../`)
 TypeWriter.Executable = Path.resolve(`${TypeWriter.Folder}/TypeWriter${TypeWriter.OS == "win32" ? ".exe" : ""}`)
 TypeWriter.ApplicationData = `${TypeWriter.Folder}/ApplicationData/`
 TypeWriter.Logger = require("./Lib/Logger")
+
 
 if (FS.existsSync(`${TypeWriter.Folder}/InstallationDirectory`)) {
     TypeWriter.Logger.Debug("Valid installation found")

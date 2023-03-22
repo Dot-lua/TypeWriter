@@ -8,10 +8,14 @@ function Repeat(Snippet, Times) {
     return S
 }
 
-function FindUp(Root, FileName, I=0) {
+function FindUp(Root, FileName, MaxUp, I=0) {
+    if (I > MaxUp) {
+        return null
+    }
+
     const Path = `${Root}/${Repeat("/../", I)}/${FileName}`
     if (!FS.existsSync(Path)) {
-        return FindUp(Root, FileName, I + 1)
+        return FindUp(Root, FileName, MaxUp, I + 1)
     }
     return require("path").resolve(Path + "/../") + "/"
 }

@@ -98,6 +98,6 @@ if(TypeWriter.OS != "win32") {
 } else {
     FS.writeFileSync(
         `${process.env.LOCALAPPDATA}/Microsoft/WindowsApps/TypeWriter.bat`,
-        `@echo off\n${process.env.APPDATA}"/.TypeWriter/TypeWriter.exe %*`
+        `@echo off\n${process.env.APPDATA}/.TypeWriter/TypeWriter.exe %*`
     )
 }
