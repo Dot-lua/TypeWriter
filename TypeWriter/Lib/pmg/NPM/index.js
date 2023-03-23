@@ -6,55 +6,60 @@ const KlawSync = require("klaw-sync")
 const SemVer = require("semver")
 const Base64 = require("js-base64")
 const JsonRequest = require("../../JsonRequest")
+const RequireString = require("require-from-string")
 
 const CacheFolder = `${TypeWriter.Folder}/Cache/ModuleCache/NPM/`
 const UnpackFolder = `${TypeWriter.Folder}/Cache/ModuleCache/Unpack/`
 
-function EncodePackageName(Name) {
-    return Base64.encode(Name)
-}
-
-function GetCacheFolder(Name) {
-    return `${CacheFolder}/${EncodePackageName(Name)}`
+function GetCacheFolder(PackageName) {
+    return `${CacheFolder}/${Base64.encode(PackageName)}`
 }
 
 function GetPackageInfo(PackageName, PackageVersion) {
     return JsonRequest(
         `https://nva.corebyte.me/version?q=${PackageName}&v=${PackageVersion}`
+    ).Data
+}
+
+function FindClosest(FolderPath, FileName) {
+    const FileList = KlawSync(
+        FolderPath,
+        {
+            nodir: true,
+            preserveOwner: false
+        }
+    )
+    const FoundFolder = Path.dirname(FileList.filter(
+        function(File) {
+            return Path.basename(File.path) == FileName
+        }
+    ).reduce(
+        function(a, b) {
+            return a.path.length <= b.path.length ? a : b;
+        }
+    ).path)
+    return FoundFolder
+}
+
+function CreatePackageFolders(PackageName) {
+    const PackageFolder = GetCacheFolder(PackageName)
+    if (FS.existsSync(PackageFolder)) {return}
+    FS.mkdirSync(PackageFolder)
+    FS.mkdirSync(`${PackageFolder}/Versions`)
+    FS.writeFileSync(`${PackageFolder}/${PackageName.replaceAll("/", "-")}`, "")
+    FS.writeJSONSync(
+        `${PackageFolder}/PackageInfo.json`,
+        {
+            Name: PackageName
+        }
     )
 }
 
-function DownloadPackage(Name, Version, CheckExists=true) {
+function DownloadPackage(Name, Version) {
     Name = Name.toLowerCase()
     const PackageFolder = GetCacheFolder(Name)
-    {
-        var CreateFolders = false
-        if (!FS.existsSync(PackageFolder)) {
-            if (CheckExists) {
-                TypeWriter.Logger.Debug(`Checking if ${Name} exists`)
-                const PackageExists = JsonRequest(`https://nva.corebyte.me/exists/?q=${Name}`)
-                if (!PackageExists) {
-                    TypeWriter.Logger.Error(`NPM package ${Name} does not exist, please fix!`)
-                    process.exit(1)
-                }
-                CreateFolders = true
-            } else {
-                CreateFolders = true
-            }
-        }
+    CreatePackageFolders(Name)
 
-        if (CreateFolders) {
-            FS.mkdirSync(PackageFolder)
-            FS.mkdirSync(`${PackageFolder}/Versions`)
-            FS.writeFileSync(`${PackageFolder}/${Name.replaceAll("/", "-")}`, "")
-            FS.writeJSONSync(
-                `${PackageFolder}/PackageInfo.json`,
-                {
-                    Name: Name
-                }
-            )
-        }
-    }
     if (FS.existsSync(`${PackageFolder}/Versions/${Version}`)) {
         TypeWriter.Logger.Debug(`Package version ${Name}@${Version} is already in the cache`)
         return `${PackageFolder}/Versions/${Version}`
@@ -99,22 +104,7 @@ function DownloadPackage(Name, Version, CheckExists=true) {
     )
 
     TypeWriter.Logger.Debug(`Moving files from ${Name}`)
-    const FileList = KlawSync(
-        UnpackFolder,
-        {
-            nodir: true,
-            preserveOwner: false
-        }
-    )
-    const MoveFolder = Path.dirname(FileList.filter(
-        function(File) {
-            return Path.basename(File.path) == "package.json"
-        }
-    ).reduce(
-        function(a, b) {
-            return a.path.length <= b.path.length ? a : b;
-        }
-    ).path)
+    const MoveFolder = FindClosest(UnpackFolder, "package.json")
 
     for (const FileName of FS.readdirSync(MoveFolder)) {
         var Moved = false
@@ -129,8 +119,20 @@ function DownloadPackage(Name, Version, CheckExists=true) {
                 TypeWriter.Logger.Warning(`Could not move downloaded package (${E})`)
             }
         }
-        
     }
+
+    if (PackageInfo.hasInstallScript) {
+        const PackageData = FS.readJSONSync(`${OutputFolder}/package.json`)
+        const InstallScript = PackageData.scripts.postinstall
+        const SplitScript = InstallScript.split(" ")
+        if (SplitScript[0] == "node") {
+            console.log(Path.join(OutputFolder, SplitScript[1]))
+            RequireString(
+                FS.readFileSync(Path.join(OutputFolder, SplitScript[1]), "utf-8")
+            )
+        }
+    }
+
     TypeWriter.Logger.Debug(`Done getting ${Name}`)
     return OutputFolder
 }
@@ -147,13 +149,28 @@ function LoadPackage(PackageName, PackageVersion, ExecuteDirectory) {
 }
 
 function GetLatestPackageVersion(PackageName) {
-    return JsonRequest(`https://registry.npmjs.org/${PackageName}/latest`).version
+    return JsonRequest(`https://unpkg.com/${PackageName}/package.json`).Data.version
+}
+
+function PackageExists(PackageName) {
+    if (FS.existsSync(GetCacheFolder(PackageName))) {
+        return true
+    } else {
+        const Exists = JsonRequest(`https://unpkg.com/${PackageName}/package.json`).Response.status == 200
+        if (Exists) {
+            CreatePackageFolders(PackageName)
+            return true
+        }
+    }
+
+    return false
 }
 
 module.exports = {
     DownloadPackage: DownloadPackage,
     LoadPackage: LoadPackage,
     GetLatestPackageVersion: GetLatestPackageVersion,
+    PackageExists: PackageExists,
     GetPackageFolder: function(PackageName, PackageVersion) {
         return `${GetCacheFolder(PackageName)}/Versions/${PackageVersion}`
     }
