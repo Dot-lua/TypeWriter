@@ -104,6 +104,24 @@ const SubParsers = MainParser.add_subparsers(
     )
 }
 
+{ //Runscript Parser
+    const RunScriptParser = SubParsers.add_parser(
+        "runscript",
+        {
+            help: "None",
+            metavar: "None"
+        }
+    )
+    RunScriptParser.add_argument(
+        "-i", "--input",
+        {
+            help: ArgParse.SUPPRESS,
+            metavar: "path",
+            default: "./src/"
+        }
+    )
+}
+
 const Parsed = MainParser.parse_args()
 module.exports.Arguments = Parsed
 module.exports.Parser = MainParser

@@ -3,4 +3,5 @@ module.exports = {
     execute:    require("./execute/Index.js"),
     new:        require("./new/Index.js"),
     run:        require("./run/Index.js"),
+    runscript:  require("./runscript/Index.js"),
 }
