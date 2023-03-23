@@ -8,9 +8,15 @@ function JsonRequest(Url) {
         const Response = Fetch(
             Url
         )
-        const Data = Response.json()
-        Cache[Url] = Data
-        return Data
+        var Data = false
+        try {
+            Data = Response.json()
+        } catch {}
+        Cache[Url] = {
+            Data: Data,
+            Response: Response
+        }
+        return Cache[Url]
     }
 }
 
