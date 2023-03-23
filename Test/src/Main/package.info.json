@@ -23,8 +23,8 @@
 		{
 			"Source": "NPM",
 			"Package": "electron",
-			"Version": "23.1.4",
-			"Type": "Packaged"
+			"Type": "Packaged",
+			"Version": "23.2.0"
 		}
 	],
 	"Entrypoints": {
