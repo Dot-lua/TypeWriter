@@ -39,6 +39,10 @@ BuildHelper.Build = function(Folder, Branch) {
         var NeedWrite = false
 
         for (const Dependency of PackageData.Dependencies) {
+            if (!Pmg[Dependency.Source].PackageExists(Dependency.Package)) {
+                return false
+            }
+
             if (!Dependency.Version) {
                 TypeWriter.Logger.Warning(`Missing version in ${Dependency.Source} package ${Dependency.Package}`)
                 TypeWriter.Logger.Warning(`Defaulting to latest version`)
