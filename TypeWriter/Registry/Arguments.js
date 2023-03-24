@@ -121,6 +121,7 @@ const SubParsers = MainParser.add_subparsers(
     )
 }
 
-const Parsed = MainParser.parse_args()
-module.exports.Arguments = Parsed
+var Parsed = MainParser.parse_known_args()
+module.exports.Arguments = Parsed[0]
 module.exports.Parser = MainParser
+module.exports.Unknown = Parsed[1]
