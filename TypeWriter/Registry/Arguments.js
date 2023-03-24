@@ -108,16 +108,15 @@ const SubParsers = MainParser.add_subparsers(
     const RunScriptParser = SubParsers.add_parser(
         "runscript",
         {
-            help: "None",
-            metavar: "None"
+            help: "Runs a script"
         }
     )
     RunScriptParser.add_argument(
         "-i", "--input",
         {
-            help: ArgParse.SUPPRESS,
+            help: "input script",
             metavar: "path",
-            default: "./src/"
+            default: "./index.js"
         }
     )
 }
