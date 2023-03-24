@@ -14,8 +14,8 @@ function FindUp(Root, FileName, MaxUp, I=0) {
         return null
     }
 
-    const FoundPath = `${Root}/${Repeat("/../", I)}/${FileName}`
-    if (!FS.existsSync(Path)) {
+    const FoundPath = Path.resolve(`${Root}/${Repeat("/../", I)}/${FileName}`)
+    if (!FS.existsSync(FoundPath)) {
         return FindUp(Root, FileName, MaxUp, I + 1)
     }
     return Path.resolve(FoundPath + "/../") + "/"
