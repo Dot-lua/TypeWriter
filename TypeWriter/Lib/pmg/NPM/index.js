@@ -126,9 +126,13 @@ function DownloadPackage(Name, Version) {
         const InstallScript = PackageData.scripts.postinstall
         const SplitScript = InstallScript.split(" ")
         if (SplitScript[0] == "node") {
-            console.log(Path.join(OutputFolder, SplitScript[1]))
-            RequireString(
-                FS.readFileSync(Path.join(OutputFolder, SplitScript[1]), "utf-8")
+            require("child_process").execFileSync(
+                TypeWriter.Executable,
+                ["runscript", "-i", Path.join(OutputFolder, SplitScript[1])],
+                {
+                    cwd: `${OutputFolder}`,
+                    stdio: "inherit"
+                }
             )
         }
     }
