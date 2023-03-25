@@ -20,7 +20,7 @@ function GetModuleFolder(PackageName) {
 }
 
 function GetPackageInfo(PackageName, PackageVersion) {
-    TypeWriter.Logger.Debug(`Getting package info for ${PackageName}@${PackageVersion}``)
+    TypeWriter.Logger.Debug(`Getting package info for ${PackageName}@${PackageVersion}`)
     return JsonRequest(
         `https://unpkg.com/${PackageName}@${PackageVersion}/package.json`
     ).Data
