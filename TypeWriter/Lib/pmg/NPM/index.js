@@ -8,8 +8,10 @@ const Base64 = require("js-base64")
 const JsonRequest = require("../../JsonRequest")
 const RequireString = require("require-from-string")
 
-const CacheFolder = `${TypeWriter.Folder}/Cache/ModuleCache/NPM/`
-const UnpackFolder = `${TypeWriter.Folder}/Cache/ModuleCache/Unpack/`
+const CacheFolder =         `${TypeWriter.Folder}/Cache/ModuleCache/NPM/`
+const ModulesFolder =       `${CacheFolder}/Modules/`
+const ModuleTarsFolder =    `${CacheFolder}/ModuleTars/`
+const UnpackFolder =        `${CacheFolder}/Unpack/`
 
 function GetCacheFolder(PackageName) {
     return `${CacheFolder}/${Base64.encode(PackageName)}`
