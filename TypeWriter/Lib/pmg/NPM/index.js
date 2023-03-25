@@ -6,20 +6,24 @@ const KlawSync = require("klaw-sync")
 const SemVer = require("semver")
 const Base64 = require("js-base64")
 const JsonRequest = require("../../JsonRequest")
-const RequireString = require("require-from-string")
 
 const CacheFolder =         `${TypeWriter.Folder}/Cache/ModuleCache/NPM/`
 const ModulesFolder =       `${CacheFolder}/Modules/`
 const ModuleTarsFolder =    `${CacheFolder}/ModuleTars/`
 const UnpackFolder =        `${CacheFolder}/Unpack/`
 
-function GetCacheFolder(PackageName) {
-    return `${CacheFolder}/${Base64.encode(PackageName)}`
+function GetModuleFolder(PackageName) {
+    const SplitName = PackageName.split("/")
+    if (SplitName.length == 2) {
+        FS.ensureDirSync(`${ModulesFolder}/${SplitName[0]}`)
+        return `${ModulesFolder}/${SplitName[0]}/${SplitName[1]}`
+    }
+    return `${ModulesFolder}/${PackageName}`
 }
 
 function GetPackageInfo(PackageName, PackageVersion) {
     return JsonRequest(
-        `https://nva.corebyte.me/version?q=${PackageName}&v=${PackageVersion}`
+        `https://unpkg.com/${PackageName}@${PackageVersion}/package.json`
     ).Data
 }
 
@@ -44,68 +48,45 @@ function FindClosest(FolderPath, FileName) {
 }
 
 function CreatePackageFolders(PackageName) {
-    const PackageFolder = GetCacheFolder(PackageName)
-    if (FS.existsSync(PackageFolder)) {return}
-    FS.mkdirSync(PackageFolder)
-    FS.mkdirSync(`${PackageFolder}/Versions`)
-    FS.writeFileSync(`${PackageFolder}/${PackageName.replaceAll("/", "-")}`, "")
+    const ModuleFolder = GetModuleFolder(PackageName)
+    if (FS.existsSync(ModuleFolder)) {return}
+    FS.mkdirSync(ModuleFolder)
+    FS.mkdirSync(`${ModuleFolder}/Versions`)
     FS.writeJSONSync(
-        `${PackageFolder}/PackageInfo.json`,
+        `${ModuleFolder}/PackageInfo.json`,
         {
             Name: PackageName
         }
     )
 }
 
-function DownloadPackage(Name, Version) {
-    Name = Name.toLowerCase()
-    const PackageFolder = GetCacheFolder(Name)
-    CreatePackageFolders(Name)
-
-    if (FS.existsSync(`${PackageFolder}/Versions/${Version}`)) {
-        TypeWriter.Logger.Debug(`Package version ${Name}@${Version} is already in the cache`)
-        return `${PackageFolder}/Versions/${Version}`
-    }
-
-    const PackageInfo = GetPackageInfo(Name, Version).VersionData
-
-    const OutputFolder = `${PackageFolder}/Versions/${PackageInfo.version}/`
-    if (FS.existsSync(OutputFolder)) {
-        return OutputFolder
-    }
-    FS.mkdirSync(OutputFolder)
-    FS.mkdirSync(`${OutputFolder}/node_modules/`)
-
-    const DependencyTree = {}
-    for (const Dependency in PackageInfo.dependencies) {
-        const DependencyVersion = PackageInfo.dependencies[Dependency]
-        DependencyTree[Dependency] = GetPackageInfo(Dependency, DependencyVersion).Version
-        const DownloadedPath = DownloadPackage(Dependency, DependencyVersion, false)
-        if (Dependency.split("/").length == 2) {
-            FS.ensureDirSync(`${OutputFolder}/node_modules/${Dependency.split("/")[0]}`)
-        }
-        FS.symlinkSync(DownloadedPath, `${OutputFolder}/node_modules/${Dependency}`, TypeWriter.OS == "win32" ? 'junction' : 'dir') // https://github.com/pnpm/symlink-dir/blob/main/src/index.ts#L10
-    }
-    FS.writeJSONSync(`${OutputFolder}/DependencyTree.json`, DependencyTree, {spaces: "\t"})
-    
-    TypeWriter.Logger.Information(`Downloading package ${Name} version ${PackageInfo.version}`)
-
-    const FetchData = Fetch(PackageInfo.dist.tarball)
-    const OutputFile = `${OutputFolder}/TarBall.tgz`
+function DownloadPackageArchive(PackageName, PackageVersion) {
+    const OutputFile = `${ModuleTarsFolder}/${PackageName}/${PackageVersion}.tgz`
+    if (FS.existsSync(OutputFile)) {return OutputFile}
     FS.mkdirpSync(Path.dirname(OutputFile))
+
+    const FetchData = Fetch(`https://registry.npmjs.org/${PackageName}/-/${PackageName}-${PackageVersion}.tgz`)
     FS.writeFileSync(OutputFile, FetchData.buffer())
 
-    TypeWriter.Logger.Debug(`Extracting ${Name}`)
+    return OutputFile
+}
+
+function UnpackPackageArchive(PackageName, PackageVersion) {
+    const OutputFolder = `${ModulesFolder}/${PackageName}/Versions/${PackageVersion}`
+    if (FS.existsSync(OutputFolder)) {return OutputFolder}
+    FS.mkdirpSync(OutputFolder)
+    const TarFile = DownloadPackageArchive(PackageName, PackageVersion)
+
     Tar.extract(
         {
-            file: OutputFile,
+            file: TarFile,
             sync: true,
             cwd: UnpackFolder,
             preserveOwner: false
         }
     )
 
-    TypeWriter.Logger.Debug(`Moving files from ${Name}`)
+    TypeWriter.Logger.Debug(`Moving files from ${PackageName}`)
     const MoveFolder = FindClosest(UnpackFolder, "package.json")
 
     for (const FileName of FS.readdirSync(MoveFolder)) {
@@ -123,9 +104,45 @@ function DownloadPackage(Name, Version) {
         }
     }
 
-    if (PackageInfo.hasInstallScript) {
-        const PackageData = FS.readJSONSync(`${OutputFolder}/package.json`)
-        const InstallScript = PackageData.scripts.postinstall
+    return OutputFolder
+}
+
+function DownloadPackage(Name, Version) {
+    Name = Name.toLowerCase()
+    const PackageFolder = GetModuleFolder(Name)
+    CreatePackageFolders(Name)
+
+    if (FS.existsSync(`${PackageFolder}/Versions/${Version}`)) {
+        TypeWriter.Logger.Debug(`Package version ${Name}@${Version} is already in the cache`)
+        return `${PackageFolder}/Versions/${Version}`
+    }
+
+    const PackageInfo = GetPackageInfo(Name, Version)
+
+    const DependencyFolders = {}
+    for (const DependencyName in PackageInfo.dependencies) {
+        const DependencyVersion = PackageInfo.dependencies[DependencyName]
+        DependencyFolders[DependencyName] = DownloadPackage(DependencyName, DependencyVersion)
+    }
+
+    const UnpackedFolder = UnpackPackageArchive(PackageInfo.name, PackageInfo.version)
+
+    FS.ensureDirSync(`${UnpackedFolder}/node_modules/`)
+    for (const DependencyName in DependencyFolders) {
+        const DependencyFolder = DependencyFolders[DependencyName]
+        const SplitDependencyName = DependencyName.split("/")
+        if (SplitDependencyName.length == 2) {
+            FS.ensureDirSync(`${UnpackedFolder}/node_modules/${SplitDependencyName[0]}`)
+        }
+        FS.symlinkSync(
+            DependencyFolder,
+            `${UnpackedFolder}/node_modules/${DependencyName}`,
+            TypeWriter.OS == "win32" ? 'junction' : 'dir'
+        )
+    }
+
+    if (PackageInfo.scripts.postInstall) {
+        const InstallScript = PackageInfo.scripts.postinstall
         const SplitScript = InstallScript.split(" ")
         if (SplitScript[0] == "node") {
             require("child_process").execFileSync(
@@ -140,7 +157,7 @@ function DownloadPackage(Name, Version) {
     }
 
     TypeWriter.Logger.Debug(`Done getting ${Name}`)
-    return OutputFolder
+    return UnpackedFolder
 }
 
 function LoadPackage(PackageName, PackageVersion, ExecuteDirectory) {
@@ -159,7 +176,7 @@ function GetLatestPackageVersion(PackageName) {
 }
 
 function PackageExists(PackageName) {
-    if (FS.existsSync(GetCacheFolder(PackageName))) {
+    if (FS.existsSync(GetModuleFolder(PackageName))) {
         return true
     } else {
         const Exists = JsonRequest(`https://unpkg.com/${PackageName}/package.json`).Response.status == 200
@@ -178,6 +195,6 @@ module.exports = {
     GetLatestPackageVersion: GetLatestPackageVersion,
     PackageExists: PackageExists,
     GetPackageFolder: function(PackageName, PackageVersion) {
-        return `${GetCacheFolder(PackageName)}/Versions/${PackageVersion}/`
+        return `${GetModuleFolder(PackageName)}/Versions/${PackageVersion}/`
     }
 }
