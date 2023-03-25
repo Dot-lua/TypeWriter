@@ -1,1 +1,1 @@
-console.log(require("fs-extra").readJSONSync)
+console.log(require("fs-extra"))
