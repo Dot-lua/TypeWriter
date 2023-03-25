@@ -142,7 +142,7 @@ function DownloadPackage(PackageName, PackageVersion) {
         )
     }
 
-    if (PackageInfo.scripts.postInstall) {
+    if ((PackageInfo.scripts || {}).postInstall) {
         const InstallScript = PackageInfo.scripts.postinstall
         const SplitScript = InstallScript.split(" ")
         if (SplitScript[0] == "node") {
