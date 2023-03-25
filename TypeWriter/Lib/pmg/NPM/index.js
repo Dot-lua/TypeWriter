@@ -176,6 +176,6 @@ module.exports = {
     GetLatestPackageVersion: GetLatestPackageVersion,
     PackageExists: PackageExists,
     GetPackageFolder: function(PackageName, PackageVersion) {
-        return `${GetCacheFolder(PackageName)}/Versions/${PackageVersion}`
+        return `${GetCacheFolder(PackageName)}/Versions/${PackageVersion}/`
     }
 }
