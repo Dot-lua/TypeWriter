@@ -1,7 +1,7 @@
 const RuntimeHelper = {}
 
 const SingleTarRead = require("../Lib/SingleTar")
-const FS = require("fs")
+const FS = require("fs-extra")
 const Tar = require("tar")
 const Path = require("path")
 const LuaHelper = require("./LuaHelper")
@@ -27,6 +27,7 @@ RuntimeHelper.LoadEnvoirment = function(ExecuteFolder) {
     TypeWriter.Import = this.Import
     global.Import = this.Import
     TypeWriter.LoadEntrypoint = this.LoadEntrypoint
+    TypeWriter.ResourceManager = require("./ResourceManager")
     Module.prototype.require = this.Require
 
     LuaHelper.LoadFile(TypeWriterLuaState, Path.join(__dirname, "./lua/LuaEnv.lua"))
@@ -85,84 +86,102 @@ const NPMCacheFolder = Path.resolve(`${TypeWriter.Folder}/Cache/ModuleCache/NPM/
 RuntimeHelper.Require = function(Request) {
     const CallerFile = Path.resolve(GetCallerFile(3))
 
-    const Exts = ["js", "json", "node"]
-    function FindFileExt(FilePath) {
-        for (const Ext of Exts) {
-            const CheckPath = `${FilePath}.${Ext}`
-            if (FS.existsSync(CheckPath)) { 
-                return CheckPath
-            }
-        }
-    }
-
-    { // Is it a core module
-        if (IsCoreModule(Request)) {
-            return OriginalRequire(Request)
-        }
-    }
-
-    { // Ext stuff
-        const ResolvedPath = Path.resolve(`${Path.dirname(CallerFile)}/${Request}/`)
-
-        if (FS.existsSync(ResolvedPath)) {
-            return OriginalRequire(ResolvedPath)
-        }
-
-        const NoExt = FindFileExt(ResolvedPath)
-        if (NoExt) {
-            return OriginalRequire(NoExt)
-        }
-
-        const WithExt = FindFileExt(ResolvedPath + "/index")
-        if (WithExt) {
-            return OriginalRequire(WithExt)
-        }
-    }    
-    
-    { // Is it included
-        function IsPackageIncluded(Request) {
-            for (const PackageId in TypeWriter.LoadedPackages) {
-                const Package = TypeWriter.LoadedPackages[PackageId].Package
-                const PackageDependencies = Package.Dependencies
-                for (const Dependency of PackageDependencies) {
-                    if (Dependency.Source == "NPM" && Dependency.Package == Request) {
-                        return Dependency.Version
-                    }
+    function Resolve(Request, CallerFile) {
+        const Exts = ["js", "json", "node"]
+        function FindFileExt(FilePath) {
+            for (const Ext of Exts) {
+                const CheckPath = `${FilePath}.${Ext}`
+                if (FS.existsSync(CheckPath)) { 
+                    return CheckPath
                 }
             }
-    
-            return false
         }
 
-        const IsIncluded = IsPackageIncluded(Request)
-        if (IsIncluded) {
-            return OriginalRequire(PMG.NPM.GetPackageFolder(Request, IsIncluded))
-        }
-    }
-
-    { // Is it a sub dep
-        function GetCallerFolder() {
-            const SplitPath = CallerFile.split(NPMCacheFolder)
-            SplitPath.shift()
-            SplitPath.unshift(NPMCacheFolder)
-            if (SplitPath[1]) {
-                const PackageCacheFolder = SplitPath[1].split(Path.sep)
-                return `${NPMCacheFolder}/${PackageCacheFolder.filter(function(_, I) {return I < 4}).join("/")}/`
+        { // Is it a core module
+            if (IsCoreModule(Request)) {
+                return Request
             }
-            
         }
 
-        const CallerFolder = GetCallerFolder()
-        const RequestModuleFolder = `${CallerFolder}/node_modules/${Request}`
-        if (FS.existsSync(RequestModuleFolder)) {
-            return OriginalRequire(RequestModuleFolder)
+        { // Ext stuff
+            const ResolvedPath = Path.resolve(`${Path.dirname(CallerFile)}/${Request}/`)
+
+            if (FS.existsSync(ResolvedPath)) {
+                return ResolvedPath
+            }
+
+            const NoExt = FindFileExt(ResolvedPath)
+            if (NoExt) {
+                return NoExt
+            }
+
+            const WithExt = FindFileExt(ResolvedPath + "/index")
+            if (WithExt) {
+                return WithExt
+            }
+        }    
+        
+        { // Is it included
+            function IsPackageIncluded(Request) {
+                for (const PackageId in TypeWriter.LoadedPackages) {
+                    const Package = TypeWriter.LoadedPackages[PackageId].Package
+                    const PackageDependencies = Package.Dependencies
+                    for (const Dependency of PackageDependencies) {
+                        if (Dependency.Source == "NPM" && Dependency.Package == Request) {
+                            return Dependency.Version
+                        }
+                    }
+                }
+        
+                return false
+            }
+
+            const IsIncluded = IsPackageIncluded(Request)
+            if (IsIncluded) {
+                const PackagePath = PMG.NPM.GetPackageFolder(Request, IsIncluded)
+                if (FS.existsSync(`${PackagePath}/index.js`)) {
+                    return PackagePath
+                } else {
+                    const PackageData = FS.readJSONSync(`${PackagePath}/package.json`)
+                    return Path.join(PackagePath, PackageData.main)
+                }
+            }
         }
 
-        const WithExt = FindFileExt(RequestModuleFolder)
-        if (WithExt) {
-            return OriginalRequire(RequestModuleFolder)
+        { // Is it a sub dep
+            function GetCallerFolder() {
+                const SplitPath = CallerFile.split(NPMCacheFolder)
+                SplitPath.shift()
+                SplitPath.unshift(NPMCacheFolder)
+                if (SplitPath[1]) {
+                    const PackageCacheFolder = SplitPath[1].split(Path.sep)
+                    return `${NPMCacheFolder}/${PackageCacheFolder.filter(function(_, I) {return I < 4}).join("/")}/`
+                }
+                
+            }
+
+            const CallerFolder = GetCallerFolder()
+            const RequestModuleFolder = `${CallerFolder}/node_modules/${Request}`
+            if (FS.existsSync(RequestModuleFolder)) {
+                return RequestModuleFolder
+            }
+
+            const WithExt = FindFileExt(RequestModuleFolder)
+            console.log(WithExt)
+            if (WithExt) {
+                return RequestModuleFolder
+            }
         }
     }
+
+    const Found = Resolve(Request, CallerFile)
+    
+    const Return = OriginalRequire(Found)
+    console.log(Request)
+    console.log(Found)
+    console.log(Return)
+    return Return
+
     
     
 }
