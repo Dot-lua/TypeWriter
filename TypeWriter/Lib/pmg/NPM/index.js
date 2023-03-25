@@ -20,6 +20,7 @@ function GetModuleFolder(PackageName) {
 }
 
 function GetPackageInfo(PackageName, PackageVersion) {
+    TypeWriter.Logger.Debug(`Getting package info for ${PackageName}@${PackageVersion}``)
     return JsonRequest(
         `https://unpkg.com/${PackageName}@${PackageVersion}/package.json`
     ).Data
@@ -61,6 +62,7 @@ function CreatePackageFolders(PackageName) {
 function DownloadPackageArchive(PackageName, PackageVersion) {
     const OutputFile = `${ModuleTarsFolder}/${PackageName}/${PackageVersion}.tgz`
     if (FS.existsSync(OutputFile)) {return OutputFile}
+    TypeWriter.Logger.Debug(`Downloading ${PackageName}@${PackageVersion}`)
     FS.mkdirpSync(Path.dirname(OutputFile))
 
     const FetchData = Fetch(`https://registry.npmjs.org/${PackageName}/-/${PackageName.split("/").filter(x => !x.startsWith("@"))[0]}-${PackageVersion}.tgz`)
@@ -72,6 +74,7 @@ function DownloadPackageArchive(PackageName, PackageVersion) {
 function UnpackPackageArchive(PackageName, PackageVersion) {
     const OutputFolder = `${ModulesFolder}/${PackageName}/Versions/${PackageVersion}`
     if (FS.existsSync(OutputFolder)) {return OutputFolder}
+    TypeWriter.Logger.Debug(`Unpacking ${PackageName}@${PackageVersion}`)
     FS.mkdirpSync(OutputFolder)
     const TarFile = DownloadPackageArchive(PackageName, PackageVersion)
 
@@ -111,6 +114,7 @@ function DownloadPackage(PackageName, PackageVersion) {
     CreatePackageFolders(PackageName)
 
     if (FS.existsSync(`${PackageFolder}/Versions/${PackageVersion}`)) {
+        TypeWriter.Logger.Debug(`Package version ${PackageName}@${PackageVersion} is already in the cache`)
         return `${PackageFolder}/Versions/${PackageVersion}`
     }
 
@@ -142,6 +146,7 @@ function DownloadPackage(PackageName, PackageVersion) {
         const InstallScript = PackageInfo.scripts.postinstall
         const SplitScript = InstallScript.split(" ")
         if (SplitScript[0] == "node") {
+            TypeWriter.Logger.Debug(`Running postinstall script for ${PackageName}`)
             require("child_process").execFileSync(
                 TypeWriter.Executable,
                 ["runscript", "-i", Path.join(OutputFolder, SplitScript[1])],
