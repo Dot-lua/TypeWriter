@@ -31,8 +31,10 @@ if (FS.existsSync(`${TypeWriter.Folder}/InstallationDirectory`)) {
     CreateDir(`${TypeWriter.Folder}/Cache/ExecuteCache/`)
     CreateDir(`${TypeWriter.Folder}/Cache/ModuleCache/`)
     CreateDir(`${TypeWriter.Folder}/Cache/ModuleCache/NPM/`)
+    CreateDir(`${TypeWriter.Folder}/Cache/ModuleCache/NPM/Modules/`)
+    CreateDir(`${TypeWriter.Folder}/Cache/ModuleCache/NPM/ModuleTars/`)
+    CreateDir(`${TypeWriter.Folder}/Cache/ModuleCache/NPM/Unpack/`)
     CreateDir(`${TypeWriter.Folder}/Cache/ModuleCache/LIT/`)
-    CreateDir(`${TypeWriter.Folder}/Cache/ModuleCache/Unpack/`)
 }
 
 if (TypeWriter.Arguments.action) {
