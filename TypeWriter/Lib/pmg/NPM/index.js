@@ -107,17 +107,16 @@ function UnpackPackageArchive(PackageName, PackageVersion) {
     return OutputFolder
 }
 
-function DownloadPackage(Name, Version) {
-    Name = Name.toLowerCase()
-    const PackageFolder = GetModuleFolder(Name)
-    CreatePackageFolders(Name)
+function DownloadPackage(PackageName, PackageVersion) {
+    PackageName = PackageName.toLowerCase()
+    const PackageFolder = GetModuleFolder(PackageName)
+    CreatePackageFolders(PackageName)
 
-    if (FS.existsSync(`${PackageFolder}/Versions/${Version}`)) {
-        TypeWriter.Logger.Debug(`Package version ${Name}@${Version} is already in the cache`)
-        return `${PackageFolder}/Versions/${Version}`
+    if (FS.existsSync(`${PackageFolder}/Versions/${PackageVersion}`)) {
+        return `${PackageFolder}/Versions/${PackageVersion}`
     }
 
-    const PackageInfo = GetPackageInfo(Name, Version)
+    const PackageInfo = GetPackageInfo(PackageName, PackageVersion)
 
     const DependencyFolders = {}
     for (const DependencyName in PackageInfo.dependencies) {
@@ -156,7 +155,7 @@ function DownloadPackage(Name, Version) {
         }
     }
 
-    TypeWriter.Logger.Debug(`Done getting ${Name}`)
+    TypeWriter.Logger.Debug(`Done getting ${PackageName}`)
     return UnpackedFolder
 }
 
