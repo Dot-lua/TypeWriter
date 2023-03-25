@@ -65,7 +65,7 @@ function DownloadPackageArchive(PackageName, PackageVersion) {
     if (FS.existsSync(OutputFile)) {return OutputFile}
     FS.mkdirpSync(Path.dirname(OutputFile))
 
-    const FetchData = Fetch(`https://registry.npmjs.org/${PackageName}/-/${PackageName}-${PackageVersion}.tgz`)
+    const FetchData = Fetch(`https://registry.npmjs.org/${PackageName}/-/${PackageName.split("/").filter(x => !x.startsWith("@"))[0]}-${PackageVersion}.tgz`)
     FS.writeFileSync(OutputFile, FetchData.buffer())
 
     return OutputFile
