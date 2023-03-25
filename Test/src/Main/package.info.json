@@ -16,15 +16,9 @@
 	},
 	"Dependencies": [
 		{
-			"Source": "LIT",
-			"Package": "coro-spawn",
-			"Type": "Packaged"
-		},
-		{
 			"Source": "NPM",
-			"Package": "electron",
-			"Type": "Packaged",
-			"Version": "23.2.0"
+			"Package": "fs-extra",
+			"Version": "11.1.1"
 		}
 	],
 	"Entrypoints": {
