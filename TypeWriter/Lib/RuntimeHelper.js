@@ -82,105 +82,58 @@ RuntimeHelper.LoadEntrypoint = function(PackageId, EntrypointName) {
 
 const OriginalRequire = Module.prototype.require
 TypeWriter.OriginalRequire = OriginalRequire
-const NPMCacheFolder = Path.resolve(`${TypeWriter.Folder}/Cache/ModuleCache/NPM/`)
+const NPMCacheFolder = Path.resolve(`${TypeWriter.Folder}/Cache/ModuleCache/NPM/Modules/`)
 RuntimeHelper.Require = function(Request) {
-    const CallerFile = Path.resolve(GetCallerFile(3))
+    const CallerFile = GetCallerFile(3)
+    //console.log(Request)
+    //console.log(CallerFile)
 
-    function Resolve(Request, CallerFile) {
-        const Exts = ["js", "json", "node"]
-        function FindFileExt(FilePath) {
-            for (const Ext of Exts) {
-                const CheckPath = `${FilePath}.${Ext}`
-                if (FS.existsSync(CheckPath)) { 
-                    return CheckPath
-                }
-            }
-        }
-
-        { // Is it a core module
-            if (IsCoreModule(Request)) {
-                return Request
-            }
-        }
-
-        { // Ext stuff
-            const ResolvedPath = Path.resolve(`${Path.dirname(CallerFile)}/${Request}/`)
-
-            if (FS.existsSync(ResolvedPath)) {
-                return ResolvedPath
-            }
-
-            const NoExt = FindFileExt(ResolvedPath)
-            if (NoExt) {
-                return NoExt
-            }
-
-            const WithExt = FindFileExt(ResolvedPath + "/index")
-            if (WithExt) {
-                return WithExt
-            }
-        }    
-        
-        { // Is it included
-            function IsPackageIncluded(Request) {
-                for (const PackageId in TypeWriter.LoadedPackages) {
-                    const Package = TypeWriter.LoadedPackages[PackageId].Package
-                    const PackageDependencies = Package.Dependencies
-                    for (const Dependency of PackageDependencies) {
-                        if (Dependency.Source == "NPM" && Dependency.Package == Request) {
-                            return Dependency.Version
-                        }
-                    }
-                }
-        
-                return false
-            }
-
-            const IsIncluded = IsPackageIncluded(Request)
-            if (IsIncluded) {
-                const PackagePath = PMG.NPM.GetPackageFolder(Request, IsIncluded)
-                if (FS.existsSync(`${PackagePath}/index.js`)) {
-                    return PackagePath
-                } else {
-                    const PackageData = FS.readJSONSync(`${PackagePath}/package.json`)
-                    return Path.join(PackagePath, PackageData.main)
-                }
-            }
-        }
-
-        { // Is it a sub dep
-            function GetCallerFolder() {
-                const SplitPath = CallerFile.split(NPMCacheFolder)
-                SplitPath.shift()
-                SplitPath.unshift(NPMCacheFolder)
-                if (SplitPath[1]) {
-                    const PackageCacheFolder = SplitPath[1].split(Path.sep)
-                    return `${NPMCacheFolder}/${PackageCacheFolder.filter(function(_, I) {return I < 4}).join("/")}/`
-                }
-                
-            }
-
-            const CallerFolder = GetCallerFolder()
-            const RequestModuleFolder = `${CallerFolder}/node_modules/${Request}`
-            if (FS.existsSync(RequestModuleFolder)) {
-                return RequestModuleFolder
-            }
-
-            const WithExt = FindFileExt(RequestModuleFolder)
-            console.log(WithExt)
-            if (WithExt) {
-                return RequestModuleFolder
-            }
+    { // Is it a core module
+        if (IsCoreModule(Request)) {
+            //console.log("Core Module")
+            return OriginalRequire(Request)
         }
     }
 
-    const Found = Resolve(Request, CallerFile)
-    
-    const Return = OriginalRequire(Found)
-    console.log(Request)
-    console.log(Found)
-    console.log(Return)
-    return Return
+    { // Is it relative
+        if (Request.startsWith(".")) {
+            //console.log("Relative")
+            return OriginalRequire(Path.join(Path.dirname(CallerFile), Request))
+        }
+    }
+
+    { // Is it a dep of a package
+        if ((CallerFile.split(":")[1] || "").startsWith(" ")) {
+            const PackageId = CallerFile.split(":")[0]
+            if (TypeWriter.LoadedPackages[PackageId]) {
+                const PackageData = TypeWriter.LoadedPackages[PackageId].Package
+                const Dependency = PackageData.Dependencies.filter(x => x.Package == Request)[0]
+                if (Dependency) {
+                    //console.log("Dep of a package")
+                    return OriginalRequire(PMG.NPM.GetPackageFolder(Dependency.Package, Dependency.Version))
+                }
+            }
+
+        }
+    }
+
+    { // Is it a dep of a module
+        if (CallerFile.split(NPMCacheFolder)[1]) {
+            var RequestName
+            if (Request.startsWith("@")) {
+                RequestName = Request
+            } else if (Request.split("/").length == 2) {
+                RequestName = Request.split("/")[0]
+            } else {
+                RequestName = Request
+            }
+            if (FS.existsSync(Path.join(NPMCacheFolder, RequestName))) {
+                //console.log("Dep of a module")
+                const CallerRoot = Path.join(NPMCacheFolder, CallerFile.split(NPMCacheFolder)[1].replaceAll("\\", "/").split("/").filter(function(_, I) {return I < 4}).join("/"))
+                return OriginalRequire(Path.join(CallerRoot, `node_modules/${Request}`))
+            }
+        }
+    }
 
     
     
