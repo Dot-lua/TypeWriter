@@ -3,8 +3,6 @@ const Fetch = require("sync-fetch")
 const Path = require("path")
 const Tar = require("tar")
 const KlawSync = require("klaw-sync")
-const SemVer = require("semver")
-const Base64 = require("js-base64")
 const JsonRequest = require("../../JsonRequest")
 
 const CacheFolder =         `${TypeWriter.Folder}/Cache/ModuleCache/NPM/`
