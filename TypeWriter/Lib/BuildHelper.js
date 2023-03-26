@@ -81,7 +81,7 @@ BuildHelper.Build = function(Folder, Branch) {
                 if (Path.extname(FilePath) != FileExt) {TypeWriter.Logger.Error(`Found ${FileName} in ${Path.resolve(FilePath)} but file extension needs to be ${FileExt}, skipping.`)}
                 CompiledCode[NewCodePath] = {
                     Type: Type,
-                    Code: FS.readFileSync(FilePath, "utf-8")
+                    Code: encodeURIComponent(FS.readFileSync(FilePath, "utf-8"))
                 }
                 if (FileBaseName == "Main") {
                     CompiledCode[CodePath] = {
