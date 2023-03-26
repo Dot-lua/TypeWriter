@@ -63,10 +63,10 @@ RuntimeHelper.Import = function(PackagePath) {
         const CodeData = PackageData.Code[PackagePath]
         if (CodeData) {
             if (CodeData.Type == "lua") {
-                return LuaHelper.Load(TypeWriterLuaState, CodeData.Code)()
+                return LuaHelper.Load(TypeWriterLuaState, decodeURIComponent(CodeData.Code))()
             } else if (CodeData.Type == "js") {
                 return RequireString(
-                    CodeData.Code,
+                    decodeURIComponent(CodeData.Code),
                     `${PackageId}: ${PackagePath}`
                 )
             } else if (CodeData.Type == "Redirect") {
@@ -83,10 +83,31 @@ RuntimeHelper.LoadEntrypoint = function(PackageId, EntrypointName) {
 const OriginalRequire = Module.prototype.require
 TypeWriter.OriginalRequire = OriginalRequire
 const NPMCacheFolder = Path.resolve(`${TypeWriter.Folder}/Cache/ModuleCache/NPM/Modules/`)
+const Exts = ["js", "json", "node"]
+function FindFileExt(FilePath) {
+    for (const Ext of Exts) {
+        const CheckPath = `${FilePath}.${Ext}`
+        if (FS.existsSync(CheckPath)) { 
+            return CheckPath
+        }
+    }
+}
 RuntimeHelper.Require = function(Request) {
     const CallerFile = GetCallerFile(3)
     //console.log(Request)
     //console.log(CallerFile)
+
+    var RequestName
+    var RequestRest = ""
+    if (Request.startsWith("@")) {
+        RequestName = Request
+    } else if (Request.split("/").length >= 2) {
+        RequestName = Request.split("/")[0]
+        RequestRest = Request.split("/").splice(1).join("/")
+    } else {
+        RequestName = Request
+    }
+    //console.log(RequestName)
 
     { // Is it a core module
         if (IsCoreModule(Request)) {
@@ -119,23 +140,53 @@ RuntimeHelper.Require = function(Request) {
 
     { // Is it a dep of a module
         if (CallerFile.split(NPMCacheFolder)[1]) {
-            var RequestName
-            if (Request.startsWith("@")) {
-                RequestName = Request
-            } else if (Request.split("/").length == 2) {
-                RequestName = Request.split("/")[0]
-            } else {
-                RequestName = Request
-            }
             if (FS.existsSync(Path.join(NPMCacheFolder, RequestName))) {
                 //console.log("Dep of a module")
-                const CallerRoot = Path.join(NPMCacheFolder, CallerFile.split(NPMCacheFolder)[1].replaceAll("\\", "/").split("/").filter(function(_, I) {return I < 4}).join("/"))
-                return OriginalRequire(Path.join(CallerRoot, `node_modules/${Request}`))
+                const PathParts = CallerFile.split(NPMCacheFolder)[1].replaceAll("\\", "/").split("/")
+                const CallerRoot = Path.join(NPMCacheFolder, PathParts.filter(function(_, I) {return I < (PathParts[1].startsWith("@") ? 5 : 4)}).join("/"))
+
+                const FoundFolder = Path.join(CallerRoot, `node_modules/${Request}`)
+                if (FS.existsSync(FoundFolder)) {
+                    //console.log(1)
+                    return OriginalRequire(FoundFolder)
+                }
+
+                const FoundExtFolder = FindFileExt(FoundFolder)
+                if (FoundExtFolder) {
+                    //console.log(1.5)
+                    return OriginalRequire(FoundExtFolder)
+                }
+
+                const SplitFoundFolder = FoundFolder.replaceAll("\\", "/").split("/")
+                SplitFoundFolder.pop()
+                if (FS.existsSync(SplitFoundFolder.join("/")) && SplitFoundFolder[SplitFoundFolder.length - 1] != "node_modules") {
+                    //console.log(2)
+                    return OriginalRequire(FoundFolder)
+                }
+
             }
         }
     }
 
-    
+    { // Fallback to any dep of a package
+        for (const PackageId in TypeWriter.LoadedPackages) {
+            const PackageData = TypeWriter.LoadedPackages[PackageId].Package
+            const Dependency = PackageData.Dependencies.filter(x => x.Package == RequestName)[0]
+            if (Dependency) {
+                //console.log("Dep of a package")
+                return OriginalRequire(PMG.NPM.GetPackageFolder(Dependency.Package, Dependency.Version) + RequestRest)
+            }
+        }
+    }
+
+    { //Is it a literal path
+        if (FS.existsSync(Request)) {
+            //console.log("Literal")
+            return OriginalRequire(Request)
+        }
+    }
+
+    throw new Error(`Could not find module ${Request}`)
     
 }
 
