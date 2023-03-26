@@ -12,7 +12,6 @@ function PackageLoaded(Id) {
 
 function ResourceExists(Id, ResourcePath) {
     if (!PackageLoaded(Id)) {
-        console.log("Package not loaded")
         return false
     }
     return TypeWriter.LoadedPackages[Id].ResourceIndex.includes(ResourcePath)
@@ -27,7 +26,6 @@ function ListResources(Id) {
 
 function GetRaw(Id, ResourcePath) {
     if (!ResourceExists(Id, ResourcePath)) {
-        console.log("Resource not found")
         return null
     }
     return SingleTar(TypeWriter.LoadedPackages[Id].PackagePath, `resources${ResourcePath}`)
