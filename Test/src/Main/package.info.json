@@ -17,8 +17,27 @@
 	"Dependencies": [
 		{
 			"Source": "NPM",
+			"Package": "discord.js",
+			"Version": "14.8.0",
+			"Type": "Packaged"
+		},
+		{
+			"Source": "NPM",
+			"Package": "@sapphire/framework",
+			"Version": "4.2.2",
+			"Type": "Packaged"
+		},
+		{
+			"Source": "NPM",
 			"Package": "fs-extra",
-			"Version": "11.1.1"
+			"Version": "11.1.1",
+			"Type": "Packaged"
+		},
+		{
+			"Source": "NPM",
+			"Package": "discord-api-types",
+			"Version": "0.37.37",
+			"Type": "Packaged"
 		}
 	],
 	"Entrypoints": {
