@@ -72,7 +72,7 @@ function DownloadPackageArchive(PackageName, PackageVersion) {
 }
 
 function UnpackPackageArchive(PackageName, PackageVersion) {
-    const OutputFolder = `${ModulesFolder}/${PackageName}/Versions/${PackageVersion}`
+    const OutputFolder = `${ModulesFolder}/${PackageName}/Versions/${PackageVersion}/`
     if (FS.existsSync(OutputFolder)) {return OutputFolder}
     TypeWriter.Logger.Debug(`Unpacking ${PackageName}@${PackageVersion}`)
     FS.mkdirpSync(OutputFolder)
@@ -126,6 +126,7 @@ function DownloadPackage(PackageName, PackageVersion) {
         DependencyFolders[DependencyName] = DownloadPackage(DependencyName, DependencyVersion)
     }
 
+    TypeWriter.Logger.Information(`Getting ${PackageInfo.name}@${PackageInfo.version}`)
     const UnpackedFolder = UnpackPackageArchive(PackageInfo.name, PackageInfo.version)
 
     FS.ensureDirSync(`${UnpackedFolder}/node_modules/`)
@@ -135,11 +136,14 @@ function DownloadPackage(PackageName, PackageVersion) {
         if (SplitDependencyName.length == 2) {
             FS.ensureDirSync(`${UnpackedFolder}/node_modules/${SplitDependencyName[0]}`)
         }
-        FS.symlinkSync(
-            DependencyFolder,
-            `${UnpackedFolder}/node_modules/${DependencyName}`,
-            TypeWriter.OS == "win32" ? 'junction' : 'dir'
-        )
+        if (!FS.existsSync(`${UnpackedFolder}/node_modules/${DependencyName}`)) {
+            FS.symlinkSync(
+                DependencyFolder,
+                `${UnpackedFolder}/node_modules/${DependencyName}/`,
+                TypeWriter.OS == "win32" ? 'junction' : 'dir'
+            )
+        }
+        
     }
 
     if ((PackageInfo.scripts || {}).postInstall) {
