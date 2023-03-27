@@ -138,10 +138,10 @@ function DownloadPackage(PackageName, PackageVersion) {
         }
         if (!FS.existsSync(`${UnpackedFolder}/node_modules/${DependencyName}`)) {
             FS.symlinkSync(
-                DependencyFolder,
-                `${UnpackedFolder}/node_modules/${DependencyName}/`,
+                Path.resolve(DependencyFolder),
+                Path.resolve(`${UnpackedFolder}/node_modules/${DependencyName}/`),
                 TypeWriter.OS == "win32" ? 'junction' : 'dir'
-            )
+            ) 
         }
         
     }
