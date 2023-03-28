@@ -32,5 +32,50 @@ jobs:
 
       - uses: actions/upload-artifact@v3
         with:
-          name: my-artifact
-          path: ./.build/
+          name: typewriter-alpine-arm64
+          path: ./.build/typewriter-alpine-arm64
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: typewriter-alpine-x64
+          path: ./.build/typewriter-alpine-x64
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: typewriter-linux-arm64
+          path: ./.build/typewriter-linux-arm64
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: typewriter-linux-x64
+          path: ./.build/typewriter-linux-x64
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: typewriter-linuxstatic-arm64
+          path: ./.build/typewriter-linuxstatic-arm64
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: typewriter-linuxstatic-x64
+          path: ./.build/typewriter-linuxstatic-x64
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: typewriter-macos-arm64
+          path: ./.build/typewriter-macos-arm64
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: typewriter-macos-x64
+          path: ./.build/typewriter-macos-x64
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: typewriter-win-arm64
+          path: ./.build/typewriter-win-arm64.exe
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: typewriter-win-x64
+          path: ./.build/typewriter-win-x64.exe
