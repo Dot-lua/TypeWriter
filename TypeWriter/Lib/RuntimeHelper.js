@@ -63,7 +63,16 @@ RuntimeHelper.Import = function(PackagePath) {
         const CodeData = PackageData.Code[PackagePath]
         if (CodeData) {
             if (CodeData.Type == "lua") {
-                return LuaHelper.Load(TypeWriterLuaState, decodeURIComponent(CodeData.Code))()
+                return LuaHelper.Load(
+                    TypeWriterLuaState,
+                    `
+                        return coroutine.wrap(
+                            load(
+                                js.global:decodeURIComponent("${CodeData.Code}")
+                            )
+                        )()
+                    `
+                )()
             } else if (CodeData.Type == "js") {
                 return RequireString(
                     decodeURIComponent(CodeData.Code),
