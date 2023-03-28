@@ -79,3 +79,8 @@ jobs:
         with:
           name: typewriter-win-x64
           path: ./.build/typewriter-win-x64.exe
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: typewriter
+          path: ./.build/
