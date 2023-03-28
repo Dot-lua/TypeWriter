@@ -12,6 +12,18 @@ TypeWriter.Executable = Path.resolve(`${TypeWriter.Folder}/TypeWriter${TypeWrite
 TypeWriter.ApplicationData = `${TypeWriter.Folder}/ApplicationData/`
 TypeWriter.Logger = require("./Lib/Logger")
 
+globalThis.Sleep = async function (Time) {
+    return new Promise((resolve) => {
+        setTimeout(resolve, Time)
+    })
+}
+
+globalThis.Wait = async function (Time) { //in seconds
+    return new Promise((resolve) => {
+        setTimeout(resolve, Time * 1000)
+    })
+}
+
 if (FS.existsSync(`${TypeWriter.Folder}/InstallationDirectory`)) {
     TypeWriter.Logger.Debug("Valid installation found")
 } else {
