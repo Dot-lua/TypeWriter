@@ -1,6 +1,6 @@
 {
     "name": "typewriter",
-    "version": "1.0.0",
+    "version": "6.0.0",
     "description": "A code archiver for lua and js",
     "author": "CoreByte",
     "license": "MIT",
