@@ -13,15 +13,11 @@ TypeWriter.ApplicationData = `${TypeWriter.Folder}/ApplicationData/`
 TypeWriter.Logger = require("./Lib/Logger")
 
 globalThis.Sleep = async function (Time) {
-    return new Promise((resolve) => {
-        setTimeout(resolve, Time)
-    })
+    Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, Time)
 }
 
 globalThis.Wait = async function (Time) { //in seconds
-    return new Promise((resolve) => {
-        setTimeout(resolve, Time * 1000)
-    })
+    Sleep(Time * 1000)
 }
 
 if (FS.existsSync(`${TypeWriter.Folder}/InstallationDirectory`)) {

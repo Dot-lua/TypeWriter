@@ -14,17 +14,11 @@ end
 
 do
     _G.Sleep = function (Time)
-        local Current = coroutine.running()
-        local Promise = js.global:Sleep(Time)
-        Promise["then"](Promise, function() assert(coroutine.resume(Current)) end)
-        coroutine.yield()
+        js.global:Sleep(Time)
     end
 
     _G.Wait = function (Time)
-        local Current = coroutine.running()
-        local Promise = js.global:Wait(Time)
-        Promise["then"](Promise, function() assert(coroutine.resume(Current)) end)
-        coroutine.yield()
+        js.global:Wait(Time)
     end
 end
 
