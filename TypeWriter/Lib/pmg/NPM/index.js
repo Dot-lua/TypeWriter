@@ -142,20 +142,27 @@ function DownloadPackage(PackageName, PackageVersion) {
                 Path.resolve(`${UnpackedFolder}/node_modules/${DependencyName}/`),
                 TypeWriter.OS == "win32" ? 'junction' : 'dir'
             ) 
-        }
-        
+        }   
     }
 
-    if ((PackageInfo.scripts || {}).postInstall) {
-        const InstallScript = PackageInfo.scripts.postinstall
+    const InstallScripts = ["preinstall", "install", "postinstall"]
+
+    var InstallScript
+    for (const ScriptName of InstallScripts) {
+        if ((PackageInfo.scripts || {})[ScriptName]) {
+            InstallScript = PackageInfo.scripts[ScriptName]
+        }
+    }
+
+    if (InstallScript) {
         const SplitScript = InstallScript.split(" ")
         if (SplitScript[0] == "node") {
-            TypeWriter.Logger.Debug(`Running postinstall script for ${PackageName}`)
+            TypeWriter.Logger.Information(`Running install script for ${PackageName}`)
             require("child_process").execFileSync(
                 TypeWriter.Executable,
-                ["runscript", "-i", Path.join(OutputFolder, SplitScript[1])],
+                ["runscript", "-i", Path.join(UnpackedFolder, SplitScript[1])],
                 {
-                    cwd: `${OutputFolder}`,
+                    cwd: `${UnpackedFolder}`,
                     stdio: "inherit"
                 }
             )
