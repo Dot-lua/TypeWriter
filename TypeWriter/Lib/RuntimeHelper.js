@@ -99,7 +99,6 @@ RuntimeHelper.LoadEntrypoint = function(PackageId, EntrypointName) {
 }
 
 const OriginalRequire = Module.prototype.require
-TypeWriter.OriginalRequire = OriginalRequire
 const NPMCacheFolder = Path.resolve(`${TypeWriter.Folder}/Cache/ModuleCache/NPM/Modules/`)
 const Exts = ["js", "json", "node"]
 function FindFileExt(FilePath) {

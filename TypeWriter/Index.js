@@ -8,9 +8,10 @@ TypeWriter.OS = process.platform
 TypeWriter.Arguments = ArgumentData.Arguments
 TypeWriter.ApplicationArguments = ArgumentData.Unknown
 TypeWriter.Folder = require("./Lib/FindUp")(Path.resolve(process.argv0, "../"), "InstallationDirectory", 40) || Path.resolve(`${process.argv0}/../`)
-TypeWriter.Executable = Path.resolve(`${TypeWriter.Folder}/TypeWriter${TypeWriter.OS == "win32" ? ".exe" : ""}`)
+TypeWriter.Executable = process.execPath
 TypeWriter.ApplicationData = `${TypeWriter.Folder}/ApplicationData/`
 TypeWriter.Logger = require("./Lib/Logger")
+TypeWriter.OriginalRequire = require
 
 globalThis.Sleep = async function (Time) {
     Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, Time)
