@@ -17,7 +17,20 @@ do -- Set globals
         return F(F, S, P)
     end
     js.Load = js.LoadString
+    js.await = function (P)
+        local Co = coroutine.running()
+        P["then"](
+            P,
+            function (...)
+                assert(coroutine.resume(Co, ...))
+            end
+        )
+        return coroutine.yield()
+    end
+    js.Await = js.await
 
+    _G.await = js.await
+    _G.Await = js.await
     _G.Js = js
     _G.JS = js
     _G.jsnew = js.new
