@@ -2,6 +2,7 @@ const FS = require("fs")
 const Path = require("path")
 
 const ArgumentData = require("./Registry/Arguments")
+const Module = require("module")
 
 global.TypeWriter = {}
 TypeWriter.OS = process.platform
@@ -11,7 +12,7 @@ TypeWriter.Folder = require("./Lib/FindUp")(Path.resolve(process.argv0, "../"), 
 TypeWriter.Executable = process.execPath
 TypeWriter.ApplicationData = `${TypeWriter.Folder}/ApplicationData/`
 TypeWriter.Logger = require("./Lib/Logger")
-TypeWriter.OriginalRequire = require
+TypeWriter.OriginalRequire = Module.prototype.require
 
 globalThis.Sleep = async function (Time) {
     Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, Time)
