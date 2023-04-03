@@ -75,10 +75,16 @@ RuntimeHelper.Import = function(PackagePath) {
                 return LuaHelper.Load(
                     TypeWriterLuaState,
                     `
+                        local F, E = load(
+                            js.global:decodeURIComponent("${CodeData.Code}"),
+                            "${PackagePath}"
+                        )
+                        if not F then
+                            error(E)
+                        end
+
                         return coroutine.wrap(
-                            load(
-                                js.global:decodeURIComponent("${CodeData.Code}")
-                            )
+                            F
                         )()
                     `
                 )()
