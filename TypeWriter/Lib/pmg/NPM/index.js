@@ -160,7 +160,7 @@ function DownloadPackage(PackageName, PackageVersion) {
             TypeWriter.Logger.Information(`Running install script for ${PackageName}`)
             require("child_process").execFileSync(
                 TypeWriter.Executable,
-                ["runscript", "-i", Path.join(UnpackedFolder, SplitScript[1])],
+                [TypeWriter.OriginalRequire.main.filename, "runscript", "-i", Path.join(UnpackedFolder, SplitScript[1])],
                 {
                     cwd: `${UnpackedFolder}`,
                     stdio: "inherit"
