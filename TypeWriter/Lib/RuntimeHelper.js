@@ -30,6 +30,15 @@ RuntimeHelper.LoadEnvoirment = function(ExecuteFolder) {
     TypeWriter.ResourceManager = require("./ResourceManager")
     Module.prototype.require = this.Require
 
+    globalThis.lua = {
+        LoadFile: LuaHelper.LoadFile,
+        Load: LuaHelper.Load,
+        LoadString: LuaHelper.LoadString,
+        Global: LuaHelper.Load(TypeWriterLuaState, "return _G")(),
+    }
+    globalThis.Lua = globalThis.lua
+    globalThis.LUA = globalThis.lua
+
     LuaHelper.LoadFile(TypeWriterLuaState, Path.join(__dirname, "./lua/LuaEnv.lua"))
 }
 
