@@ -29,6 +29,7 @@ RuntimeHelper.LoadEnvoirment = function(ExecuteFolder) {
     TypeWriter.LoadEntrypoint = this.LoadEntrypoint
     TypeWriter.ResourceManager = require("./ResourceManager")
     Module.prototype.require = this.Require
+    TypeWriter.JsRequire = this.Require
 
     globalThis.lua = {
         LoadFile: LuaHelper.LoadFile,
