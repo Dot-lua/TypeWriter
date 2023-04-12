@@ -27,6 +27,7 @@ RuntimeHelper.LoadEnvoirment = function(ExecuteFolder) {
     TypeWriter.Import = this.Import
     global.Import = this.Import
     TypeWriter.LoadEntrypoint = this.LoadEntrypoint
+    TypeWriter.PackageManager = require("./PackageManager")
     TypeWriter.ResourceManager = require("./ResourceManager")
     Module.prototype.require = this.Require
     TypeWriter.JsRequire = this.Require
