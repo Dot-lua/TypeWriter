@@ -12,4 +12,8 @@ PackageManager.ListPackageIds = function () {
     return Object.keys(TypeWriter.LoadedPackages)
 }
 
+PackageManager.IsPackageLoaded = function (Id) {
+    return this.ListPackageIds().includes(Id)
+}
+
 module.exports = PackageManager
