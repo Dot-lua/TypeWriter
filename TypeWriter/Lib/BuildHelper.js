@@ -40,6 +40,7 @@ BuildHelper.Build = function(Folder, Branch) {
 
         for (const Dependency of PackageData.Dependencies) {
             if (!Pmg[Dependency.Source].PackageExists(Dependency.Package)) {
+                TypeWriter.Logger.Error(`Could not find ${Dependency.Source} package ${Dependency.Package}`)
                 return false
             }
 
