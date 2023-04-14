@@ -9,15 +9,15 @@ function GetPackagePath(Id) {
 }
 
 function ParseResourcePath(Id, ResourcePath) {
-    if (!ResourcePath) {
-        const Split = Id.split(":")
-        return Split[0], Split[1]
+    if (ResourcePath != undefined) {
+        return [Id, ResourcePath]
     }
-    return Id, ResourcePath
+    const Split = Id.split(":")
+    return [Split[0], Split[1]]
 }
 
 ResourceManager.ResourceExists = function(Id, ResourcePath) {
-    Id, ResourcePath = ParseResourcePath(Id, ResourcePath)
+    var ResourceData = ParseResourcePath(Id, ResourcePath); var Id = ResourceData[0]; var ResourcePath = ResourceData[1];
     if (!TypeWriter.PackageManager.IsPackageLoaded(Id)) {
         return false
     }
@@ -32,30 +32,30 @@ ResourceManager.ListResources = function(Id) {
 }
 
 ResourceManager.GetRaw = function(Id, ResourcePath) {
-    Id, ResourcePath = ParseResourcePath(Id, ResourcePath)
-    if (!ResourceExists(Id, ResourcePath)) {
+    var ResourceData = ParseResourcePath(Id, ResourcePath); var Id = ResourceData[0]; var ResourcePath = ResourceData[1];
+    if (!this.ResourceExists(Id, ResourcePath)) {
         return null
     }
     return SingleTar(TypeWriter.LoadedPackages[Id].PackagePath, `resources${ResourcePath}`)
 }
 
 ResourceManager.GetJson = function(Id, ResourcePath) {
-    Id, ResourcePath = ParseResourcePath(Id, ResourcePath)
-    if (!ResourceExists(Id, ResourcePath)) {
+    var ResourceData = ParseResourcePath(Id, ResourcePath); var Id = ResourceData[0]; var ResourcePath = ResourceData[1];
+    if (!this.ResourceExists(Id, ResourcePath)) {
         return null
     }
-    return JSON.parse(GetRaw(Id, ResourcePath))
+    return JSON.parse(this.GetRaw(Id, ResourcePath))
 }
 
 ResourceManager.GetFilePath = function(Id, ResourcePath) {
-    Id, ResourcePath = ParseResourcePath(Id, ResourcePath)
-    if (!ResourceExists(Id, ResourcePath)) {
+    var ResourceData = ParseResourcePath(Id, ResourcePath); var Id = ResourceData[0]; var ResourcePath = ResourceData[1];
+    if (!this.ResourceExists(Id, ResourcePath)) {
         return null
     }
 
     const OutputPath = `${GetPackagePath(Id)}resources${ResourcePath}`
     FS.ensureDirSync(Path.dirname(OutputPath))
-    FS.writeFileSync(OutputPath, GetRaw(Id, ResourcePath))
+    FS.writeFileSync(OutputPath, this.GetRaw(Id, ResourcePath))
     return OutputPath
 }
 
