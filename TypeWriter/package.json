@@ -19,6 +19,7 @@
         "klaw-sync": "^6.0.0",
         "randomstring": "^1.2.3",
         "require-from-string": "^2.0.2",
+        "require-main-filename": "^2.0.0",
         "sync-fetch": "^0.4.2",
         "tar": "^6.1.13"
     },

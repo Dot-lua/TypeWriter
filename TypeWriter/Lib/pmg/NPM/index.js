@@ -9,6 +9,7 @@ const CacheFolder =         `${TypeWriter.Folder}/Cache/ModuleCache/NPM/`
 const ModulesFolder =       `${CacheFolder}/Modules/`
 const ModuleTarsFolder =    `${CacheFolder}/ModuleTars/`
 const UnpackFolder =        `${CacheFolder}/Unpack/`
+const MainFileName = require("require-main-filename")()
 
 function GetModuleFolder(PackageName) {
     const SplitName = PackageName.split("/")
@@ -160,7 +161,7 @@ function DownloadPackage(PackageName, PackageVersion) {
             TypeWriter.Logger.Information(`Running install script for ${PackageName}`)
             require("child_process").execFileSync(
                 TypeWriter.Executable,
-                [TypeWriter.OriginalRequire.main.filename, "runscript", "-i", Path.join(UnpackedFolder, SplitScript[1])],
+                [MainFileName, "runscript", "-i", Path.join(UnpackedFolder, SplitScript[1])],
                 {
                     cwd: `${UnpackedFolder}`,
                     stdio: "inherit"
