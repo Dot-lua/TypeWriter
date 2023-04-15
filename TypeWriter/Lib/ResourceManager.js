@@ -55,7 +55,7 @@ ResourceManager.GetFilePath = function(Id, ResourcePath) {
 
     const OutputPath = `${GetPackagePath(Id)}resources${ResourcePath}`
     FS.ensureDirSync(Path.dirname(OutputPath))
-    FS.writeFileSync(OutputPath, this.GetRaw(Id, ResourcePath))
+    FS.writeFileSync(OutputPath, this.GetRaw(Id, ResourcePath), "binary")
     return OutputPath
 }
 

@@ -12,7 +12,7 @@ function extractFileFromTarball(tarpath, filename) {
   };
   tar.t({onentry, file: tarpath, sync: true});
   var buf = Buffer.concat(data);
-  return buf.toString('ascii');
+  return buf.toString('binary');
 }
 
 module.exports = extractFileFromTarball
