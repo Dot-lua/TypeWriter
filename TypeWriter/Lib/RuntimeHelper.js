@@ -19,7 +19,7 @@ function GetPackagePath(Package) {
     return `${TypeWriter.ExecuteFolder}/${Package.Id}/`
 }
 
-RuntimeHelper.LoadEnvoirment = function(ExecuteFolder) {
+RuntimeHelper.LoadEnvoirment = function (ExecuteFolder) {
     TypeWriter.LoadFile = this.LoadFile
     TypeWriter.ExecuteFolder = ExecuteFolder
     TypeWriter.LoadedPackages = {}
@@ -44,7 +44,7 @@ RuntimeHelper.LoadEnvoirment = function(ExecuteFolder) {
     LuaHelper.LoadFile(TypeWriterLuaState, Path.join(__dirname, "./lua/LuaEnv.lua"))
 }
 
-RuntimeHelper.LoadFile = function(FilePath) {
+RuntimeHelper.LoadFile = function (FilePath) {
     const PackageInfo = GetPackagedJson(FilePath, "package.info.json")
     const PackagePath = GetPackagePath(PackageInfo)
 
@@ -68,7 +68,7 @@ RuntimeHelper.LoadFile = function(FilePath) {
     return PackageInfo
 }
 
-RuntimeHelper.Import = function(PackagePath) {
+RuntimeHelper.Import = function (PackagePath) {
     for (const PackageId in TypeWriter.LoadedPackages) {
         const PackageData = TypeWriter.LoadedPackages[PackageId]
         const CodeData = PackageData.Code[PackagePath]
@@ -102,7 +102,7 @@ RuntimeHelper.Import = function(PackagePath) {
     }
 }
 
-RuntimeHelper.LoadEntrypoint = function(PackageId, EntrypointName) {
+RuntimeHelper.LoadEntrypoint = function (PackageId, EntrypointName) {
     return this.Import(TypeWriter.LoadedPackages[PackageId].Package.Entrypoints[EntrypointName])
 }
 
@@ -112,12 +112,12 @@ const Exts = ["js", "json", "node"]
 function FindFileExt(FilePath) {
     for (const Ext of Exts) {
         const CheckPath = `${FilePath}.${Ext}`
-        if (FS.existsSync(CheckPath)) { 
+        if (FS.existsSync(CheckPath)) {
             return CheckPath
         }
     }
 }
-RuntimeHelper.Require = function(Request) {
+RuntimeHelper.Require = function (Request) {
     const CallerFile = GetCallerFile(3)
     //console.log(Request)
     //console.log(CallerFile)
@@ -156,7 +156,17 @@ RuntimeHelper.Require = function(Request) {
                 const Dependency = PackageData.Dependencies.filter(x => x.Package == Request)[0]
                 if (Dependency) {
                     //console.log("Dep of a package")
-                    return OriginalRequire(PMG.NPM.GetPackageFolder(Dependency.Package, Dependency.Version))
+                    try {
+                        return OriginalRequire(PMG.NPM.GetPackageFolder(Dependency.Package, Dependency.Version))
+                    } catch (error) { }
+
+                    const ModuleData = FS.readJSONSync(Path.join(PMG.NPM.GetPackageFolder(Dependency.Package, Dependency.Version), "package.json"))
+                    if (ModuleData.main) {
+                        return OriginalRequire(Path.join(PMG.NPM.GetPackageFolder(Dependency.Package, Dependency.Version), MuduleData.main))
+                    } else if (ModuleData.exports["."].require) {
+                        return OriginalRequire(Path.join(PMG.NPM.GetPackageFolder(Dependency.Package, Dependency.Version), ModuleData.exports["."].require))
+                    }
+
                 }
             }
 
@@ -168,7 +178,7 @@ RuntimeHelper.Require = function(Request) {
             if (FS.existsSync(Path.join(NPMCacheFolder, RequestName))) {
                 //console.log("Dep of a module")
                 const PathParts = CallerFile.split(NPMCacheFolder)[1].replaceAll("\\", "/").split("/")
-                const CallerRoot = Path.join(NPMCacheFolder, PathParts.filter(function(_, I) {return I < (PathParts[1].startsWith("@") ? 5 : 4)}).join("/"))
+                const CallerRoot = Path.join(NPMCacheFolder, PathParts.filter(function (_, I) { return I < (PathParts[1].startsWith("@") ? 5 : 4) }).join("/"))
 
                 const FoundFolder = Path.join(CallerRoot, `node_modules/${Request}`)
                 if (FS.existsSync(FoundFolder)) {
@@ -212,7 +222,7 @@ RuntimeHelper.Require = function(Request) {
     }
 
     throw new Error(`Could not find module ${Request}`)
-    
+
 }
 
 module.exports = RuntimeHelper
