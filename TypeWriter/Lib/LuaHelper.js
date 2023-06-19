@@ -42,6 +42,10 @@ function CreateState() {
     lua.lua_pushcfunction(L, luvi_traceback);
     ErrorFunc = lua.lua_gettop(L);
 
+    lua.lua_atnativeerror(L, L => {
+        console.error(lua.lua_touserdata(L, 1))
+        return 1
+    })
 
     return L
 }
