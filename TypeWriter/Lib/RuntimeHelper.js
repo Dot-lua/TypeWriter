@@ -162,7 +162,7 @@ RuntimeHelper.Require = function (Request) {
 
                     const ModuleData = FS.readJSONSync(Path.join(PMG.NPM.GetPackageFolder(Dependency.Package, Dependency.Version), "package.json"))
                     if (ModuleData.main) {
-                        return OriginalRequire(Path.join(PMG.NPM.GetPackageFolder(Dependency.Package, Dependency.Version), MuduleData.main))
+                        return OriginalRequire(Path.join(PMG.NPM.GetPackageFolder(Dependency.Package, Dependency.Version), ModuleData.main))
                     } else if (ModuleData.exports["."].require) {
                         return OriginalRequire(Path.join(PMG.NPM.GetPackageFolder(Dependency.Package, Dependency.Version), ModuleData.exports["."].require))
                     }
