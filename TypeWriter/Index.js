@@ -1,4 +1,4 @@
-const FS = require("fs")
+const FS = require("fs-extra")
 const Path = require("path")
 
 const ArgumentData = require("./Registry/Arguments")
@@ -27,20 +27,16 @@ if (FS.existsSync(`${TypeWriter.Folder}/InstallationDirectory`)) {
 }
 
 { //Create folders in Exe folder
-    function CreateDir(DirPath) {
-        if (FS.existsSync(DirPath)) {return}
-        FS.mkdirSync(DirPath)
-    }
-    CreateDir(TypeWriter.ApplicationData)
-    CreateDir(`${TypeWriter.Folder}/Cache/`)
-    CreateDir(`${TypeWriter.Folder}/Cache/BuildCache/`)
-    CreateDir(`${TypeWriter.Folder}/Cache/ExecuteCache/`)
-    CreateDir(`${TypeWriter.Folder}/Cache/ModuleCache/`)
-    CreateDir(`${TypeWriter.Folder}/Cache/ModuleCache/NPM/`)
-    CreateDir(`${TypeWriter.Folder}/Cache/ModuleCache/NPM/Modules/`)
-    CreateDir(`${TypeWriter.Folder}/Cache/ModuleCache/NPM/ModuleTars/`)
-    CreateDir(`${TypeWriter.Folder}/Cache/ModuleCache/NPM/Unpack/`)
-    CreateDir(`${TypeWriter.Folder}/Cache/ModuleCache/LIT/`)
+    FS.ensureDirSync(TypeWriter.ApplicationData)
+    FS.ensureDirSync(`${TypeWriter.Folder}/Cache/`)
+    FS.ensureDirSync(`${TypeWriter.Folder}/Cache/BuildCache/`)
+    FS.ensureDirSync(`${TypeWriter.Folder}/Cache/ExecuteCache/`)
+    FS.ensureDirSync(`${TypeWriter.Folder}/Cache/ModuleCache/`)
+    FS.ensureDirSync(`${TypeWriter.Folder}/Cache/ModuleCache/NPM/`)
+    FS.ensureDirSync(`${TypeWriter.Folder}/Cache/ModuleCache/NPM/Modules/`)
+    FS.ensureDirSync(`${TypeWriter.Folder}/Cache/ModuleCache/NPM/ModuleTars/`)
+    FS.ensureDirSync(`${TypeWriter.Folder}/Cache/ModuleCache/NPM/Unpack/`)
+    FS.ensureDirSync(`${TypeWriter.Folder}/Cache/ModuleCache/LIT/`)
 }
 
 if (TypeWriter.Arguments.action) {
