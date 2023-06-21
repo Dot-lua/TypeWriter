@@ -1,7 +1,8 @@
-const BuildHelper = require("../../Lib/BuildHelper.js")
 const RandomString = require("randomstring")
 const FS = require("fs-extra")
 const Path = require("path")
+
+const BuildHelper = require("../../Lib/BuildHelper.js")
 const RuntimeHelper = require("../../Lib/RuntimeHelper")
 
 module.exports.Name = "Run"
