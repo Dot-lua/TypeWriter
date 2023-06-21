@@ -4,7 +4,7 @@ const Path = require("path")
 const RuntimeHelper = require("../../Lib/RuntimeHelper")
 
 module.exports.Name = "Execute"
-module.exports.Execute = function() {
+module.exports.Execute = async function() {
     const InputPath = TypeWriter.Arguments.input
     const ExecuteId = RandomString.generate(32)
     const ExecuteFolder = Path.normalize(`${TypeWriter.Folder}/Cache/ExecuteCache/${ExecuteId}/`)

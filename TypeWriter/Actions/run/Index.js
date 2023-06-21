@@ -6,7 +6,7 @@ const BuildHelper = require("../../Lib/BuildHelper.js")
 const RuntimeHelper = require("../../Lib/RuntimeHelper")
 
 module.exports.Name = "Run"
-module.exports.Execute = function() {
+module.exports.Execute = async function() {
     const InputPath = TypeWriter.Arguments.input
     const InputBranch = TypeWriter.Arguments.branch
 
