@@ -5,12 +5,16 @@ const ArgumentData = require("./Registry/Arguments")
 const Module = require("module")
 
 global.TypeWriter = {}
-TypeWriter.OS = process.platform
+//Arguments
 TypeWriter.Arguments = ArgumentData.Arguments
 TypeWriter.ApplicationArguments = ArgumentData.Unknown
+//Os
+TypeWriter.OS = process.platform
+//File Paths
 TypeWriter.Folder = require("./Lib/FindUp")(Path.resolve(process.argv0, "../"), "InstallationDirectory", 40) || Path.resolve(`${process.argv0}/../`)
 TypeWriter.Executable = process.execPath
 TypeWriter.ApplicationData = `${TypeWriter.Folder}/ApplicationData/`
+//Other
 TypeWriter.Logger = require("./Lib/Logger")
 TypeWriter.OriginalRequire = Module.prototype.require
 
