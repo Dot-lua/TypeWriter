@@ -14,14 +14,6 @@ TypeWriter.ApplicationData = `${TypeWriter.Folder}/ApplicationData/`
 TypeWriter.Logger = require("./Lib/Logger")
 TypeWriter.OriginalRequire = Module.prototype.require
 
-globalThis.Sleep = async function (Time) {
-    Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, Time)
-}
-
-globalThis.Wait = async function (Time) { //in seconds
-    Sleep(Time * 1000)
-}
-
 if (FS.existsSync(`${TypeWriter.Folder}/InstallationDirectory`)) {
     TypeWriter.Logger.Debug("Valid installation found")
 } else {
