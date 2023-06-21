@@ -40,7 +40,9 @@ if (FS.existsSync(`${TypeWriter.Folder}/InstallationDirectory`)) {
 }
 
 if (TypeWriter.Arguments.action) {
-    require(`./Actions/List.js`)[TypeWriter.Arguments.action].Execute()
+    const Actions = require("./Actions/List.js")
+    const Action = Actions[TypeWriter.Arguments.action]
+    Action.Execute()
 } else {
     ArgumentData.Parser.print_help()
 }
