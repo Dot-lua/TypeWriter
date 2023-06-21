@@ -1,7 +1,6 @@
 const FS = require("fs-extra")
 const RandomString = require("randomstring")
 const Path = require("path")
-const Tar = require("tar")
 const RuntimeHelper = require("../../Lib/RuntimeHelper")
 
 module.exports.Name = "Execute"
