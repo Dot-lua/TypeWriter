@@ -19,14 +19,30 @@ do -- Set globals
     js.Load = js.LoadString
     js.await = function (P)
         local Co = coroutine.running()
+        if not coroutine.isyieldable(Co) then
+            error("Cannot await outside of a coroutine")
+        end
+
         P["then"](
             P,
             function (...)
                 assert(coroutine.resume(Co, ...))
             end
         )
-        return coroutine.yield()
+        local Return = {coroutine.yield()}
+        if Return[1] ~= true then
+            local Shifted = {}
+            for Key, Value in pairs(Return) do
+                Shifted[Key - 1] = Value
+            end
+            return table.unpack(Shifted)
+        else
+            error(Return[2])
+        end
     end
+    -- js.await = function (P)
+    --     return TypeWriter:Await(P)
+    -- end
     js.Await = js.await
 
     _G.await = js.await
