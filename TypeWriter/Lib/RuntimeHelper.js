@@ -79,7 +79,7 @@ RuntimeHelper.Import = function (PackagePath) {
                     `
                         local F, E = load(
                             js.global:decodeURIComponent("${CodeData.Code}"),
-                            "${PackagePath}"
+                            "${PackageId}: ${PackagePath}"
                         )
                         if not F then
                             error(E)
@@ -88,7 +88,8 @@ RuntimeHelper.Import = function (PackagePath) {
                         return coroutine.wrap(
                             F
                         )()
-                    `
+                    `,
+                    `${PackageId}: ${PackagePath}`
                 )()
             } else if (CodeData.Type == "js") {
                 return RequireString(
@@ -145,6 +146,14 @@ RuntimeHelper.Require = function (Request) {
         if (Request.startsWith(".")) {
             //console.log("Relative")
             return OriginalRequire(Path.join(Path.dirname(CallerFile), Request))
+        }
+    }
+
+    { // Is It a direct file path
+        const FoundExt = FindFileExt(Request)
+        if (FS.existsSync(FoundExt)) {
+            //console.log("Direct Path")
+            return OriginalRequire(FoundExt)
         }
     }
 
