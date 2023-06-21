@@ -17,12 +17,6 @@ BuildHelper.GetBuildFolder = function(BuildId) {
     return Path.normalize(`${BuildCacheFolder}/${BuildId}/`)
 }
 
-BuildHelper.CleanupBuild = function(BuildId) {
-    const BuildFolder = this.GetBuildFolder(BuildId)
-    TypeWriter.Logger.Debug(`Cleaning up ${BuildFolder}`)
-    FS.rmSync(BuildFolder, { recursive: true, force: true });
-}
-
 BuildHelper.Build = function(Folder, Branch) {
     const BranchFolder = `${Folder}/${Branch}/`
     if (!FS.existsSync(BranchFolder)) {TypeWriter.Logger.Error("The selected branch is not valid."); return false}
@@ -143,6 +137,12 @@ BuildHelper.CompressBuild = function(BuildId, OutputFolder) {
         },
         FS.readdirSync(BuildFolder)
     )
+}
+
+BuildHelper.CleanupBuild = function(BuildId) {
+    const BuildFolder = this.GetBuildFolder(BuildId)
+    TypeWriter.Logger.Debug(`Cleaning up ${BuildFolder}`)
+    FS.rmSync(BuildFolder, { recursive: true, force: true });
 }
 
 module.exports = BuildHelper
