@@ -1,8 +1,8 @@
 const FS = require("fs-extra")
+const FSHelpers = require("../FSHelpers")
 const Fetch = require("sync-fetch")
 const Path = require("path")
 const Tar = require("tar")
-const KlawSync = require("klaw-sync")
 const JsonRequest = require("../../JsonRequest")
 
 const CacheFolder =         `${TypeWriter.Folder}/Cache/ModuleCache/NPM/`
@@ -20,31 +20,11 @@ function GetModuleFolder(PackageName) {
     return `${ModulesFolder}/${PackageName}`
 }
 
-function GetPackageInfo(PackageName, PackageVersion) {
-    TypeWriter.Logger.Debug(`Getting package info for ${PackageName}@${PackageVersion}`)
+function GetPackageInfo(FullName, Version) {
+    TypeWriter.Logger.Debug(`Getting package info for ${FullName}@${Version}`)
     return JsonRequest(
-        `https://cdn.jsdelivr.net/npm/${PackageName}@${PackageVersion}/package.json`
+        `https://cdn.jsdelivr.net/npm/${FullName}@${Version}/package.json`
     ).Data
-}
-
-function FindClosest(FolderPath, FileName) {
-    const FileList = KlawSync(
-        FolderPath,
-        {
-            nodir: true,
-            preserveOwner: false
-        }
-    )
-    const FoundFolder = Path.dirname(FileList.filter(
-        function(File) {
-            return Path.basename(File.path) == FileName
-        }
-    ).reduce(
-        function(a, b) {
-            return a.path.length <= b.path.length ? a : b;
-        }
-    ).path)
-    return FoundFolder
 }
 
 function CreatePackageFolders(PackageName) {
@@ -89,7 +69,7 @@ function UnpackPackageArchive(PackageName, PackageVersion) {
     )
 
     TypeWriter.Logger.Debug(`Moving files from ${PackageName}`)
-    const MoveFolder = FindClosest(UnpackFolder, "package.json")
+    const MoveFolder = FSHelpers.FindDown(UnpackFolder, "package.json")
 
     for (const FileName of FS.readdirSync(MoveFolder)) {
         var Moved = false

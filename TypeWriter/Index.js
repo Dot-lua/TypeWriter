@@ -1,4 +1,5 @@
 const FS = require("fs-extra")
+const FSHelpers = require("./Lib/FSHelpers")
 const Path = require("path")
 
 const ArgumentData = require("./Registry/Arguments")
@@ -11,7 +12,7 @@ TypeWriter.ApplicationArguments = ArgumentData.Unknown
 //Os
 TypeWriter.OS = process.platform
 //File Paths
-TypeWriter.Folder = require("./Lib/FindUp")(Path.resolve(process.argv0, "../"), "InstallationDirectory", 40) || Path.resolve(`${process.argv0}/../`)
+TypeWriter.Folder = FSHelpers.FindUp(Path.resolve(process.argv0, "../"), "InstallationDirectory", 40) || Path.resolve(`${process.argv0}/../`)
 TypeWriter.Executable = process.execPath
 TypeWriter.ApplicationData = `${TypeWriter.Folder}/ApplicationData/`
 //Other
