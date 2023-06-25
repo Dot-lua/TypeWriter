@@ -20,6 +20,9 @@ module.exports.Execute = async function() {
 
     BuildHelper.CompressBuild(BuildId, ExecuteFolder)
     BuildHelper.CleanupBuild(BuildId)
+    if (BuildId == false) {
+        return
+    }
 
     RuntimeHelper.LoadEnvoirment(ExecuteFolder)
     const Package = TypeWriter.LoadFile(`${ExecuteFolder}/${FS.readdirSync(ExecuteFolder)}`)
