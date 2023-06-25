@@ -15,8 +15,10 @@
 		"Socials": {}
 	},
 	"Dependencies": [
-		"npm+node-fetch@3.3.1",
-		"npm+types/node-fetch@2.6.4"
+		{
+            "Source": "NPM",
+            "Package": "node-fetch"
+        }
 	],
 	"Entrypoints": {
 		"Main": "me.corebyte.test"
