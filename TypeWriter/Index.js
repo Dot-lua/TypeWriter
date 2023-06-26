@@ -18,6 +18,7 @@ TypeWriter.ApplicationData = `${TypeWriter.Folder}/ApplicationData/`
 //Other
 TypeWriter.Logger = require("./Lib/Logger")
 TypeWriter.OriginalRequire = Module.prototype.require
+TypeWriter.PackageManagers = require("./Lib/PackageManagers/Index.js")
 
 //Check if valid install
 if (FS.existsSync(`${TypeWriter.Folder}/InstallationDirectory`)) {

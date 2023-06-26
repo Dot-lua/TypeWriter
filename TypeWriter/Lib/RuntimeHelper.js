@@ -5,11 +5,9 @@ const FS = require("fs-extra")
 const Tar = require("tar")
 const Path = require("path")
 const LuaHelper = require("./LuaHelper")
-const PMG = require("./pmg/")
 const RequireString = require("require-from-string")
 const IsCoreModule = require("is-builtin-module")
 const GetCallerFile = require("get-caller-file")
-const { Module } = require("module")
 
 function GetPackagedJson(FilePath, PackedFile) {
     return JSON.parse(SingleTarRead(FilePath, PackedFile))
@@ -55,7 +53,7 @@ RuntimeHelper.LoadFile = function (FilePath) {
     FS.mkdirSync(PackagePath)
 
     for (const Dependency of PackageInfo.Dependencies) {
-        PMG[Dependency.Source].LoadPackage(Dependency.Package, Dependency.Version, PackagePath)
+        TypeWriter.PackageManagers.LoadPackage(Dependency, PackagePath)
     }
 
     TypeWriter.LoadedPackages[PackageInfo.Id] = {
@@ -107,7 +105,7 @@ RuntimeHelper.LoadEntrypoint = function (PackageId, EntrypointName) {
     return this.Import(TypeWriter.LoadedPackages[PackageId].Package.Entrypoints[EntrypointName])
 }
 
-const OriginalRequire = Module.prototype.require
+const OriginalRequire = TypeWriter.OriginalRequire
 const NPMCacheFolder = Path.resolve(`${TypeWriter.Folder}/Cache/ModuleCache/NPM/Modules/`)
 const Exts = ["js", "json", "node"]
 function FindFileExt(FilePath) {
@@ -160,20 +158,20 @@ RuntimeHelper.Require = function (Request) {
     { // Is it a dep of a package
         if ((CallerFile.split(":")[1] || "").startsWith(" ")) {
             const PackageId = CallerFile.split(":")[0]
-            if (TypeWriter.LoadedPackages[PackageId]) {
-                const PackageData = TypeWriter.LoadedPackages[PackageId].Package
-                const Dependency = PackageData.Dependencies.filter(x => x.Package == Request)[0]
+            if (TypeWriter.PackageManager.IsPackageLoaded(PackageId)) {
+                const Dependency = TypeWriter.PackageManager.ListDependencyObjects(PackageId).find(Dependency => Dependency.AtFullName == Request)
                 if (Dependency) {
                     //console.log("Dep of a package")
+                    const PackageFolder = TypeWriter.PackageManagers.PackageFolder(Dependency)
                     try {
-                        return OriginalRequire(PMG.NPM.GetPackageFolder(Dependency.Package, Dependency.Version))
+                        return OriginalRequire(PackageFolder)
                     } catch (error) { }
 
-                    const ModuleData = FS.readJSONSync(Path.join(PMG.NPM.GetPackageFolder(Dependency.Package, Dependency.Version), "package.json"))
+                    const ModuleData = FS.readJSONSync(Path.join(PackageFolder, "package.json"))
                     if (ModuleData.main) {
-                        return OriginalRequire(Path.join(PMG.NPM.GetPackageFolder(Dependency.Package, Dependency.Version), ModuleData.main))
+                        return OriginalRequire(Path.join(PackageFolder, ModuleData.main))
                     } else if (ModuleData.exports["."].require) {
-                        return OriginalRequire(Path.join(PMG.NPM.GetPackageFolder(Dependency.Package, Dependency.Version), ModuleData.exports["."].require))
+                        return OriginalRequire(Path.join(PackageFolder, ModuleData.exports["."].require))
                     }
 
                 }
@@ -214,11 +212,10 @@ RuntimeHelper.Require = function (Request) {
 
     { // Fallback to any dep of a package
         for (const PackageId in TypeWriter.LoadedPackages) {
-            const PackageData = TypeWriter.LoadedPackages[PackageId].Package
-            const Dependency = PackageData.Dependencies.filter(x => x.Package == RequestName)[0]
+            const Dependency = TypeWriter.PackageManager.ListDependencyObjects(PackageId).find(Dependency => Dependency.AtFullName == Request)
             if (Dependency) {
                 //console.log("Dep of a package")
-                return OriginalRequire(PMG.NPM.GetPackageFolder(Dependency.Package, Dependency.Version) + RequestRest)
+                return OriginalRequire(TypeWriter.PackageManagers.PackageFolder(Dependency) + RequestRest)
             }
         }
     }
