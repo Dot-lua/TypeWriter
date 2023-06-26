@@ -5,7 +5,7 @@ const FS = require("fs-extra")
 const Path = require("path")
 const KlawSync = require('klaw-sync')
 const Tar = require("tar")
-const Pmg = require("./pmg/index")
+const DependencyFormatter = TypeWriter.PackageManagers.DependencyFormatter
 
 const BuildCacheFolder = `${TypeWriter.Folder}/Cache/BuildCache/`
 
@@ -28,9 +28,43 @@ BuildHelper.Build = function (Folder, Branch) {
     FS.mkdirSync(BuildFolder)
     FS.mkdirSync(`${BuildFolder}/resources/`)
 
-    try {
-        const PackageData = FS.readJSONSync(`${BranchFolder}/package.info.json`)
-        var NeedWrite = false
+    FS.ensureDirSync(`${BuildFolder}/js/`)
+    FS.ensureDirSync(`${BuildFolder}/lua/`)
+    FS.ensureDirSync(`${BuildFolder}/resources/`)
+
+    { // Update Dependencies
+        var PackageData
+        try {
+            PackageData = FS.readJSONSync(`${BranchFolder}/package.info.json`)
+        } catch (E) {
+            TypeWriter.Logger.Error(`Could not read package.info.json (${E})`)
+            return false
+        }
+        var NeedsWrite = false
+
+        for (const DependencyIndex in PackageData.Dependencies) {
+            var Dependency = PackageData.Dependencies[DependencyIndex]
+
+            if (typeof Dependency == "object") {
+                const DependencySource = Dependency.Source.toLowerCase()
+                var DependencyAuthor
+                var DependencyName
+                if (Dependency.Package.includes("/")) {
+                    DependencyAuthor = Dependency.Package.split("/")[0].substring(1)
+                    DependencyName = Dependency.Package.split("/")[1]
+                } else {
+                    DependencyName = Dependency.Package
+                }
+
+                NeedsWrite = true
+                PackageData.Dependencies[DependencyIndex] = DependencyFormatter.FormatDependency(
+                    {
+                        Source: DependencySource,
+                        Author: DependencyAuthor,
+                        Name: DependencyName,
+                        Version: Dependency.Version
+                    }
+                )
 
         for (const Dependency of PackageData.Dependencies) {
             if (!Pmg[Dependency.Source].PackageExists(Dependency.Package)) {
