@@ -4,8 +4,6 @@ const SingleTarRead = require("../Lib/SingleTar")
 const FS = require("fs-extra")
 const Tar = require("tar")
 const Path = require("path")
-const LuaHelper = require("./LuaHelper")
-const RequireString = require("require-from-string")
 const IsCoreModule = require("is-builtin-module")
 const GetCallerFile = require("get-caller-file")
 
@@ -15,31 +13,6 @@ function GetPackagedJson(FilePath, PackedFile) {
 
 function GetPackagePath(Package) {
     return `${TypeWriter.ExecuteFolder}/${Package.Id}/`
-}
-
-RuntimeHelper.LoadEnvoirment = function (ExecuteFolder) {
-    TypeWriter.LoadFile = this.LoadFile
-    TypeWriter.ExecuteFolder = ExecuteFolder
-    TypeWriter.LoadedPackages = {}
-    global.TypeWriterLuaState = LuaHelper.CreateState()
-    TypeWriter.Import = this.Import
-    global.Import = this.Import
-    TypeWriter.LoadEntrypoint = this.LoadEntrypoint
-    TypeWriter.PackageManager = require("./PackageManager")
-    TypeWriter.ResourceManager = require("./ResourceManager")
-    Module.prototype.require = this.Require
-    TypeWriter.JsRequire = this.Require
-
-    globalThis.lua = {
-        LoadFile: LuaHelper.LoadFile,
-        Load: LuaHelper.Load,
-        LoadString: LuaHelper.LoadString,
-        Global: LuaHelper.Load(TypeWriterLuaState, "return _G")(),
-    }
-    globalThis.Lua = globalThis.lua
-    globalThis.LUA = globalThis.lua
-
-    LuaHelper.LoadFile(TypeWriterLuaState, Path.join(__dirname, "./lua/LuaEnv.lua"))
 }
 
 RuntimeHelper.LoadFile = function (FilePath) {
@@ -72,25 +45,12 @@ RuntimeHelper.Import = function (PackagePath) {
         const CodeData = PackageData.Code[PackagePath]
         if (CodeData) {
             if (CodeData.Type == "lua") {
-                return LuaHelper.Load(
-                    TypeWriterLuaState,
-                    `
-                        local F, E = load(
-                            js.global:decodeURIComponent("${CodeData.Code}"),
-                            "${PackageId}: ${PackagePath}"
-                        )
-                        if not F then
-                            error(E)
-                        end
-
-                        return coroutine.wrap(
-                            F
-                        )()
-                    `,
+                return TypeWriter.Lua.LoadString(
+                    decodeURIComponent(CodeData.Code),
                     `${PackageId}: ${PackagePath}`
-                )()
+                )
             } else if (CodeData.Type == "js") {
-                return RequireString(
+                return TypeWriter.JavaScript.LoadString(
                     decodeURIComponent(CodeData.Code),
                     `${PackageId}: ${PackagePath}`
                 )
