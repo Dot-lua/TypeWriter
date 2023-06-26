@@ -66,28 +66,28 @@ BuildHelper.Build = function (Folder, Branch) {
                     }
                 )
 
-        for (const Dependency of PackageData.Dependencies) {
-            if (!Pmg[Dependency.Source].PackageExists(Dependency.Package)) {
-                TypeWriter.Logger.Error(`Could not find ${Dependency.Source} package ${Dependency.Package}`)
+                Dependency = PackageData.Dependencies[DependencyIndex]
+            }
+
+            if (!TypeWriter.PackageManagers.PackageExists(Dependency)) {
+                TypeWriter.Logger.Error(`Package ${Dependency} does not exist. Please check your package.info.json file.`)
                 return false
             }
 
-            if (!Dependency.Version) {
-                TypeWriter.Logger.Warning(`Missing version in ${Dependency.Source} package ${Dependency.Package}`)
-                TypeWriter.Logger.Warning(`Defaulting to latest version`)
-                NeedWrite = true
-                Dependency.Version = Pmg[Dependency.Source].GetLatestPackageVersion(Dependency.Package)
+            if (!TypeWriter.PackageManagers.HasVersion(Dependency)) {
+                TypeWriter.Logger.Warning(`Missing version for package ${Dependency}, attempting to find latest version`)
+                NeedsWrite = true
+                const ParsedDependency = DependencyFormatter.ParseDependency(PackageData.Dependencies[DependencyIndex])
+                ParsedDependency.Version = TypeWriter.PackageManagers.LatestPackageVersion(Dependency)
+                PackageData.Dependencies[DependencyIndex] = DependencyFormatter.FormatDependency(ParsedDependency)
             }
         }
 
-        if (NeedWrite) {
+        if (NeedsWrite) {
             TypeWriter.Logger.Warning(`Updating values in package.info.json`)
             FS.writeJSONSync(`${BranchFolder}/package.info.json`, PackageData, { spaces: "\t" })
         }
         FS.writeJSONSync(`${BuildFolder}/package.info.json`, PackageData, {spaces: "\t"})
-    } catch (E) {
-        TypeWriter.Logger.Error(`Could not read package.info.json file. (${E})`)
-        return false
     }
 
     const CompiledCode = {}
