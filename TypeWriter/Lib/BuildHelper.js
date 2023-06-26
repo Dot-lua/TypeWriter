@@ -91,40 +91,47 @@ BuildHelper.Build = function (Folder, Branch) {
     }
 
     const CompiledCode = {}
-    function CodeScan(ScanFolder, CodePath, Type) {
-        TypeWriter.Logger.Debug("Path is " + CodePath)
-        TypeWriter.Logger.Debug("Scanning " + ScanFolder)
+    function CodeScan(ScanFolder, Ext) {
+        ScanFolder = Path.resolve(ScanFolder)
+        TypeWriter.Logger.Debug("Scanning " + ScanFolder + " for " + Ext + " files")
+        const Files = KlawSync(ScanFolder, { nodir: true })
 
-        const FileExt = `.${Type}`
-        for (const FileName of FS.readdirSync(ScanFolder)) {
-            const FileBaseName = Path.basename(FileName, FileExt)
-            const FilePath = `${ScanFolder}/${FileName}`
-            const IsFileDir = FS.lstatSync(FilePath).isDirectory()
-            const NewCodePath = CodePath.length == 0 ? FileBaseName : `${CodePath}.${FileBaseName}`
+        for (const FileInformation of Files) {
+            const FilePath = FileInformation.path
+            if (Path.extname(FilePath) != `.${Ext}`) {
+                TypeWriter.Logger.Error(`Found ${FilePath} but file extension needs to be .${Ext}, skipping.`)
+                continue
+            }
+            var CodePath = Path.normalize(FilePath).split(ScanFolder)[1].replaceAll("\\", "/").replaceAll("/", ".")
+            if (CodePath.startsWith(".")) { CodePath = CodePath.substring(1) }
+            CodePath = CodePath.substring(0, CodePath.length - Ext.length - 1)
+            var ParentCodePath = CodePath.split(".")
+            delete ParentCodePath[ParentCodePath.length - 1]
+            ParentCodePath = ParentCodePath.join(".")
+            ParentCodePath = ParentCodePath.substring(0, ParentCodePath.length - 1)
 
-            TypeWriter.Logger.Debug(`Found ${FilePath} as ${IsFileDir ? "Directory" : "File"}`)
-
-            if (IsFileDir) {
-                CodeScan(FilePath, NewCodePath, Type)
-            } else {
-                if (Path.extname(FilePath) != FileExt) {TypeWriter.Logger.Error(`Found ${FileName} in ${Path.resolve(FilePath)} but file extension needs to be ${FileExt}, skipping.`)}
-                CompiledCode[NewCodePath] = {
-                    Type: Type,
-                    Code: encodeURIComponent(FS.readFileSync(FilePath, "utf-8"))
-                }
-                if (FileBaseName == "Main") {
-                    CompiledCode[CodePath] = {
-                        Type: "Redirect",
-                        Path: NewCodePath
-                    }
-                }
+            TypeWriter.Logger.Debug(`Found ${Ext} file ${CodePath} at ${FilePath}`)
+            CompiledCode[CodePath] = {
+                Type: Ext,
+                Code: encodeURIComponent(FS.readFileSync(FilePath, "utf-8"))
             }
 
+            if (Path.basename(FilePath, `.${Ext}`) == "Main") {
+                CompiledCode[ParentCodePath] = {
+                    Type: "Redirect",
+                    Path: CodePath
+                }
+            } else if (Path.basename(FilePath, `.${Ext}`) == "Index") {
+                CompiledCode[ParentCodePath] = {
+                    Type: "Redirect",
+                    Path: CodePath
+                }
+            }
         }
     }
 
-    CodeScan(`${BranchFolder}/lua/`, "", "lua")
-    CodeScan(`${BranchFolder}/js/`, "", "js")
+    CodeScan(`${BranchFolder}/lua/`, "lua")
+    CodeScan(`${BranchFolder}/js/`, "js")
 
     FS.writeJSONSync(
         `${BuildFolder}/Code.json`,
