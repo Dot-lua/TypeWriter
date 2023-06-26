@@ -2,7 +2,6 @@ const RuntimeHelper = {}
 
 const SingleTarRead = require("../Lib/SingleTar")
 const FS = require("fs-extra")
-const Tar = require("tar")
 const Path = require("path")
 const IsCoreModule = require("is-builtin-module")
 const GetCallerFile = require("get-caller-file")
