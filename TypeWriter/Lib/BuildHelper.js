@@ -9,21 +9,21 @@ const Pmg = require("./pmg/index")
 
 const BuildCacheFolder = `${TypeWriter.Folder}/Cache/BuildCache/`
 
-BuildHelper.CanBuild = function(Folder) {
+BuildHelper.CanBuild = function (Folder) {
     return FS.existsSync(`${Folder}/package.info.json`) && FS.existsSync(`${Folder}/resources`)
 }
 
-BuildHelper.GetBuildFolder = function(BuildId) {
+BuildHelper.GetBuildFolder = function (BuildId) {
     return Path.normalize(`${BuildCacheFolder}/${BuildId}/`)
 }
 
-BuildHelper.Build = function(Folder, Branch) {
+BuildHelper.Build = function (Folder, Branch) {
     const BranchFolder = `${Folder}/${Branch}/`
-    if (!FS.existsSync(BranchFolder)) {TypeWriter.Logger.Error("The selected branch is not valid."); return false}
+    if (!FS.existsSync(BranchFolder)) { TypeWriter.Logger.Error("The selected branch is not valid."); return false }
     const BuildId = RandomString.generate(32)
     const BuildFolder = this.GetBuildFolder(BuildId)
 
-    if (!this.CanBuild(BranchFolder)) {TypeWriter.Logger.Error("You need a valid package.info.json and resource folder to build."); return false}
+    if (!this.CanBuild(BranchFolder)) { TypeWriter.Logger.Error("You need a valid package.info.json and resource folder to build."); return false }
 
     FS.mkdirSync(BuildFolder)
     FS.mkdirSync(`${BuildFolder}/resources/`)
@@ -48,7 +48,7 @@ BuildHelper.Build = function(Folder, Branch) {
 
         if (NeedWrite) {
             TypeWriter.Logger.Warning(`Updating values in package.info.json`)
-            FS.writeJSONSync(`${BranchFolder}/package.info.json`, PackageData, {spaces: "\t"})
+            FS.writeJSONSync(`${BranchFolder}/package.info.json`, PackageData, { spaces: "\t" })
         }
         FS.writeJSONSync(`${BuildFolder}/package.info.json`, PackageData, {spaces: "\t"})
     } catch (E) {
@@ -102,9 +102,9 @@ BuildHelper.Build = function(Folder, Branch) {
 
     const ResourceIndex = []
     const ResourceFolder = Path.resolve(`${BranchFolder}/resources/`)
-    for (const File of KlawSync(ResourceFolder, {nodir: true})) {
+    for (const File of KlawSync(ResourceFolder, { nodir: true })) {
         const FilePath = File.path
-        const ResourceFilePath = Path.normalize(FilePath.split(ResourceFolder)[1]).replaceAll("\\", "/", )
+        const ResourceFilePath = Path.normalize(FilePath.split(ResourceFolder)[1]).replaceAll("\\", "/")
         const DestFilePath = `${BuildFolder}/resources/${ResourceFilePath}`
         TypeWriter.Logger.Debug(`Found resource ${ResourceFilePath} at ${FilePath}`)
         FS.ensureDirSync(Path.dirname(DestFilePath))
@@ -139,7 +139,7 @@ BuildHelper.CompressBuild = function(BuildId, OutputFolder) {
     )
 }
 
-BuildHelper.CleanupBuild = function(BuildId) {
+BuildHelper.CleanupBuild = function (BuildId) {
     const BuildFolder = this.GetBuildFolder(BuildId)
     TypeWriter.Logger.Debug(`Cleaning up ${BuildFolder}`)
     FS.rmSync(BuildFolder, { recursive: true, force: true });
