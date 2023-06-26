@@ -3,7 +3,7 @@ const FS = require("fs-extra")
 const Path = require("path")
 
 const BuildHelper = require("../../Lib/BuildHelper.js")
-const RuntimeHelper = require("../../Lib/RuntimeHelper")
+const LoadEnvoirment = require("../../Lib/LoadEnvoirment")
 
 module.exports.Name = "Run"
 module.exports.Execute = async function() {
@@ -24,7 +24,7 @@ module.exports.Execute = async function() {
         return
     }
 
-    RuntimeHelper.LoadEnvoirment(ExecuteFolder)
+    await LoadEnvoirment(ExecuteFolder)
     const Package = TypeWriter.LoadFile(`${ExecuteFolder}/${FS.readdirSync(ExecuteFolder)}`)
     TypeWriter.LoadEntrypoint(Package.Id, "Main")
 }

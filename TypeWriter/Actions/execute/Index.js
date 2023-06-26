@@ -1,7 +1,7 @@
 const FS = require("fs-extra")
 const RandomString = require("randomstring")
 const Path = require("path")
-const RuntimeHelper = require("../../Lib/RuntimeHelper")
+const LoadEnvoirment = require("../../Lib/LoadEnvoirment")
 
 module.exports.Name = "Execute"
 module.exports.Execute = async function() {
@@ -15,7 +15,7 @@ module.exports.Execute = async function() {
     
     FS.mkdirSync(ExecuteFolder)
 
-    RuntimeHelper.LoadEnvoirment(ExecuteFolder)
+    await LoadEnvoirment(ExecuteFolder)
     const Package = TypeWriter.LoadFile(InputPath)
     TypeWriter.LoadEntrypoint(Package.Id, "Main")
 }
