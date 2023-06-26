@@ -164,7 +164,12 @@ BuildHelper.Build = function (Folder, Branch) {
     return BuildId
 }
 
-BuildHelper.CompressBuild = function(BuildId, OutputFolder) {
+BuildHelper.CompressBuild = function (BuildId, OutputFolder) {
+    if (BuildId == false) {
+        TypeWriter.Logger.Error("Looks like the build failed, not compressing")
+        return false
+    }
+
     const BuildFolder = this.GetBuildFolder(BuildId)
     const OutputFile = Path.join(OutputFolder, FS.readJSONSync(`${BuildFolder}/package.info.json`).Id) + ".twr"
     TypeWriter.Logger.Debug(`Outputting to ${OutputFile} in ${BuildFolder}`)
