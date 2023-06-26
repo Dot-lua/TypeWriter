@@ -16,4 +16,16 @@ PackageManager.IsPackageLoaded = function (Id) {
     return this.ListPackageIds().includes(Id)
 }
 
+PackageManager.ListDependencyObjects = function(Id) {
+    const PackageData = TypeWriter.LoadedPackages[PackageId].Package
+    const Objects = []
+
+    for (const DependencyString of PackageData.Dependencies) {
+        const DependencyObject = TypeWriter.PackageManagers.TryParse(DependencyString)
+        Objects.push(DependencyObject)
+    }
+
+    return DependencyObject
+}
+
 module.exports = PackageManager
