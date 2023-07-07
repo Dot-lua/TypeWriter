@@ -60,8 +60,34 @@ RuntimeHelper.Import = function (PackagePath) {
     }
 }
 
+RuntimeHelper.ImportAsync = async function (PackagePath) {
+    for (const PackageId in TypeWriter.LoadedPackages) {
+        const PackageData = TypeWriter.LoadedPackages[PackageId]
+        const CodeData = PackageData.Code[PackagePath]
+        if (CodeData) {
+            if (CodeData.Type == "lua") {
+                return await TypeWriter.Lua.LoadStringAsync(
+                    decodeURIComponent(CodeData.Code),
+                    `${PackageId}: ${PackagePath}`
+                )
+            } else if (CodeData.Type == "js") {
+                return await TypeWriter.JavaScript.LoadStringAsync(
+                    decodeURIComponent(CodeData.Code),
+                    `${PackageId}: ${PackagePath}`
+                )
+            } else if (CodeData.Type == "Redirect") {
+                return await this.ImportAsync(CodeData.Path)
+            }
+        }
+    }
+}
+
 RuntimeHelper.LoadEntrypoint = function (PackageId, EntrypointName) {
     return this.Import(TypeWriter.LoadedPackages[PackageId].Package.Entrypoints[EntrypointName])
+}
+
+RuntimeHelper.LoadEntrypointAsync = async function (PackageId, EntrypointName) {
+    return await this.ImportAsync(TypeWriter.PackageManager.GetPackageEntrypoints(PackageId)[EntrypointName])
 }
 
 const OriginalRequire = TypeWriter.OriginalRequire
