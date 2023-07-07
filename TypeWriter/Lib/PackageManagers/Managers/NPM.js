@@ -3,6 +3,7 @@ const FSHelpers = require("../../FSHelpers")
 const JsonRequest = require("../../JsonRequest")
 const Fetch = require("sync-fetch")
 const Tar = require("tar")
+const Path = require("path")
 
 const CacheFolder = `${TypeWriter.Folder}/Cache/ModuleCache/NPM/`
 const ModulesFolder = `${CacheFolder}/Modules/`
@@ -122,7 +123,7 @@ class NPM {
             const DependencyFolder = this.DownloadPackage(DependencyData, Dependency.FullName)
 
             if (DependencyData.Author) {
-                FS.mkdirSync(`${NodeModulesFolder}/@${DependencyData.Author}`)
+                FS.ensureDirSync(`${NodeModulesFolder}/@${DependencyData.Author}`)
             }
             FS.symlinkSync(
                 DependencyFolder,
