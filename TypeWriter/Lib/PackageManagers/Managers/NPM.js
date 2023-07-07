@@ -165,12 +165,12 @@ class NPM {
         if (InstallScript) {
             const SplitScript = InstallScript.split(" ")
             if (SplitScript[0] == "node") {
-                TypeWriter.Logger.Information(`Running install script for ${PackageName}`)
+                TypeWriter.Logger.Information(`Running install script for ${Dependency.FullName}@${Dependency.Version}`)
                 require("child_process").execFileSync(
                     TypeWriter.Executable,
-                    [MainFileName, "runscript", "-i", Path.join(UnpackedFolder, SplitScript[1])],
+                    [MainFileName, "runscript", "-i", Path.join(PackageFolder, SplitScript[1])],
                     {
-                        cwd: `${UnpackedFolder}`,
+                        cwd: `${PackageFolder}`,
                         stdio: "inherit"
                     }
                 )
