@@ -19,6 +19,6 @@
 		"npm+types/node-fetch@2.6.4"
 	],
 	"Entrypoints": {
-		"Main": "me.corebyte.test"
+		"Main": "Test"
 	}
 }
