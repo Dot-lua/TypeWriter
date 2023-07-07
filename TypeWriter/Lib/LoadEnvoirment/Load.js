@@ -3,6 +3,8 @@ module.exports = async function (ExecuteFolder) {
     { // Global Vars
         TypeWriter.ExecuteFolder = ExecuteFolder
         TypeWriter.LoadedPackages = {}
+
+        Error.stackTraceLimit = Infinity
     }
 
     { // Sleeping
@@ -26,9 +28,14 @@ module.exports = async function (ExecuteFolder) {
     { // Runtime functions
         const RuntimeHelper = require("../RuntimeHelper.js")
         TypeWriter.LoadFile = RuntimeHelper.LoadFile
+
         TypeWriter.Import = RuntimeHelper.Import
         globalThis.Import = RuntimeHelper.Import
+        TypeWriter.ImportAsync = RuntimeHelper.ImportAsync
+        globalThis.ImportAsync = RuntimeHelper.ImportAsync
+
         TypeWriter.LoadEntrypoint = RuntimeHelper.LoadEntrypoint
+        TypeWriter.LoadEntrypointAsync = RuntimeHelper.LoadEntrypointAsync
 
         TypeWriter.PackageManager = require("../PackageManager")
         TypeWriter.ResourceManager = require("../ResourceManager")
@@ -39,6 +46,7 @@ module.exports = async function (ExecuteFolder) {
         const FS = require("fs-extra")
         const Path = require("path")
         const RequireFromString = require("require-from-string")
+
         const WasMoon = require("wasmoon")
         const LuaFactory = new WasMoon.LuaFactory()
         const LuaEnvoirment = await LuaFactory.createEngine(
@@ -46,36 +54,58 @@ module.exports = async function (ExecuteFolder) {
                 enableProxy: true,
                 injectObjects: true,
                 openStandardLibs: true,
-                traceAllocations: true,
+                traceAllocations: false,
             }
         )
+        LuaEnvoirment.global.registerTypeExtension(10, new (require("./LegacyClassFix.js")))
 
-        const OldWarn = console.warn
-        console.warn = function (...Args) {
-            if (Args[0] == "The type 'userdata' returned is not supported on JS") { return }
-            OldWarn(...Args, "asd")
-        }
         TypeWriter.Lua = {
             Envoirment: LuaEnvoirment,
             LoadFile: function (FilePath) {
-                return LuaEnvoirment.doFileSync(FilePath)
+                const FileData = FS.readFileSync(FilePath, "utf8")
+                return LuaEnvoirment.doStringSync(FileData)
             },
+            LoadFileAsync: async function (FilePath) {
+                const FileData = await FS.promises.readFile(FilePath, "utf8")
+                return await LuaEnvoirment.doString(FileData)
+            },
+
             LoadString: function (String, Name) {
                 return LuaEnvoirment.doStringSync(String)
             },
-
-            Global: LuaEnvoirment.doStringSync("return _G") // This throws 3 errors
+            LoadStringAsync: async function (String, Name) {
+                return await LuaEnvoirment.doString(String)
+            }
         }
-        console.warn = OldWarn
-        TypeWriter.Lua.Envoirment.global.set("Sussy", "baka")
+        TypeWriter.Lua.Envoirment.global.set("TypeWriter", TypeWriter)
 
         TypeWriter.JavaScript = {
             LoadFile: function (FilePath) {
                 const FileData = FS.readFileSync(FilePath, "utf8")
                 return RequireFromString(FileData, Path.normalize(FilePath))
             },
+            LoadFileAsync: async function (FilePath) {
+                return this.LoadFile(FilePath)
+            },
+
             LoadString: function (String, Name) {
                 return RequireFromString(String, Name)
+            },
+            LoadStringAsync: async function (String, Name) {
+                return this.LoadString(String, Name)
+            },
+
+            //Operators
+            New: function (Class, ...Args) {
+                return new Class(...Args)
+            },
+
+            TypeOf: function (Object) {
+                return typeof Object
+            },
+
+            InstanceOf: function (Object, Class) {
+                return Object instanceof Class
             },
 
             Global: globalThis
