@@ -193,6 +193,19 @@ class NPM {
         if (!FS.existsSync(PackageFolder)) {
             this.DownloadPackage(Dependency)
         }
+
+        const ModulesFolder = `${ExecuteDirectory}/node_modules/`
+        FS.ensureDirSync(ModulesFolder)
+        if (Dependency.Author) {
+            FS.ensureDirSync(`${ModulesFolder}/@${Dependency.Author}`)
+        }
+
+        FS.symlinkSync(
+            PackageFolder,
+            `${ModulesFolder}/${Dependency.AtFullName}`,
+            TypeWriter.OS == "win32" ? 'junction' : 'dir'
+        )
+
     }
 }
 
