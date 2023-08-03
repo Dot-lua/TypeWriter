@@ -92,6 +92,7 @@ BuildHelper.Build = function (Folder, Branch) {
 
     const CompiledCode = {}
     function CodeScan(ScanFolder, Ext) {
+        FS.ensureDirSync(ScanFolder)
         ScanFolder = Path.resolve(ScanFolder)
         TypeWriter.Logger.Debug("Scanning " + ScanFolder + " for " + Ext + " files")
         const Files = KlawSync(ScanFolder, { nodir: true })
