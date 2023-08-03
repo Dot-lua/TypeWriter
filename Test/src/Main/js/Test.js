@@ -1,1 +1,1 @@
-ImportAsync("me.corebyte.test")
+require("discord.js")

@@ -16,7 +16,8 @@
 	},
 	"Dependencies": [
 		"npm+node-fetch@3.3.1",
-		"npm+types/node-fetch@2.6.4"
+		"npm+types/node-fetch@2.6.4",
+		"npm+discord.js@14.12.1"
 	],
 	"Entrypoints": {
 		"Main": "Test"
