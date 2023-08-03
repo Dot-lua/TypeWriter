@@ -20,7 +20,7 @@ RuntimeHelper.LoadFile = function (FilePath) {
 
     if (FS.existsSync(PackagePath)) {
         TypeWriter.Logger.Debug(`${PackageInfo.Id} is already loaded at ${PackagePath}`)
-        return false
+        return PackageInfo
     }
     FS.mkdirSync(PackagePath)
 
