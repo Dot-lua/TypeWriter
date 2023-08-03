@@ -107,6 +107,7 @@ class NPM {
         for (const DependencyName in PackageInfo.dependencies) {
             const DependencyVersion = PackageInfo.dependencies[DependencyName]
             const DependencyData = {
+                Source: "npm",
                 Version: DependencyVersion
             }
             if (DependencyName.startsWith("@")) {
@@ -119,6 +120,7 @@ class NPM {
                 DependencyData.FullName = DependencyName
                 DependencyData.AtFullName = DependencyName
             }
+            DependencyData.String = TypeWriter.PackageManagers.DependencyFormatter.FormatDependency(DependencyData)
 
             const DependencyFolder = this.DownloadPackage(DependencyData, Dependency.FullName)
 
