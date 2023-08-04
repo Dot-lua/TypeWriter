@@ -1,1 +1,1 @@
-require("discord.js")
+console.log(require("discord.js"))

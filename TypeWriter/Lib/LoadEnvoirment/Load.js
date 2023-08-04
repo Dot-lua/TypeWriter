@@ -27,6 +27,8 @@ module.exports = async function (ExecuteFolder) {
 
     { // Runtime functions
         const RuntimeHelper = require("../RuntimeHelper.js")
+        TypeWriter.GetPackagePath = RuntimeHelper.GetPackagePath
+
         TypeWriter.LoadFile = RuntimeHelper.LoadFile
 
         TypeWriter.Import = RuntimeHelper.Import
