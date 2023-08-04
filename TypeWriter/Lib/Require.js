@@ -101,12 +101,10 @@ function Require(Request) {
     // )
 
     if (IsCoreModule(Request)) { // Is it a core module
-        console.log("Core Module")
         return OriginalRequire(Request)
     }
 
     if (Request.startsWith(".")) { // Is it relative
-        console.log("Relative")
         return OriginalRequire(Path.join(Path.dirname(Caller), Request))
     }
 
