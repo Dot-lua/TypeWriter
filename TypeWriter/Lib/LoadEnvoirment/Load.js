@@ -56,7 +56,7 @@ module.exports = async function (ExecuteFolder) {
                 enableProxy: true,
                 injectObjects: true,
                 openStandardLibs: true,
-                traceAllocations: false,
+                traceAllocations: false
             }
         )
         LuaEnvoirment.global.registerTypeExtension(10, new (require("./LegacyClassFix.js")))

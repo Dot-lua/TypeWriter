@@ -4,7 +4,8 @@ _G.p = function (T)
 end
 
 _G.Import = function (P)
-    return TypeWriter:Import(P)
+    print(P)
+    return TypeWriter:ImportAsync(P):await()
 end
 
 _G.Sleep = function (T)
