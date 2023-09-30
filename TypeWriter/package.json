@@ -10,11 +10,13 @@
     "dependencies": {
         "argparse": "^2.0.1",
         "colors": "^1.4.0",
+        "extract-zip": "^2.0.1",
         "fs-extra": "^11.1.0",
         "get-caller-file": "^2.0.5",
         "is-builtin-module": "^3.2.1",
         "is-online": "^10.0.0",
         "klaw-sync": "^6.0.0",
+        "node-fetch": "^2.6.13",
         "randomstring": "^1.2.3",
         "require-from-string": "^2.0.2",
         "require-main-filename": "^2.0.0",
