@@ -20,32 +20,39 @@ TypeWriter.Logger = require("./Lib/Logger")
 TypeWriter.OriginalRequire = Module.prototype.require
 TypeWriter.PackageManagers = require("./Lib/PackageManagers/Index.js")
 
-//Check if valid install
-if (FS.existsSync(`${TypeWriter.Folder}/InstallationDirectory`)) {
-    TypeWriter.Logger.Debug("Valid installation found")
-} else {
-    TypeWriter.Logger.Information("Invalid install found")
-    require("./Installer/")
-    process.exit(0)
+async function Main() {
+    //Check if valid install
+    const Installer = require("./Installer/Index.js")
+    if (FS.existsSync(`${TypeWriter.Folder}/InstallationDirectory`)) {
+        TypeWriter.Logger.Debug("Valid installation found, Trying postinstall scripts")
+        await Installer.PostInstall()
+    } else {
+        TypeWriter.Logger.Information("Invalid install found")
+        await Installer.Install()
+        process.exit(0)
+    }
+
+    //Create folders in Exe folder
+    FS.ensureDirSync(TypeWriter.ApplicationData)
+    FS.ensureDirSync(`${TypeWriter.Folder}/Binaries/`)
+    FS.ensureDirSync(`${TypeWriter.Folder}/Cache/`)
+    FS.ensureDirSync(`${TypeWriter.Folder}/Cache/BuildCache/`)
+    FS.ensureDirSync(`${TypeWriter.Folder}/Cache/ExecuteCache/`)
+    FS.ensureDirSync(`${TypeWriter.Folder}/Cache/ModuleCache/`)
+    FS.ensureDirSync(`${TypeWriter.Folder}/Cache/ModuleCache/NPM/`)
+    FS.ensureDirSync(`${TypeWriter.Folder}/Cache/ModuleCache/NPM/Modules/`)
+    FS.ensureDirSync(`${TypeWriter.Folder}/Cache/ModuleCache/NPM/ModuleTars/`)
+    FS.ensureDirSync(`${TypeWriter.Folder}/Cache/ModuleCache/NPM/Unpack/`)
+    FS.ensureDirSync(`${TypeWriter.Folder}/Cache/ModuleCache/LIT/`)
+
+    //Run action
+    if (TypeWriter.Arguments.action) {
+        const Actions = require("./Actions/List.js")
+        const Action = Actions[TypeWriter.Arguments.action]
+        await Action.Execute()
+    } else {
+        ArgumentData.Parser.print_help()
+    }
 }
 
-//Create folders in Exe folder
-FS.ensureDirSync(TypeWriter.ApplicationData)
-FS.ensureDirSync(`${TypeWriter.Folder}/Cache/`)
-FS.ensureDirSync(`${TypeWriter.Folder}/Cache/BuildCache/`)
-FS.ensureDirSync(`${TypeWriter.Folder}/Cache/ExecuteCache/`)
-FS.ensureDirSync(`${TypeWriter.Folder}/Cache/ModuleCache/`)
-FS.ensureDirSync(`${TypeWriter.Folder}/Cache/ModuleCache/NPM/`)
-FS.ensureDirSync(`${TypeWriter.Folder}/Cache/ModuleCache/NPM/Modules/`)
-FS.ensureDirSync(`${TypeWriter.Folder}/Cache/ModuleCache/NPM/ModuleTars/`)
-FS.ensureDirSync(`${TypeWriter.Folder}/Cache/ModuleCache/NPM/Unpack/`)
-FS.ensureDirSync(`${TypeWriter.Folder}/Cache/ModuleCache/LIT/`)
-
-//Run action
-if (TypeWriter.Arguments.action) {
-    const Actions = require("./Actions/List.js")
-    const Action = Actions[TypeWriter.Arguments.action]
-    Action.Execute()
-} else {
-    ArgumentData.Parser.print_help()
-}
+Main()
