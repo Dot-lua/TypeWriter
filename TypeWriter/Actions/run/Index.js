@@ -1,11 +1,12 @@
-const BuildHelper = require("../../Lib/BuildHelper.js")
 const RandomString = require("randomstring")
 const FS = require("fs-extra")
 const Path = require("path")
-const RuntimeHelper = require("../../Lib/RuntimeHelper")
+
+const BuildHelper = require("../../Lib/BuildHelper.js")
+const LoadEnvoirment = require("../../Lib/LoadEnvoirment")
 
 module.exports.Name = "Run"
-module.exports.Execute = function() {
+module.exports.Execute = async function() {
     const InputPath = TypeWriter.Arguments.input
     const InputBranch = TypeWriter.Arguments.branch
 
@@ -19,8 +20,11 @@ module.exports.Execute = function() {
 
     BuildHelper.CompressBuild(BuildId, ExecuteFolder)
     BuildHelper.CleanupBuild(BuildId)
+    if (BuildId == false) {
+        return
+    }
 
-    RuntimeHelper.LoadEnvoirment(ExecuteFolder)
+    await LoadEnvoirment(ExecuteFolder)
     const Package = TypeWriter.LoadFile(`${ExecuteFolder}/${FS.readdirSync(ExecuteFolder)}`)
-    TypeWriter.LoadEntrypoint(Package.Id, "Main")
+    TypeWriter.LoadEntrypointAsync(Package.Id, "Main")
 }

@@ -1,21 +1,21 @@
 const FS = require("fs-extra")
 const RandomString = require("randomstring")
 const Path = require("path")
-const Tar = require("tar")
-const RuntimeHelper = require("../../Lib/RuntimeHelper")
+const LoadEnvoirment = require("../../Lib/LoadEnvoirment")
 
 module.exports.Name = "Execute"
-module.exports.Execute = function() {
+module.exports.Execute = async function() {
     const InputPath = TypeWriter.Arguments.input
-    TypeWriter.Logger.Debug(`Input is ${InputPath}`)
     const ExecuteId = RandomString.generate(32)
-    TypeWriter.Logger.Debug(`ExecuteId is ${ExecuteId}`)
     const ExecuteFolder = Path.normalize(`${TypeWriter.Folder}/Cache/ExecuteCache/${ExecuteId}/`)
+
+    TypeWriter.Logger.Debug(`Input is ${InputPath}`)
+    TypeWriter.Logger.Debug(`ExecuteId is ${ExecuteId}`)
     TypeWriter.Logger.Debug(`ExecuteFolder is ${ExecuteFolder}`)
     
     FS.mkdirSync(ExecuteFolder)
 
-    RuntimeHelper.LoadEnvoirment(ExecuteFolder)
+    await LoadEnvoirment(ExecuteFolder)
     const Package = TypeWriter.LoadFile(InputPath)
-    TypeWriter.LoadEntrypoint(Package.Id, "Main")
+    TypeWriter.LoadEntrypointAsync(Package.Id, "Main")
 }

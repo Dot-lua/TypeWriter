@@ -2,7 +2,7 @@ const FS = require("fs-extra")
 const Path = require("path")
 
 module.exports.Name = "New"
-module.exports.Execute = function() {
+module.exports.Execute = async function() {
     if (FS.existsSync("./src/")) {
         TypeWriter.Logger.Error("The ./src/ folder already exists, please remove it before trying again.")
         process.exit(1)

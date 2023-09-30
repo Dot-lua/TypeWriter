@@ -3,7 +3,7 @@ const RequireFromString = require("require-from-string")
 const FS = require("fs-extra")
 
 module.exports.Name = "RunScript"
-module.exports.Execute = function() {
+module.exports.Execute = async function() {
     const InputPath = TypeWriter.Arguments.input
     
     RequireFromString(
