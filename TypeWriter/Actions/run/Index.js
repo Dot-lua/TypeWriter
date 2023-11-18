@@ -2,7 +2,7 @@ const RandomString = require("randomstring")
 const FS = require("fs-extra")
 const Path = require("path")
 
-const BuildHelper = require("../../Lib/BuildHelper.js")
+// const BuildHelper = require("../../Lib/BuildHelper.js")
 const LoadEnvoirment = require("../../Lib/LoadEnvoirment")
 
 module.exports.Name = "Run"
