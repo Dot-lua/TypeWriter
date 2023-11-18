@@ -4,6 +4,7 @@ const Path = require("path")
 
 const Logger = require("./Classes/Logger.js")
 const DepencencyManager = require("./Classes/DependencyManager/Index.js")
+const PackageManager = require("./Classes/PackageManager.js")
 
 class TypeWriter {
     constructor() {
@@ -20,6 +21,8 @@ class TypeWriter {
 
         this.Logger = this.CreateLogger("TypeWriter")
         this.DependencyManager = new DepencencyManager()
+        this.PackageManager = new PackageManager()
+
         this.Actions = require("./Actions/List.js")
     }
 
