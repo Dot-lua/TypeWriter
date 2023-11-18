@@ -93,6 +93,7 @@ function GeneratePaths(Request, CallerInfo) {
 function Require(Request) {
     const Caller = GetCallerFile(3)
     const CallerInfo = GetCallerInformation(Caller)
+    // console.log(Request, Caller, FS.existsSync(Request))
 
     // console.log(
     //     Request,
@@ -108,16 +109,28 @@ function Require(Request) {
         return OriginalRequire(Path.join(Path.dirname(Caller), Request))
     }
 
+    if (FS.existsSync(Request)) { // Is it a file
+        return OriginalRequire(Request)
+    }
+
     const Paths = GeneratePaths(Request, CallerInfo)
 
     for (const Path of Paths) {
-        const EntrypointPath = FindModuleEntrypoint(Path)
+        let EntrypointPath
+        try {
+            EntrypointPath = FindModuleEntrypoint(Path)
+        } catch (error) {
+            continue
+        }
         if (FS.existsSync(EntrypointPath)) {
             return OriginalRequire(EntrypointPath)
         }
     }
 
-    throw new Error("Module not found: " + Request)
+    const Err = new Error("Cannot find module '" + Request + "'")
+    Err.code = "MODULE_NOT_FOUND"
+
+    throw Err
 
 }
 
