@@ -11,42 +11,30 @@ class Logger {
         this.LogLevel = LogLevel
 
         this.LogLevels = [
-            {
-                Label: "[ERROR]      ",
-                Color: "red"
-            },
-            {
-                Label: "[WARNING]    ",
-                Color: "yellow"
-            },
-            {
-                Label: "[INFORMATION]",
-                Color: "brightGreen"
-            },
-            {
-                Label: "[DEBUG]      ",
-                Color: "cyan"
-            }
+            Colors.underline(Colors.red("FATAL")),
+            Colors.red("ERROR"),
+            Colors.yellow("WARN "),
+            Colors.brightGreen("INFO "),
+            Colors.cyan("DEBUG")
         ]
     }
 
     Log(Level, Message) {
         if (Level > this.LogLevel) { return }
 
-        const LevelInfo = this.LogLevels[Level]
         const Time = new Date()
-        const TimeString = `[${Time.getFullYear()}-${Pad(Time.getMonth() + 1, 2)}-${Pad(Time.getDate(), 2)} ${Pad(Time.getHours(), 2)}:${Pad(Time.getMinutes(), 2)}:${Pad(Time.getSeconds(), 2)}]`
+        const TimeString = `${Time.getFullYear()}-${Pad(Time.getMonth() + 1, 2)}-${Pad(Time.getDate(), 2)} ${Pad(Time.getHours(), 2)}:${Pad(Time.getMinutes(), 2)}:${Pad(Time.getSeconds(), 2)}`
         console.log(
-            `${TimeString} ${Colors.bold(Colors[LevelInfo.Color](LevelInfo.Label))}: ${Message}`
+            `[ ${Colors.bold(this.LogLevels[Level])} ] [ ${TimeString} ] : ${Message}`
         )
     }
 
     Debug(Message) {
-        this.Log(3, Message)
+        this.Log(4, Message)
     }
 
     Info(Message) {
-        this.Log(2, Message)
+        this.Log(3, Message)
     }
 
     Information(Message) {
@@ -54,7 +42,7 @@ class Logger {
     }
 
     Warn(Message) {
-        this.Log(1, Message)
+        this.Log(2, Message)
     }
 
     Warning(Message) {
@@ -62,6 +50,10 @@ class Logger {
     }
 
     Error(Message) {
+        this.Log(1, Message)
+    }
+
+    Fatal(Message) {
         this.Log(0, Message)
     }
 }
