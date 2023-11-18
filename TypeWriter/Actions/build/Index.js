@@ -1,4 +1,3 @@
-// const BuildHelper = require("../../Lib/BuildHelper.js")
 const BuilderClass = require("../../Classes/Builder.js")
 
 module.exports.Name = "Build"
@@ -13,8 +12,4 @@ module.exports.Execute = async function() {
     await Builder.ScanResources()
     await Builder.Compress()
     await Builder.Cleanup()
-
-    // const BuildId = BuildHelper.Build(InputPath, InputBranch)
-    // BuildHelper.CompressBuild(BuildId, TypeWriter.Arguments.output)
-    // BuildHelper.CleanupBuild(BuildId)
 }

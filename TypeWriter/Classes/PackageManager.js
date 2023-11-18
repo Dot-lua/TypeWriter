@@ -1,3 +1,22 @@
+const SingleTar = require("../Lib/SingleTar")
+
+function SingleJson(FilePath, Path) {
+    return JSON.parse(SingleTar(FilePath, Path))
+}
+
+class Package {
+    constructor(FilePath) {
+        this.FilePath = FilePath
+        this.PackageInfo = SingleJson(FilePath, "package.info.json")
+        this.Code = SingleJson(FilePath, "Code.json")
+        this.ResourceIndex = SingleJson(FilePath, "ResourceIndex.json")
+    }
+
+    async FetchDependencies() {
+        
+    }
+}
+
 class PackageManager {
     constructor() {
         this.LoadedPackages = {}
