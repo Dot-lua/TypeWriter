@@ -103,7 +103,6 @@ const SubParsers = MainParser.add_subparsers(
         }
     )
 }
-
 { //Runscript Parser
     const RunScriptParser = SubParsers.add_parser(
         "runscript",
