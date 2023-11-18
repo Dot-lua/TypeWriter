@@ -1,6 +1,6 @@
 const FS = require("fs-extra")
 const FSHelpers = require("../../FSHelpers")
-const JsonRequest = require("../../JsonRequest")
+const JsonRequest = require("../../FetchJson")
 const Fetch = require("sync-fetch")
 const Tar = require("tar")
 const Path = require("path")
