@@ -8,9 +8,7 @@
         "Developers": [
             "CoreByte"
         ],
-        "Contributors": [
-            
-        ]
+        "Contributors": []
     },
 
     "Contact": {
@@ -19,14 +17,9 @@
         "Socials": {}
     },
 
-    "Dependencies": [
-        {
-            "Source": "LIT",
-            "Package": "coro-spawn",
-            "Version": null,
-            "Type": "Packaged"
-        }
-    ],
+    "Dependencies": [],
+
+    "Preload": [],
 
     "Entrypoints": {
         "Main": "me.corebyte.test"
