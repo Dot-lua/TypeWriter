@@ -16,7 +16,7 @@
         "is-builtin-module": "^3.2.1",
         "is-online": "^10.0.0",
         "klaw-sync": "^6.0.0",
-        "node-fetch": "^2.6.13",
+        "node-fetch": "^2.7.0",
         "randomstring": "^1.2.3",
         "require-from-string": "^2.0.2",
         "require-main-filename": "^2.0.0",
