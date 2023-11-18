@@ -1,6 +1,12 @@
 class PackageManager {
     constructor() {
+        this.LoadedPackages = {}
+    }
 
+    async LoadPackage(FilePath) {
+        const LoadedPackage = new Package(FilePath)
+        this.LoadedPackages[LoadedPackage.PackageInfo.Id] = LoadedPackage
+        return LoadedPackage
     }
 
     GetPackageInfo(Id) {
