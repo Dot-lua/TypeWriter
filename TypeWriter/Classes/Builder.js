@@ -83,6 +83,7 @@ class Builder {
         TypeWriter.Logger.Debug(`Building to ${this.BuildFolder}`)
         
         FS.ensureDirSync(this.BuildFolder)
+        FS.cpSync(this.BranchFolder + "/package.info.json", this.BuildFolder + "/package.info.json")
 
         this.CreateRequiredFolders()
     }
@@ -152,7 +153,7 @@ class Builder {
     async Compress() {
         const PackageInfo = FS.readJsonSync(this.PackageInfoFile)
         const OutputFile = Path.join(this.OutputPath + `/${PackageInfo.Id}.twr`)
-        TypeWriter.Logger.Information(`Outputting to ${OutputFile} in ${this.BuildFolder}`)
+        TypeWriter.Logger.Debug(`Outputting to ${OutputFile} in ${this.BuildFolder}`)
         Tar.create(
             {
                 file: OutputFile,
@@ -163,6 +164,8 @@ class Builder {
             },
             FS.readdirSync(this.BuildFolder)
         )
+
+        return OutputFile
     }
     
     async Cleanup() {
