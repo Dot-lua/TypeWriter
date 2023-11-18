@@ -39,7 +39,6 @@ module.exports = async function (ExecuteFolder) {
         TypeWriter.LoadEntrypoint = RuntimeHelper.LoadEntrypoint
         TypeWriter.LoadEntrypointAsync = RuntimeHelper.LoadEntrypointAsync
 
-        TypeWriter.PackageManager = require("../PackageManager")
         TypeWriter.ResourceManager = require("../ResourceManager")
     }
 
