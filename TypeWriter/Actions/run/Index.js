@@ -26,5 +26,5 @@ module.exports.Execute = async function() {
 
     await LoadEnvoirment(ExecuteFolder)
     const Package = await TypeWriter.PackageManager.LoadPackage(OutputFile)
-    TypeWriter.LoadEntrypointAsync(Package.Id, "Main")
+    await Package.LoadEntrypoint("Main")
 }
