@@ -25,8 +25,6 @@ async function FixDependencyVersions(Dependencies) {
                 async function (DependencyIndex, ParsedDependency) {
                     const LatestVersion = await TypeWriter.DependencyManager.GetLatestVersion(ParsedDependency)
                     ParsedDependency.Version = LatestVersion
-                    console.log(ParsedDependency)
-                    console.log(DependencyIndex)
                     Dependencies[DependencyIndex] = DependencyParser.Format(ParsedDependency)
                 }
             ]
@@ -48,7 +46,6 @@ async function ScanCode(ScanFolder, Extension) {
     for (const File of Files) {
         const FilePath = File.path
         const CodePath = FilePath.split(ScanFolder)[1].replaceAll("\\", "/").replaceAll("/", ".").substring(1).split(".").slice(0, -1).join(".")
-        console.log(FilePath, CodePath)
 
         ScannedCode[CodePath] = {
             Type: Extension,
