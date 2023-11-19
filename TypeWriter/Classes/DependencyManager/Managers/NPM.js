@@ -2,6 +2,7 @@ const FetchJson = require("../../../Lib/FetchJson.js")
 const Fetch = require("node-fetch")
 const FS = require("fs-extra")
 const Path = require("path")
+const Pall = require("p-all")
 
 async function GetDependencyFiles(DependencyName, Version) {
     const [_1, DependencyData] = await FetchJson(`https://cdn.jsdelivr.net/npm/${DependencyName}@${Version}/package.json`)
@@ -105,6 +106,7 @@ class NPM {
         console.log(Files)
 
         const DownloadPromises = []
+        let Index = 0
         for (const File of Files) {
             if (File.Type == "Download") {
                 DownloadPromises.push(
@@ -113,16 +115,18 @@ class NPM {
                         const Content = await Response.text()
                         FS.mkdirpSync(Path.dirname(File.Path))
                         FS.writeFileSync(File.Path, Content)
-                        TypeWriter.Logger.Information(`Downloaded ${File.Name} for ${File.For}`)
+                        Index++
+                        TypeWriter.Logger.Information(`Downloaded (${Index}/${Files.length}) ${File.Name}  for ${File.For}`)
                     }
                 )
             } else if (File.Type == "File") {
                 FS.mkdirpSync(Path.dirname(File.Path))
                 FS.writeFileSync(File.Path, File.Content)
+                Index++
             }
         }
 
-        await Promise.all(DownloadPromises.map(P => P()))
+        await Pall(DownloadPromises, { concurrency: 200 })
 
         const Dependencies = {}
         Files.forEach(File => Dependencies[File.For] = true)

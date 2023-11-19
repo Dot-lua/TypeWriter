@@ -16,6 +16,7 @@
         "is-builtin-module": "^3.2.1",
         "klaw-sync": "^6.0.0",
         "node-fetch": "^2.7.0",
+        "p-all": "^3.0.0",
         "require-from-string": "^2.0.2",
         "require-main-filename": "^2.0.0",
         "tar": "^6.1.13",
