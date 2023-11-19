@@ -21,7 +21,8 @@ class NPM {
             const FolderExists = FS.existsSync(DependencyFolder)
             if (!FolderExists) {
                 const [Response] = await FetchJson(`https://cdn.jsdelivr.net/npm/${Depencency.AtFullName}/package.json`)
-                return Response.status == 200
+                const Exists = Response.status == 200
+                return Exists
             }
             return true
         } else {
