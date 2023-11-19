@@ -56,14 +56,14 @@ async function ScanCode(ScanFolder, Extension) {
         }
 
         if (CodePath.endsWith(".Main")) {
-            ScannedCode[CodePath] = {
+            ScannedCode[CodePath.substring(0, CodePath.length - 5)] = {
                 Type: "Redirect",
-                Path: CodePath.substring(0, CodePath.length - 5)
+                Path: CodePath
             }
         } else if (CodePath.endsWith(".Index")) {
-            ScannedCode[CodePath] = {
+            ScannedCode[CodePath.substring(0, CodePath.length - 6)] = {
                 Type: "Redirect",
-                Path: CodePath.substring(0, CodePath.length - 6)
+                Path: CodePath
             }
         }
     }
