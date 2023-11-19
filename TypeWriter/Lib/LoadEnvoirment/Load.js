@@ -2,7 +2,6 @@ module.exports = async function (ExecuteFolder) {
 
     { // Global Vars
         TypeWriter.ExecuteFolder = ExecuteFolder
-        TypeWriter.LoadedPackages = {}
 
         Error.stackTraceLimit = Infinity
     }
