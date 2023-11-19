@@ -32,17 +32,17 @@ async function GetDependencyFiles(DependencyName, Version) {
                     Name: File.name,
                     For: FullDependencyName,
                     Path: `${DependencyFolder}/${File.name}`,
-                    Url: `https://cdn.jsdelivr.net/npm/${FullDependencyName}/${File.name}`
+                    Url: `http://cdn.jsdelivr.net/npm/${FullDependencyName}${File.name}`
                 }
             }
         ),
-        {
-            Type: "File",
-            Name: "TypeWriter.FullyDownloaded",
-            For: FullDependencyName,
-            Path: FullyDownloadedFile,
-            Content: ""
-        }
+        // {
+        //     Type: "File",
+        //     Name: "TypeWriter.FullyDownloaded",
+        //     For: FullDependencyName,
+        //     Path: FullyDownloadedFile,
+        //     Content: ""
+        // }
     ]
 
     return Files
