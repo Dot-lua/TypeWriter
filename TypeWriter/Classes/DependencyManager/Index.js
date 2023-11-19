@@ -20,6 +20,20 @@ class DependencyManager {
         return await Manager.Exists(Depencency)
     }
 
+    async AddDependencyToQueue(Depencency) {
+        const Manager = this.GetManager(Depencency.Source)
+        return await Manager.AddDependencyToQueue(Depencency)
+    }
+
+    async ExecuteQueue() {
+        const Promises = []
+        for (const ManagerName in this.Managers) {
+            const Manager = this.Managers[ManagerName]
+            Promises.push(Manager.ExecuteQueue())
+        }
+        return await Promise.all(Promises)
+    }
+
     
 }
 
