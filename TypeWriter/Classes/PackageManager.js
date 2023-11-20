@@ -1,5 +1,6 @@
 const SingleTar = require("../Lib/SingleTar")
 const DependencyParser = require("../Lib/DependencyParser")
+const FS = require("fs-extra")
 
 function SingleJson(FilePath, Path) {
     return JSON.parse(SingleTar(FilePath, Path))
@@ -7,11 +8,19 @@ function SingleJson(FilePath, Path) {
 
 class Package {
     constructor(FilePath, IsSubPackage = false) {
-        this.FilePath = FilePath
-        this.IsSubPackage = IsSubPackage
+        console.log(TypeWriter.ExecuteFolder)
+
         this.PackageInfo = SingleJson(FilePath, "package.info.json")
         this.Code = SingleJson(FilePath, "Code.json")
         this.ResourceIndex = SingleJson(FilePath, "ResourceIndex.json")
+
+        this.FilePath = FilePath
+        this.IsSubPackage = IsSubPackage
+        this.SubPackages = []
+        this.ExecuteFolder = `${TypeWriter.ExecuteFolder}/${this.PackageInfo.Id}/`
+        FS.ensureDirSync(this.ExecuteFolder)
+        this.NodeModulesFolder = `${this.ExecuteFolder}/node_modules/`
+        FS.ensureDirSync(this.NodeModulesFolder)
     }
 
     async FetchDependencies() {
@@ -19,8 +28,25 @@ class Package {
         for (const Dependency of DependencyObjects) {
             await TypeWriter.DependencyManager.AddDependencyToQueue(Dependency)
         }
-        if (this.IsSubPackage) { return }
-        await TypeWriter.DependencyManager.ExecuteQueue()
+
+        if (!this.IsSubPackage) {
+            await TypeWriter.DependencyManager.ExecuteQueue()
+            await this.LinkDependencies()
+        }
+    }
+
+    async LinkDependencies() {
+        const DependencyObjects = this.ListDependencyObjects()
+        for (const Dependency of DependencyObjects) {
+            const DependencyFolder = await TypeWriter.DependencyManager.GetDependencyFolder(Dependency)
+            const ModulesDependencyFolder = `${this.NodeModulesFolder}/${Dependency.AtFullName}/`
+            console.log(DependencyFolder, ModulesDependencyFolder)
+            FS.symlinkSync(
+                DependencyFolder,
+                ModulesDependencyFolder,
+                TypeWriter.OS == "win32" ? 'junction' : 'dir'
+            )
+        }
     }
 
     GetPackageInfo() {
