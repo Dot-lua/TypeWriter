@@ -162,14 +162,17 @@ class NPM {
     }
 
     async ExecuteQueue() {
-        TypeWriter.Logger.Information(`Downloading ${this.DependencyQueue.length} dependencies...`)
+        if (this.DependencyQueue.length == 0) { return }
+        TypeWriter.Logger.Information(`Downloading ${this.DependencyQueue.length} NPM dependencies...`)
         const MappedDependencies = {}
         for (const Dependency of this.DependencyQueue) {
             MappedDependencies[Dependency.AtFullName] = Dependency.Version
         }
+        TypeWriter.Logger.Information(`Building dependency tree...`)
         const DependencyTree = await BuildDependencyTree(MappedDependencies)
         const FlattendDependencyTree = await FlatDependencyTree(DependencyTree)
-
+        
+        TypeWriter.Logger.Information(`Downloading ${FlattendDependencyTree.length} NPM dependencies...`)
         const DependencyPromises = []
         for (const Dependency of FlattendDependencyTree) {
             const [DependencyName, DependencyVerison] = await SplitNameAndVersion(Dependency)
@@ -178,7 +181,9 @@ class NPM {
         }
         await Promise.all(DependencyPromises)
 
+        TypeWriter.Logger.Information(`Linking dependencies...`)
         await LinkDependencies(DependencyTree)
+        TypeWriter.Logger.Information(`Done!`)
 
     }
 
