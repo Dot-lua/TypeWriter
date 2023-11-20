@@ -85,7 +85,7 @@ class Package {
     }
 
     async LoadEntrypoint(Entrypoint) {
-        await this.Import(this.GetEntrypoints()[Entrypoint])
+        return await this.Import(this.GetEntrypoints()[Entrypoint])
     }   
 }
 
