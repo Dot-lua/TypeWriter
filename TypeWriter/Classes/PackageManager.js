@@ -38,7 +38,6 @@ class Package {
         for (const Dependency of DependencyObjects) {
             const DependencyFolder = await TypeWriter.DependencyManager.GetDependencyFolder(Dependency)
             const ModulesDependencyFolder = `${this.NodeModulesFolder}/${Dependency.AtFullName}/`
-            console.log(DependencyFolder, ModulesDependencyFolder)
             FS.symlinkSync(
                 DependencyFolder,
                 ModulesDependencyFolder,
@@ -99,11 +98,11 @@ class PackageManager {
     }
 
     GetPackage(Id) {
-        return self.LoadedPackages[Id]
+        return this.LoadedPackages[Id]
     }
 
     IsPackageLoaded(Id) {
-        return !!self.LoadedPackages[Id]
+        return !!this.LoadedPackages[Id]
     }
 
 }
