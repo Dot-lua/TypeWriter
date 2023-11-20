@@ -27,7 +27,7 @@ function GetCallerInformation(Caller) {
     CallerData.IsPackage = CallerData.CallerId != undefined
 
     if (CallerData.IsPackage) {
-        CallerData.PackagePath = TypeWriter.GetPackagePath(CallerData.CallerId)
+        CallerData.PackagePath = TypeWriter.PackageManager.GetPackage(CallerData.CallerId).ExecuteFolder
     } else {
         CallerData.IsModule = true
     }
