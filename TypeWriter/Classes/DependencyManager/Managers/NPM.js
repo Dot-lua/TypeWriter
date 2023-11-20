@@ -3,6 +3,7 @@ const Fetch = require("node-fetch")
 const FS = require("fs-extra")
 const Path = require("path")
 const Pall = require("p-all")
+const FetchFile = require("../../../Lib/FetchFile.js")
 
 async function GetDependencyFiles(DependencyName, Version) {
     const [_1, DependencyData] = await FetchJson(`https://cdn.jsdelivr.net/npm/${DependencyName}@${Version}/package.json`)
@@ -31,19 +32,12 @@ async function GetDependencyFiles(DependencyName, Version) {
                 return {
                     Type: "Download",
                     Name: File.name,
-                    For: FullDependencyName,
+                    For: [DependencyData.name, DependencyData.version],
                     Path: `${DependencyFolder}/${File.name}`,
                     Url: `http://cdn.jsdelivr.net/npm/${FullDependencyName}${File.name}`
                 }
             }
-        ),
-        // {
-        //     Type: "File",
-        //     Name: "TypeWriter.FullyDownloaded",
-        //     For: FullDependencyName,
-        //     Path: FullyDownloadedFile,
-        //     Content: ""
-        // }
+        )
     ]
 
     return Files
@@ -74,7 +68,7 @@ class NPM {
                 Dependency = Dependency.AtFullName
             }
             const DependencyFolder = await this.GetDependencyFolder(Dependency, Version)
-            const FolderExists = FS.existsSync(DependencyFolder)
+            const FolderExists = FS.existsSync(DependencyFolder + "/TypeWriter.FullyDownloaded")
             return FolderExists
         } else {
             const DependencyFolder = await this.GetDependencyFolder(Dependency)
@@ -111,26 +105,29 @@ class NPM {
             if (File.Type == "Download") {
                 DownloadPromises.push(
                     async function () {
-                        const Response = await Fetch(File.Url)
-                        const Content = await Response.text()
-                        FS.mkdirpSync(Path.dirname(File.Path))
-                        FS.writeFileSync(File.Path, Content)
+                        await FetchFile(File.Url, File.Path)
                         Index++
-                        TypeWriter.Logger.Information(`Downloaded (${Index}/${Files.length}) ${File.Name}  for ${File.For}`)
+                        TypeWriter.Logger.Information(`Downloaded (${Index}/${Files.length}) ${File.Name} for ${File.For[0]}@${File.For[1]}`)
                     }
                 )
-            } else if (File.Type == "File") {
-                FS.mkdirpSync(Path.dirname(File.Path))
-                FS.writeFileSync(File.Path, File.Content)
-                Index++
             }
         }
 
-        await Pall(DownloadPromises, { concurrency: 200 })
+        // await Pall(DownloadPromises, { concurrency: 1000 })
+        await Promise.all(DownloadPromises.map(Promise => Promise()))
 
-        const Dependencies = {}
-        Files.forEach(File => Dependencies[File.For] = true)
+        var Dependencies = {}
+        Files.forEach(File => Dependencies[File.For.join("@")] = File.For )
+        Dependencies = Object.values(Dependencies)
         console.log(Dependencies)
+
+        for (const Dependency of Dependencies) {
+            const DependencyName = Dependency[0]
+            const DependencyVersion = Dependency[1]
+            const DependencyFolder = await this.GetDependencyFolder(DependencyName, DependencyVersion)
+            const FullyDownloadedFile = `${DependencyFolder}/TypeWriter.FullyDownloaded`
+            FS.writeFileSync(FullyDownloadedFile, "")
+        }
     }
 
 }
