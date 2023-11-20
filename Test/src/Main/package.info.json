@@ -29,8 +29,7 @@
         "npm+require-from-string@2.0.2",
         "npm+require-main-filename@2.0.0",
         "npm+sync-fetch@0.5.2",
-        "npm+tar@6.2.0",
-        "npm+colors@1.4.0"
+        "npm+tar@6.2.0"
     ],
     "Entrypoints": {
         "Main": "Test"
