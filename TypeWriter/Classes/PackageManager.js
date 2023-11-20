@@ -27,9 +27,17 @@ class Package {
             await TypeWriter.DependencyManager.AddDependencyToQueue(Dependency)
         }
 
+        for (const SubPackagePath of this.PackageInfo.Preload || []) {
+            this.SubPackages.push(await TypeWriter.PackageManager.LoadPackage(TypeWriter.ResourceManager.GetFilePath(SubPackagePath), true))
+        }
+
         if (!this.IsSubPackage) {
             await TypeWriter.DependencyManager.ExecuteQueue()
             await this.LinkDependencies()
+
+            for (const SubPackage of this.SubPackages) {
+                await SubPackage.LinkDependencies()
+            }
         }
     }
 
@@ -86,10 +94,10 @@ class PackageManager {
         this.LoadedPackages = {}
     }
 
-    async LoadPackage(FilePath) {
-        const LoadedPackage = new Package(FilePath)
-        await LoadedPackage.FetchDependencies()
+    async LoadPackage(FilePath, IsSubPackage = false) {
+        const LoadedPackage = new Package(FilePath, IsSubPackage)
         this.LoadedPackages[LoadedPackage.PackageInfo.Id] = LoadedPackage
+        await LoadedPackage.FetchDependencies()
         return LoadedPackage
     }
 
@@ -103,6 +111,14 @@ class PackageManager {
 
     IsPackageLoaded(Id) {
         return !!this.LoadedPackages[Id]
+    }
+
+    async Import(ImportPath) {
+        for (const Package of Object.values(this.LoadedPackages)) {
+            try {
+                return await Package.Import(ImportPath)
+            } catch (error) { }
+        }
     }
 
 }
