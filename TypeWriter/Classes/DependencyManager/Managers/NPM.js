@@ -4,43 +4,112 @@ const FS = require("fs-extra")
 const Path = require("path")
 const Pall = require("p-all")
 const FetchFile = require("../../../Lib/FetchFile.js")
+const Tar = require("tar")
+const FSHelpers = require("../../../Lib/FSHelpers")
 
-async function GetDependencyFiles(DependencyName, Version) {
-    const [_1, DependencyData] = await FetchJson(`https://cdn.jsdelivr.net/npm/${DependencyName}@${Version}/package.json`)
-    const FullDependencyName = `${DependencyData.name}@${DependencyData.version}`
-    const DependencyFolder = `${TypeWriter.Folders.Cache.ModuleCache.NPM.ModulesFolder}/${FullDependencyName}/`
-    const FullyDownloadedFile = `${DependencyFolder}/TypeWriter.FullyDownloaded`
-
-    const SubDependencyPromises = []
-    for (const SubDependencyName in DependencyData.dependencies) {
-        const SubDependencyVersion = DependencyData.dependencies[SubDependencyName]
-        SubDependencyPromises.push(GetDependencyFiles(SubDependencyName, SubDependencyVersion))
+async function SplitNameAndVersion(NameAndVersion) {
+    const SplitDependency = NameAndVersion.split("@")
+    let DependencyName = SplitDependency[0]
+    let DependencyVerison = SplitDependency[1]
+    if (SplitDependency.length == 3) {
+        DependencyName = SplitDependency[0] + "@" + SplitDependency[1]
+        DependencyVerison = SplitDependency[2]
     }
+    return [DependencyName, DependencyVerison]
+}
 
-    let Files = (await Promise.all(SubDependencyPromises)).flat()
-
-    if (FS.existsSync(FullyDownloadedFile)) {
-        return Files
+async function GetDependencyDownloadLink(Name, Version) {
+    let AuthorLessName = Name
+    if (Name.startsWith("@")) {
+        AuthorLessName = Name.split("/")[1]
     }
+    return `https://registry.npmjs.org/${Name}/-/${AuthorLessName}-${Version}.tgz`
+}
 
-    const [_2, Metadata] = await FetchJson(`https://data.jsdelivr.com/v1/package/npm/${FullDependencyName}/?structure=flat`)
-
-    Files = [
-        ...Files,
-        ...Metadata.files.map(
-            File => {
-                return {
-                    Type: "Download",
-                    Name: File.name,
-                    For: [DependencyData.name, DependencyData.version],
-                    Path: `${DependencyFolder}/${File.name}`,
-                    Url: `http://cdn.jsdelivr.net/npm/${FullDependencyName}${File.name}`
-                }
+async function BuildDependencyTree(Dependencies) {
+    const Promises = []
+    for (const DependencyName in Dependencies) {
+        const DependencyVersion = Dependencies[DependencyName]
+        Promises.push(
+            async function() {
+                const [_, DependencyData] = await FetchJson(`https://cdn.jsdelivr.net/npm/${DependencyName}@${DependencyVersion}/package.json`)
+                return [DependencyData.name, DependencyData.version, await BuildDependencyTree(DependencyData.dependencies)]
             }
         )
-    ]
+    }
+    const DependencyData = await Promise.all(Promises.map(Promise => Promise()))
 
-    return Files
+    const ReturnData = {}
+    for (const Dependency of DependencyData) {
+        ReturnData[Dependency[0] + "@" + Dependency[1]] = Dependency[2]
+    }
+    return ReturnData
+}
+
+async function FlatDependencyTree(DependencyTree, Dependencies = []) {
+    for (const Dependency in DependencyTree) {
+        const ChildDependencies = DependencyTree[Dependency]
+        if (Dependencies.includes(Dependency)) { continue }
+        Dependencies.push(Dependency)
+        await FlatDependencyTree(ChildDependencies, Dependencies)
+    }
+    return Dependencies
+}
+
+async function LinkDependencies(DependencyTree) {
+    for (const Dependency in DependencyTree) {
+        const SubDependencies = DependencyTree[Dependency]
+        const DependencyFolder = `${TypeWriter.Folders.Cache.ModuleCache.NPMFolder}/${Dependency}/`
+        const NodeModulesFolder = `${DependencyFolder}/node_modules/`
+        FS.ensureDirSync(NodeModulesFolder)
+        console.log(DependencyFolder)
+        for (const SubDependency in SubDependencies) {
+            const SubDependencyFolder = `${TypeWriter.Folders.Cache.ModuleCache.NPMFolder}/${SubDependency}/`
+            console.log(SubDependencyFolder)
+            if (SubDependency.startsWith("@")) {
+                const SplitDependency = SubDependency.split("/")
+                const SubDependencyFolder = `${NodeModulesFolder}/${SplitDependency[0]}/`
+                FS.ensureDirSync(SubDependencyFolder)
+            }
+            FS.symlinkSync(
+                SubDependencyFolder,
+                `${NodeModulesFolder}/${SubDependency}`,
+                TypeWriter.OS == "win32" ? 'junction' : 'dir'
+            )
+        }
+    }
+}
+
+async function GetDependency(Name, Version) {
+    const FullDependencyName = `${Name}@${Version}`
+
+    const NPMFolder = `${TypeWriter.Folders.Cache.ModuleCache.NPMFolder}/`
+    const DependencyFolder = `${NPMFolder}/${FullDependencyName}/`
+    const UnpackFolder = `${NPMFolder}/${FullDependencyName}_Unpack/`
+    const TarFile = `${NPMFolder}/${FullDependencyName}.tar.gz`
+
+    const DownloadLink = await GetDependencyDownloadLink(Name, Version)
+    await FetchFile(DownloadLink, TarFile)
+
+    if (FS.existsSync(UnpackFolder)) { return }
+    FS.ensureDirSync(UnpackFolder)
+    await Tar.extract(
+        {
+            file: TarFile,
+            cwd: UnpackFolder,
+            preserveOwner: false
+        }
+    )
+
+    const MoveFolder = FSHelpers.FindDown(UnpackFolder, "package.json")
+    while (true) {
+        try {
+            await FS.moveSync(MoveFolder, DependencyFolder)
+            break
+        } catch (error) {
+            TypeWriter.Logger.Warning(`Failed to move ${error}`)
+        }
+    }
 }
 
 class NPM {
@@ -49,15 +118,15 @@ class NPM {
     }
 
     async GetLatestVersion(Dependency) {
-        const [Response, Data] = await FetchJson(`https://cdn.jsdelivr.net/npm/${Dependency.AtFullName}/package.json`)
+        const [_, Data] = await FetchJson(`https://cdn.jsdelivr.net/npm/${Dependency.AtFullName}/package.json`)
         return Data.version
     }
 
     async GetDependencyFolder(Dependency, Version) {
         if (Version) {
-            return `${TypeWriter.Folders.Cache.ModuleCache.NPM.ModulesFolder}/${Dependency}@${Version}/`
+            return `${TypeWriter.Folders.Cache.ModuleCache.NPMFolder}/${Dependency}@${Version}/`
         } else {
-            return `${TypeWriter.Folders.Cache.ModuleCache.NPM.ModulesFolder}/${Dependency.AtFullName}@${Dependency.Version}/`
+            return `${TypeWriter.Folders.Cache.ModuleCache.NPMFolder}/${Dependency.AtFullName}@${Dependency.Version}/`
         }
     }
 
@@ -68,7 +137,7 @@ class NPM {
                 Dependency = Dependency.AtFullName
             }
             const DependencyFolder = await this.GetDependencyFolder(Dependency, Version)
-            const FolderExists = FS.existsSync(DependencyFolder + "/TypeWriter.FullyDownloaded")
+            const FolderExists = FS.existsSync(DependencyFolder)
             return FolderExists
         } else {
             const DependencyFolder = await this.GetDependencyFolder(Dependency)
@@ -84,50 +153,31 @@ class NPM {
 
     async AddDependencyToQueue(Dependency) {
         if (await this.Exists(Dependency, true)) {
-            TypeWriter.Logger.Information(`Dependency ${Dependency.AtFullName} already downloaded, skipping...`)
+            TypeWriter.Logger.Debug(`Dependency ${Dependency.AtFullName} already downloaded, skipping...`)
             return
         }
         this.DependencyQueue.push(Dependency)
     }
 
     async ExecuteQueue() {
-        console.log(this.DependencyQueue, "q")
-        const FilePromises = []
+        TypeWriter.Logger.Information(`Downloading ${this.DependencyQueue.length} dependencies...`)
+        const MappedDependencies = {}
         for (const Dependency of this.DependencyQueue) {
-            FilePromises.push(GetDependencyFiles(Dependency.AtFullName, Dependency.Version))
+            MappedDependencies[Dependency.AtFullName] = Dependency.Version
         }
-        const Files = (await Promise.all(FilePromises)).flat()
-        console.log(Files)
+        const DependencyTree = await BuildDependencyTree(MappedDependencies)
+        const FlattendDependencyTree = await FlatDependencyTree(DependencyTree)
 
-        const DownloadPromises = []
-        let Index = 0
-        for (const File of Files) {
-            if (File.Type == "Download") {
-                DownloadPromises.push(
-                    async function () {
-                        await FetchFile(File.Url, File.Path)
-                        Index++
-                        TypeWriter.Logger.Information(`Downloaded (${Index}/${Files.length}) ${File.Name} for ${File.For[0]}@${File.For[1]}`)
-                    }
-                )
-            }
+        const DependencyPromises = []
+        for (const Dependency of FlattendDependencyTree) {
+            const [DependencyName, DependencyVerison] = await SplitNameAndVersion(Dependency)
+
+            DependencyPromises.push(GetDependency(DependencyName, DependencyVerison))
         }
+        await Promise.all(DependencyPromises)
 
-        // await Pall(DownloadPromises, { concurrency: 1000 })
-        await Promise.all(DownloadPromises.map(Promise => Promise()))
+        await LinkDependencies(DependencyTree)
 
-        var Dependencies = {}
-        Files.forEach(File => Dependencies[File.For.join("@")] = File.For )
-        Dependencies = Object.values(Dependencies)
-        console.log(Dependencies)
-
-        for (const Dependency of Dependencies) {
-            const DependencyName = Dependency[0]
-            const DependencyVersion = Dependency[1]
-            const DependencyFolder = await this.GetDependencyFolder(DependencyName, DependencyVersion)
-            const FullyDownloadedFile = `${DependencyFolder}/TypeWriter.FullyDownloaded`
-            FS.writeFileSync(FullyDownloadedFile, "")
-        }
     }
 
 }
