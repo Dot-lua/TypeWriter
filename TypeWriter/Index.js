@@ -61,11 +61,6 @@ class TypeWriter {
                 ModuleCacheFolder: `${this.InstallationFolder}/Cache/ModuleCache/`,
                 ModuleCache: {
                     NPMFolder: `${this.InstallationFolder}/Cache/ModuleCache/NPM/`,
-                    NPM: {
-                        ModulesFolder: `${this.InstallationFolder}/Cache/ModuleCache/NPM/Modules/`,
-                        ModuleTarsFolder: `${this.InstallationFolder}/Cache/ModuleCache/NPM/ModuleTars/`,
-                        UnpackFolder: `${this.InstallationFolder}/Cache/ModuleCache/NPM/Unpack/`
-                    },
                     LITFolder: `${this.InstallationFolder}/Cache/ModuleCache/LIT/`
                 }
             }
@@ -79,9 +74,6 @@ class TypeWriter {
         FS.ensureDirSync(this.Folders.Cache.ModuleCacheFolder)
         FS.ensureDirSync(this.Folders.Cache.ModuleCacheFolder)
         FS.ensureDirSync(this.Folders.Cache.ModuleCache.NPMFolder)
-        FS.ensureDirSync(this.Folders.Cache.ModuleCache.NPM.ModulesFolder)
-        FS.ensureDirSync(this.Folders.Cache.ModuleCache.NPM.ModuleTarsFolder)
-        FS.ensureDirSync(this.Folders.Cache.ModuleCache.NPM.UnpackFolder)
         FS.ensureDirSync(this.Folders.Cache.ModuleCache.LITFolder)
     }
 }
