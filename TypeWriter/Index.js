@@ -20,7 +20,7 @@ class TypeWriter {
         this.ApplicationData = Path.normalize(`${this.InstallationFolder}/ApplicationData/`)
         this.Executable = process.execPath
 
-        this.Logger = this.CreateLogger("TypeWriter")
+        this.Logger = this.CreateLogger("TypeWriter", process.env.TypeWriterLogLevel || 3)
         this.DependencyManager = new DepencencyManager()
         this.PackageManager = new PackageManager()
         this.ResourceManager = new ResourceManager()

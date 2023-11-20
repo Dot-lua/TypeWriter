@@ -6,7 +6,7 @@ function Pad(num, size) {
 }
 
 class Logger {
-    constructor(Name, LogLevel) {
+    constructor(Name, LogLevel=3) {
         this.Name = Name
         this.LogLevel = LogLevel
 
