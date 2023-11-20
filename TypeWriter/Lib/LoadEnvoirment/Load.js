@@ -25,18 +25,15 @@ module.exports = async function (ExecuteFolder) {
     }
 
     { // Runtime functions
-        const RuntimeHelper = require("../RuntimeHelper.js")
-        TypeWriter.GetPackagePath = RuntimeHelper.GetPackagePath
-
-        TypeWriter.LoadFile = RuntimeHelper.LoadFile
-
-        TypeWriter.Import = RuntimeHelper.Import
-        globalThis.Import = RuntimeHelper.Import
-        TypeWriter.ImportAsync = RuntimeHelper.ImportAsync
-        globalThis.ImportAsync = RuntimeHelper.ImportAsync
-
-        TypeWriter.LoadEntrypoint = RuntimeHelper.LoadEntrypoint
-        TypeWriter.LoadEntrypointAsync = RuntimeHelper.LoadEntrypointAsync
+        const Deasync = require("deasync")
+        const ImportSync = Deasync(TypeWriter.PackageManager.Import)
+        globalThis.Import = async function ProxiedImport(ImportPath) {
+            return ImportSync(ImportPath)
+        }
+        TypeWriter.LoadPackage = async function ProxiedLoadPackage(FilePath) {
+            return await TypeWriter.PackageManager.LoadPackage(FilePath)
+        }
+        TypeWriter.LoadFile = TypeWriter.LoadPackage
     }
 
     { // Language globals
