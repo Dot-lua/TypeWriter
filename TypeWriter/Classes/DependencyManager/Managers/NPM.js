@@ -62,7 +62,6 @@ async function LinkDependencies(DependencyTree) {
         const DependencyFolder = `${TypeWriter.Folders.Cache.ModuleCache.NPMFolder}/${Dependency}/`
         const NodeModulesFolder = `${DependencyFolder}/node_modules/`
         FS.ensureDirSync(NodeModulesFolder)
-        console.log(DependencyFolder)
         for (const SubDependency in SubDependencies) {
             const SubDependencyFolder = `${TypeWriter.Folders.Cache.ModuleCache.NPMFolder}/${SubDependency}/`
             console.log(SubDependencyFolder)

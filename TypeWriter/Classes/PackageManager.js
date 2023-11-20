@@ -8,8 +8,6 @@ function SingleJson(FilePath, Path) {
 
 class Package {
     constructor(FilePath, IsSubPackage = false) {
-        console.log(TypeWriter.ExecuteFolder)
-
         this.PackageInfo = SingleJson(FilePath, "package.info.json")
         this.Code = SingleJson(FilePath, "Code.json")
         this.ResourceIndex = SingleJson(FilePath, "ResourceIndex.json")

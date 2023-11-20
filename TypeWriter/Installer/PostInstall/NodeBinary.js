@@ -30,12 +30,10 @@ module.exports = async function () {
 
     const DownloadFileName = `node-v${NodeVersion}-${TypeWriter.OS == "win32" ? "win" : TypeWriter.OS}-${process.arch}.${TypeWriter.OS == "win32" ? "zip" : "tar.gz"}`
     const DownloadLink = `https://nodejs.org/dist/v${NodeVersion}/${DownloadFileName}`
-    console.log(DownloadFileName, DownloadLink)
 
     TypeWriter.Logger.Information(`Downloading Node.js...`)
 
     const Download = await Fetch(DownloadLink)
-    console.log(Download)
     const DownloadedFileName = `${NodeBinariesFolder}/Node.${TypeWriter.OS == "win32" ? "zip" : "tar.gz"}`
 
     FS.writeFileSync(DownloadedFileName, await Download.buffer())

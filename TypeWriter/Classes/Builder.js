@@ -35,7 +35,6 @@ async function FixDependencyVersions(Dependencies) {
 
     await Promise.all(VersionFixes.map(D => D[2](D[0], D[1])))
 
-    console.log(Dependencies)
     return [Updated, Dependencies]
 }
 
