@@ -15,6 +15,11 @@ class DependencyManager {
         return await Manager.GetLatestVersion(Depencency)
     }
 
+    async GetDependencyFolder(Depencency, Version) {
+        const Manager = this.GetManager(Depencency.Source)
+        return await Manager.GetDependencyFolder(Depencency, Version)
+    }
+
     async Exists(Depencency) {
         const Manager = this.GetManager(Depencency.Source)
         return await Manager.Exists(Depencency)
