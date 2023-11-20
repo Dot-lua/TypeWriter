@@ -63,19 +63,22 @@ async function LinkDependencies(DependencyTree) {
         const NodeModulesFolder = `${DependencyFolder}/node_modules/`
         FS.ensureDirSync(NodeModulesFolder)
         for (const SubDependency in SubDependencies) {
+            const [SubDependencyName] = await SplitNameAndVersion(SubDependency)
             const SubDependencyFolder = `${TypeWriter.Folders.Cache.ModuleCache.NPMFolder}/${SubDependency}/`
-            console.log(SubDependencyFolder)
             if (SubDependency.startsWith("@")) {
                 const SplitDependency = SubDependency.split("/")
                 const SubDependencyFolder = `${NodeModulesFolder}/${SplitDependency[0]}/`
                 FS.ensureDirSync(SubDependencyFolder)
             }
+            const SymlinkLocation = `${NodeModulesFolder}/${SubDependencyName}`
+            if (FS.existsSync(SymlinkLocation)) { continue }
             FS.symlinkSync(
                 SubDependencyFolder,
-                `${NodeModulesFolder}/${SubDependency}`,
+                `${NodeModulesFolder}/${SubDependencyName}`,
                 TypeWriter.OS == "win32" ? 'junction' : 'dir'
             )
         }
+        await LinkDependencies(SubDependencies)
     }
 }
 
