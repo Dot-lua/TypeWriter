@@ -177,9 +177,14 @@ class NPM {
         for (const Dependency of FlattendDependencyTree) {
             const [DependencyName, DependencyVerison] = await SplitNameAndVersion(Dependency)
 
-            DependencyPromises.push(GetDependency(DependencyName, DependencyVerison))
+            DependencyPromises.push(
+                async function() {
+                    await GetDependency(DependencyName, DependencyVerison)
+                    TypeWriter.Logger.Information(`Downloaded ${DependencyName}@${DependencyVerison}`)
+                }
+            )
         }
-        await Promise.all(DependencyPromises)
+        await Promise.all(DependencyPromises.map(Promise => Promise()))
 
         TypeWriter.Logger.Information(`Linking dependencies...`)
         await LinkDependencies(DependencyTree)
