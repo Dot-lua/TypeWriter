@@ -25,10 +25,8 @@ module.exports = async function (ExecuteFolder) {
     }
 
     { // Runtime functions
-        const Deasync = require("deasync")
-        const ImportSync = Deasync(TypeWriter.PackageManager.Import)
         globalThis.Import = async function ProxiedImport(ImportPath) {
-            return ImportSync(ImportPath)
+            return await TypeWriter.PackageManager.Import(ImportPath)
         }
         TypeWriter.LoadPackage = async function ProxiedLoadPackage(FilePath) {
             return await TypeWriter.PackageManager.LoadPackage(FilePath)
