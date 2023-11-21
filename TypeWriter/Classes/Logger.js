@@ -25,7 +25,7 @@ class Logger {
         const Time = new Date()
         const TimeString = `${Time.getFullYear()}-${Pad(Time.getMonth() + 1, 2)}-${Pad(Time.getDate(), 2)} ${Pad(Time.getHours(), 2)}:${Pad(Time.getMinutes(), 2)}:${Pad(Time.getSeconds(), 2)}`
         console.log(
-            `[ ${Colors.bold(this.LogLevels[Level])} ] [ ${TimeString} ] : ${Message}`
+            `[ ${Colors.bold(this.LogLevels[Level])} ] [ ${TimeString} ] [ ${this.Name} ] : ${Message}`
         )
     }
 
