@@ -100,6 +100,7 @@ class Builder {
 
         if (NeedsUpdate) {
             FS.writeJsonSync(this.PackageInfoFile, PackageInfo, { spaces: 4 })
+            FS.writeJSONSync(this.BuildFolder + "/package.info.json", PackageInfo, { spaces: 4 })
         }
     }
 
