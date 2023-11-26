@@ -81,6 +81,7 @@ class TypeWriter {
     }
 }
 
+process.title = "TypeWriter"
 global.TypeWriter = new TypeWriter()
 global.TypeWriter.CreateFolders()
 
