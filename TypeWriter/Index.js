@@ -16,7 +16,7 @@ class TypeWriter {
         this.OS = process.platform
         this.OriginalRequire = require("module").prototype.require
 
-        this.InstallationFolder = FSHelpers.FindUp(Path.resolve(process.argv0, "../"), "InstallationDirectory", 40) || Path.resolve(`${process.argv0}/../`)
+        this.InstallationFolder = FSHelpers.FindUp(Path.resolve(process.argv0, "../"), "InstallationDirectory", 40) || global.TypeWriterAltInstallationFolder || Path.resolve(`${process.argv0}/../`)
         this.ApplicationData = Path.normalize(`${this.InstallationFolder}/ApplicationData/`)
         this.Executable = process.execPath
 
@@ -42,7 +42,8 @@ class TypeWriter {
         const Action = this.Actions[ActionName]
         if (!Action) {
             this.Logger.Error(`Action '${ActionName}' not found`)
-            process.exit(1)
+            process.exitCode = 1
+            return false
         }
 
         Action.Execute()
