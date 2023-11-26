@@ -51,7 +51,7 @@ class TypeWriter {
     }
     
     ShowHelp() {
-        this.ArgumentData.Parser.print_help()
+        console.log(this.ArgumentData.Parser.format_help())
     }
 
     CreateFolders() {
@@ -83,6 +83,8 @@ class TypeWriter {
 
 global.TypeWriter = new TypeWriter()
 global.TypeWriter.CreateFolders()
+
+module.exports = global.TypeWriter
 
 if (!global.TypeWriter.RunAction()) {
     global.TypeWriter.ShowHelp()
