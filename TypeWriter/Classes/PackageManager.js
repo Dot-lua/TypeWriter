@@ -68,7 +68,11 @@ class Package {
 
     async Import(ImportPath) {
         const ImportData = this.Code[ImportPath]
-        if (!ImportData) { throw new Error(`Import '${ImportPath}' not found`) }
+        if (!ImportData) {
+            const NotFoundError = new Error(`Import '${ImportPath}' not found`)
+            NotFoundError.code = "TYPEWRITER_IMPORT_NOT_FOUND"
+            throw NotFoundError
+        }
 
         if (ImportData.Type === "Redirect") {
             return await this.Import(ImportData.Path)
@@ -117,8 +121,16 @@ class PackageManager {
         for (const Package of Object.values(this.LoadedPackages)) {
             try {
                 return await Package.Import(ImportPath)
-            } catch (error) { }
+            } catch (error) {
+                if (error.code != "TYPEWRITER_IMPORT_NOT_FOUND") {
+                    throw error
+                }
+            }
         }
+
+        const NotFoundError = new Error(`Import '${ImportPath}' not found`)
+        NotFoundError.code = "TYPEWRITER_IMPORT_NOT_FOUND"
+        throw NotFoundError
     }
 
 }
