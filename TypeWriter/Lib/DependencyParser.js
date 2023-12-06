@@ -1,4 +1,4 @@
-module.exports.ParseDependency = function (DependencyString) {
+module.exports.Parse = function (DependencyString) {
     const Source = DependencyString.split("+")[0]
     var Author
     var Name
@@ -33,7 +33,7 @@ module.exports.ParseDependency = function (DependencyString) {
     }
 }
 
-module.exports.FormatDependency = function (DependencyObject) {
+module.exports.Format = function (DependencyObject) {
     var DependencyString = `${DependencyObject.Source}+`
     if (DependencyObject.Author) { DependencyString += `${DependencyObject.Author}/` }
     DependencyString += DependencyObject.Name

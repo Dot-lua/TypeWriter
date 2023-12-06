@@ -6,7 +6,7 @@ function RemoveFileOrFolder(FolderPath) {
     return FS.removeSync(FolderPath)
 }
 
-module.exports = async function(InstallLocation) {
+module.exports = function(InstallLocation) {
     //Remove Old v5 files
     if (FS.existsSync(`${InstallLocation}/SessionStorage`)) {
         TypeWriter.Logger.Info("Found existing v5 installation, removing old files.")

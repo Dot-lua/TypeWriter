@@ -1,6 +1,6 @@
 {
     "name": "typewriter",
-    "version": "6.0.0-beta.3",
+    "version": "6.1.0",
     "description": "A code archiver for lua and js",
     "author": "CoreByte",
     "license": "MIT",
@@ -14,13 +14,11 @@
         "fs-extra": "^11.1.0",
         "get-caller-file": "^2.0.5",
         "is-builtin-module": "^3.2.1",
-        "is-online": "^10.0.0",
         "klaw-sync": "^6.0.0",
-        "node-fetch": "^2.6.13",
-        "randomstring": "^1.2.3",
+        "node-fetch": "^2.7.0",
+        "p-all": "^3.0.0",
         "require-from-string": "^2.0.2",
         "require-main-filename": "^2.0.0",
-        "sync-fetch": "^0.4.2",
         "tar": "^6.1.13",
         "wasmoon": "^1.15.0"
     },

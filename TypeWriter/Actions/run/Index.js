@@ -1,30 +1,30 @@
-const RandomString = require("randomstring")
 const FS = require("fs-extra")
 const Path = require("path")
 
-const BuildHelper = require("../../Lib/BuildHelper.js")
+const BuilderClass = require("../../Classes/Builder.js")
 const LoadEnvoirment = require("../../Lib/LoadEnvoirment")
+const RandomString = require("../../Lib/RandomString.js")
 
 module.exports.Name = "Run"
 module.exports.Execute = async function() {
     const InputPath = TypeWriter.Arguments.input
     const InputBranch = TypeWriter.Arguments.branch
 
-    const BuildId = BuildHelper.Build(InputPath, InputBranch)
-    const ExecuteId = RandomString.generate(32)
-    TypeWriter.Logger.Debug(`ExecuteId is ${ExecuteId}`)
-    const ExecuteFolder = Path.normalize(`${TypeWriter.Folder}/Cache/ExecuteCache/${ExecuteId}/`)
-    TypeWriter.Logger.Debug(`ExecuteFolder is ${ExecuteFolder}`)
-    
+    const ExecuteId = RandomString(32)
+    const ExecuteFolder = Path.normalize(`${TypeWriter.Folders.Cache.ExecuteCacheFolder}/${ExecuteId}/`)
     FS.mkdirSync(ExecuteFolder)
 
-    BuildHelper.CompressBuild(BuildId, ExecuteFolder)
-    BuildHelper.CleanupBuild(BuildId)
-    if (BuildId == false) {
-        return
-    }
+    TypeWriter.Logger.Debug(`ExecuteId is ${ExecuteId}`)
+    TypeWriter.Logger.Debug(`ExecuteFolder is ${ExecuteFolder}`)
+
+    const Builder = new BuilderClass(InputPath, InputBranch, ExecuteFolder)
+    await Builder.ValidatePackageInfo()
+    await Builder.ScanCode()
+    await Builder.ScanResources()
+    const OutputFile = await Builder.Compress()
+    await Builder.Cleanup()
 
     await LoadEnvoirment(ExecuteFolder)
-    const Package = TypeWriter.LoadFile(`${ExecuteFolder}/${FS.readdirSync(ExecuteFolder)}`)
-    TypeWriter.LoadEntrypointAsync(Package.Id, "Main")
+    const Package = await TypeWriter.PackageManager.LoadPackage(OutputFile)
+    await Package.LoadEntrypoint("Main")
 }

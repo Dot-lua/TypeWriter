@@ -2,7 +2,6 @@ module.exports = async function (ExecuteFolder) {
 
     { // Global Vars
         TypeWriter.ExecuteFolder = ExecuteFolder
-        TypeWriter.LoadedPackages = {}
 
         Error.stackTraceLimit = Infinity
     }
@@ -26,93 +25,17 @@ module.exports = async function (ExecuteFolder) {
     }
 
     { // Runtime functions
-        const RuntimeHelper = require("../RuntimeHelper.js")
-        TypeWriter.GetPackagePath = RuntimeHelper.GetPackagePath
-
-        TypeWriter.LoadFile = RuntimeHelper.LoadFile
-
-        TypeWriter.Import = RuntimeHelper.Import
-        globalThis.Import = RuntimeHelper.Import
-        TypeWriter.ImportAsync = RuntimeHelper.ImportAsync
-        globalThis.ImportAsync = RuntimeHelper.ImportAsync
-
-        TypeWriter.LoadEntrypoint = RuntimeHelper.LoadEntrypoint
-        TypeWriter.LoadEntrypointAsync = RuntimeHelper.LoadEntrypointAsync
-
-        TypeWriter.PackageManager = require("../PackageManager")
-        TypeWriter.ResourceManager = require("../ResourceManager")
+        globalThis.Import = async function ProxiedImport(ImportPath) {
+            return await TypeWriter.PackageManager.Import(ImportPath)
+        }
+        TypeWriter.LoadPackage = async function ProxiedLoadPackage(FilePath) {
+            return await TypeWriter.PackageManager.LoadPackage(FilePath)
+        }
+        TypeWriter.LoadFile = TypeWriter.LoadPackage
     }
 
     { // Language globals
-
-        const FS = require("fs-extra")
-        const Path = require("path")
-        const RequireFromString = require("require-from-string")
-
-        const WasMoon = require("wasmoon")
-        const LuaFactory = new WasMoon.LuaFactory()
-        const LuaEnvoirment = await LuaFactory.createEngine(
-            {
-                enableProxy: true,
-                injectObjects: true,
-                openStandardLibs: true,
-                traceAllocations: false
-            }
-        )
-        LuaEnvoirment.global.registerTypeExtension(10, new (require("./LegacyClassFix.js")))
-
-        TypeWriter.Lua = {
-            Envoirment: LuaEnvoirment,
-            LoadFile: function (FilePath) {
-                const FileData = FS.readFileSync(FilePath, "utf8")
-                return LuaEnvoirment.doStringSync(FileData)
-            },
-            LoadFileAsync: async function (FilePath) {
-                const FileData = await FS.promises.readFile(FilePath, "utf8")
-                return await LuaEnvoirment.doString(FileData)
-            },
-
-            LoadString: function (String, Name) {
-                return LuaEnvoirment.doStringSync(String)
-            },
-            LoadStringAsync: async function (String, Name) {
-                return await LuaEnvoirment.doString(String)
-            }
-        }
-        TypeWriter.Lua.Envoirment.global.set("TypeWriter", TypeWriter)
-
-        TypeWriter.JavaScript = {
-            LoadFile: function (FilePath) {
-                const FileData = FS.readFileSync(FilePath, "utf8")
-                return RequireFromString(FileData, Path.normalize(FilePath))
-            },
-            LoadFileAsync: async function (FilePath) {
-                return this.LoadFile(FilePath)
-            },
-
-            LoadString: function (String, Name) {
-                return RequireFromString(String, Name)
-            },
-            LoadStringAsync: async function (String, Name) {
-                return this.LoadString(String, Name)
-            },
-
-            //Operators
-            New: function (Class, ...Args) {
-                return new Class(...Args)
-            },
-
-            TypeOf: function (Object) {
-                return typeof Object
-            },
-
-            InstanceOf: function (Object, Class) {
-                return Object instanceof Class
-            },
-
-            Global: globalThis
-
-        }
+        await require("./Languages/Index.js")(TypeWriter)
     }
 
     { // Load Require

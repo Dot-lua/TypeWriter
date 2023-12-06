@@ -103,7 +103,6 @@ const SubParsers = MainParser.add_subparsers(
         }
     )
 }
-
 { //Runscript Parser
     const RunScriptParser = SubParsers.add_parser(
         "runscript",
@@ -121,7 +120,12 @@ const SubParsers = MainParser.add_subparsers(
     )
 }
 
-var Parsed = MainParser.parse_known_args()
-module.exports.Arguments = Parsed[0]
+var Argv = process.argv.slice(2)
+if (global.TypeWriterReplaceArguments) {
+    Argv = global.TypeWriterReplaceArguments
+}
+
+const [KnownArguments, UnknownArguments] = MainParser.parse_known_args(Argv)
+module.exports.Arguments = KnownArguments
+module.exports.Unknown = UnknownArguments
 module.exports.Parser = MainParser
-module.exports.Unknown = Parsed[1]

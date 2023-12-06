@@ -41,7 +41,7 @@ function AddLineToFile(FilePath, AddLine) {
     FS.writeFileSync(FilePath, SplitLines.join("\n"), "utf-8")
 }
 
-module.exports = async function (InstallLocation) {
+module.exports = function (InstallLocation) {
     if (TypeWriter.OS != "win32") {
         RemoveLineFromFile(`${process.env.HOME}/.bash_profiles`, `alias TypeWriter="'${process.env.HOME}/Library/Application Support/TypeWriter//TypeWriter'"`)
         RemoveLineFromFile(`${process.env.HOME}/.bash_profiles`, `alias TypeWriter="'${InstallLocation}/TypeWriter'"`)
@@ -55,6 +55,11 @@ module.exports = async function (InstallLocation) {
     } else {
         FS.writeFileSync(
             `${process.env.LOCALAPPDATA}/Microsoft/WindowsApps/TypeWriter.bat`,
+            `@echo off\n${process.env.APPDATA}/.TypeWriter/TypeWriter.exe %*`
+        )
+
+        FS.writeFileSync(
+            `${process.env.LOCALAPPDATA}/Microsoft/WindowsApps/Twr.bat`,
             `@echo off\n${process.env.APPDATA}/.TypeWriter/TypeWriter.exe %*`
         )
     }
