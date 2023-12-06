@@ -82,9 +82,7 @@ class Package {
         if (ImportData.Type === "lua") {
             console.log("Importing Lua")
         } else if (ImportData.Type === "js") {
-            const WrappedCodeData = `module.exports = (async function WrappedImport() { \n${CodeData}\nreturn module.exports })`
-            const WrappedImport = await TypeWriter.JavaScript.LoadString(WrappedCodeData, `${this.PackageInfo.Id}: ${ImportPath}`)
-            return await WrappedImport()
+            return await TypeWriter.JavaScript.LoadStringWrapped(CodeData, `${this.PackageInfo.Id}: ${ImportPath}`)
         }
     }
 

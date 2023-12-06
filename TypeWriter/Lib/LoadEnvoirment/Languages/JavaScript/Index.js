@@ -16,6 +16,12 @@ module.exports = async function() {
         // LoadStringSync: function (String, Name) {
         //     return RequireFromString(String, Name)
         // },
+
+        LoadStringWrapped: async function (String, Name) {
+            const WrappedCodeData = `/* Wrapped by LoadStringWrapped (TypeWriter) */module.exports = (async function WrappedImport() { \n${String}\nreturn module.exports })`
+            const WrappedImport = await TypeWriter.JavaScript.LoadString(WrappedCodeData, Name)
+            return await WrappedImport()
+        },
         
     
         //Operators
