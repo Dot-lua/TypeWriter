@@ -62,8 +62,9 @@ function Require(Request) {
         return OriginalRequire(require.resolve(Request, { paths: [CallerInfo.ModuleRoot] }))
     }
 
-    throw new Error("Module not found: " + Request)
-
+    const Err = new Error("Module not found: " + Request)
+    Err.code = "MODULE_NOT_FOUND"
+    throw Err
 }
 
 module.exports = Require
