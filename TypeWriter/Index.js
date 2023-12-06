@@ -16,7 +16,7 @@ class TypeWriter {
         this.OS = process.platform
         this.OriginalRequire = require("module").prototype.require
 
-        this.InstallationFolder = FSHelpers.FindUp(Path.resolve(process.argv0, "../"), "InstallationDirectory", 40) || global.TypeWriterAltInstallationFolder || Path.resolve(`${process.argv0}/../`)
+        this.InstallationFolder = global.TypeWriterAltInstallationFolder || FSHelpers.FindUp(Path.resolve(process.argv0, "../"), "InstallationDirectory", 40) || Path.resolve(`${process.argv0}/../`)
         this.ApplicationData = Path.normalize(`${this.InstallationFolder}/ApplicationData/`)
         this.Executable = process.execPath
 
@@ -83,8 +83,10 @@ class TypeWriter {
 
 process.title = "TypeWriter"
 global.TypeWriter = new TypeWriter()
-global.TypeWriter.CreateFolders()
 
+require("./Installer/Index.js")()
+
+global.TypeWriter.CreateFolders()
 module.exports = global.TypeWriter
 
 if (!global.TypeWriter.RunAction()) {
