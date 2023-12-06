@@ -8,7 +8,7 @@ module.exports.Name = "Execute"
 module.exports.Execute = async function() {
     const InputPath = TypeWriter.Arguments.input
     const ExecuteId = RandomString(32)
-    const ExecuteFolder = Path.normalize(`${TypeWriter.Folder}/Cache/ExecuteCache/${ExecuteId}/`)
+    const ExecuteFolder = Path.normalize(`${TypeWriter.InstallationFolder}/Cache/ExecuteCache/${ExecuteId}/`)
     FS.mkdirSync(ExecuteFolder)
 
     TypeWriter.Logger.Debug(`Input is ${InputPath}`)
@@ -16,6 +16,6 @@ module.exports.Execute = async function() {
     TypeWriter.Logger.Debug(`ExecuteFolder is ${ExecuteFolder}`)
     
     await LoadEnvoirment(ExecuteFolder)
-    const Package = await TypeWriter.PackageManager.LoadPackage(OutputFile)
+    const Package = await TypeWriter.PackageManager.LoadPackage(InputPath)
     await Package.LoadEntrypoint("Main")
 }
