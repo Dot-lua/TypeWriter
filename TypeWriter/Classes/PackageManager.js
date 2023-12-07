@@ -45,7 +45,7 @@ class Package {
         const DependencyObjects = this.ListDependencyObjects()
         for (const Dependency of DependencyObjects) {
             const DependencyFolder = await TypeWriter.DependencyManager.GetDependencyFolder(Dependency)
-            const ModulesDependencyFolder = `${this.NodeModulesFolder}/${Dependency.AtFullName}/`
+            const ModulesDependencyFolder = `${this.NodeModulesFolder}/${Dependency.AtFullName}`
             FS.symlinkSync(
                 DependencyFolder,
                 ModulesDependencyFolder,
