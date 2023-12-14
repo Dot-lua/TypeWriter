@@ -46,6 +46,7 @@ class Package {
         for (const Dependency of DependencyObjects) {
             const DependencyFolder = await TypeWriter.DependencyManager.GetDependencyFolder(Dependency)
             const ModulesDependencyFolder = `${this.NodeModulesFolder}/${Dependency.AtFullName}`
+            if (Dependency.Author) { FS.mkdirSync(`${this.NodeModulesFolder}/@${Dependency.Author}`) }
             FS.symlinkSync(
                 DependencyFolder,
                 ModulesDependencyFolder,
